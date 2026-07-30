@@ -293,6 +293,9 @@ table.data tr.is-past td { opacity: 0.5; text-decoration: line-through; text-dec
 .countdown__clock { display: flex; gap: var(--space-3); }
 .countdown__unit { text-align: center; min-width: 62px; }
 .countdown__val { font-family: var(--font-display); font-size: var(--fs-48); line-height: 1; color: var(--color-paper); font-variant-numeric: tabular-nums; }
+/* Adaptive: dark digits on light surfaces (e.g. city pages); white stays on dark (home hero). */
+.surface-paper .countdown__val,
+.surface-paper-dim .countdown__val { color: var(--color-ink); }
 .countdown__u { display: block; font-family: var(--font-kicker); letter-spacing: 0.1em; font-size: var(--fs-12); color: var(--color-muted-on-ink); margin-top: var(--space-1); }
 .countdown__done { font-family: var(--font-kicker); letter-spacing: 0.1em; color: var(--color-lime); }
 
