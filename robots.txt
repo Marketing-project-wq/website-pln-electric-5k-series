@@ -1,0 +1,7 @@
+# PLN Mobile Speed Land 5K Series 2026 — allow all crawlers.
+User-agent: *
+Allow: /
+Disallow:
+
+# TODO: ganti domain di bawah dengan domain final klien.
+Sitemap: https://speedland.example/sitemap.xml

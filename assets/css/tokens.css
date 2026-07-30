@@ -1,0 +1,86 @@
+/* ==========================================================================
+   tokens.css — Design tokens for PLN Mobile Speed Land 5K Series 2026
+   Single source of truth for colour, type, spacing, motion.
+   Values extracted from the source pitch deck (see build brief §4).
+   ========================================================================== */
+
+:root {
+  /* --- Colour ------------------------------------------------------------ */
+  --color-ink: #0A0A0A;          /* dominant dark background */
+  --color-ink-soft: #17181C;     /* cards/panels above ink, subtle borders */
+  --color-volt: #0C6E9E;         /* primary accent — teal-electric ("electric"/PLN) */
+  --color-volt-bright: #3FA9D1;  /* lighter volt — for text/icons on ink (AA) */
+  --color-sage: #9CB35A;         /* secondary green — sustainability / Net Zero only */
+  --color-paper: #FFFFFF;        /* light background */
+  --color-paper-dim: #F4F6F7;    /* secondary light surface */
+  --color-ink-on-paper: #0A0A0A; /* text on paper */
+
+  /* Derived / utility */
+  --color-line: rgba(255, 255, 255, 0.10);
+  --color-line-strong: rgba(255, 255, 255, 0.18);
+  --color-line-ink: rgba(10, 10, 10, 0.12);
+  --color-muted-on-ink: #A7ADB4;
+  --color-muted-on-paper: #55606A;
+  --color-volt-tint: rgba(12, 110, 158, 0.14);
+  --color-sage-tint: rgba(156, 179, 90, 0.16);
+
+  /* Status colours (badges) */
+  --status-upcoming: #A7ADB4;
+  --status-open: var(--color-volt-bright);
+  --status-rpc: var(--color-sage);
+  --status-done: #6B7178;
+
+  /* --- Typography -------------------------------------------------------- */
+  --font-display: 'Anton', 'Arial Narrow', sans-serif;
+  --font-kicker: 'Bebas Neue', 'Arial Narrow', sans-serif;
+  --font-body: 'Montserrat', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Type scale */
+  --fs-12: 0.75rem;
+  --fs-14: 0.875rem;
+  --fs-16: 1rem;
+  --fs-18: 1.125rem;
+  --fs-24: 1.5rem;
+  --fs-32: 2rem;
+  --fs-48: 3rem;
+  --fs-64: 4rem;
+  --fs-96: 6rem;
+
+  --lh-tight: 1.02;
+  --lh-snug: 1.2;
+  --lh-body: 1.65;
+
+  /* --- Spacing ----------------------------------------------------------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --space-10: 8rem;
+
+  /* --- Layout ------------------------------------------------------------ */
+  --container: 1200px;
+  --container-wide: 1360px;
+  --container-narrow: 820px;
+  --radius: 4px;      /* used sparingly; the brand leans on angled clips */
+  --radius-pill: 999px;
+  --shard: polygon(0 0, 100% 0, 100% calc(100% - 22px), calc(100% - 22px) 100%, 0 100%);
+  --shard-lg: polygon(0 0, 100% 0, 100% calc(100% - 40px), calc(100% - 40px) 100%, 0 100%);
+
+  /* --- Elevation --------------------------------------------------------- */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.35);
+
+  /* --- Motion ------------------------------------------------------------ */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --dur-fast: 160ms;
+  --dur: 320ms;
+  --dur-slow: 640ms;
+
+  /* --- Breakpoints (reference; used in media queries) -------------------- */
+  /* 375 / 768 / 1024 / 1440 */
+}
