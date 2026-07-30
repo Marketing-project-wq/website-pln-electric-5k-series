@@ -253,7 +253,9 @@
     document.querySelectorAll('[data-timeline]').forEach(function (mount) {
       mount.classList.add('timeline');
       mount.innerHTML = D.timeline.map(function (p) {
-        return '<div class="timeline__phase" data-reveal><span class="timeline__num">' + p.n + '</span><span class="timeline__month">' + D.loc(p.month) + '</span><span class="timeline__title">' + D.loc(p.phase) + '</span><p class="timeline__detail">' + D.loc(p.detail) + '</p></div>';
+        var items = D.loc(p.items) || [];
+        var lis = items.map(function (it) { return '<li>' + it + '</li>'; }).join('');
+        return '<div class="timeline__phase" data-reveal><span class="timeline__num">' + p.n + '</span><span class="timeline__month">' + D.loc(p.month) + '</span><span class="timeline__title">' + D.loc(p.phase) + '</span><ul class="timeline__list">' + lis + '</ul></div>';
       }).join('');
     });
   }
