@@ -129,12 +129,28 @@
       '</div>'
     );
     document.body.appendChild(modal);
-    modal.addEventListener('click', function (e) { if (e.target.hasAttribute('data-close')) closeModal(); });
+    // Use closest() so a click on the X button's inner <svg>/<use> still counts
+    // as a close (the button carries data-close, its icon does not).
+    modal.addEventListener('click', function (e) { if (e.target.closest('[data-close]')) closeModal(); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal(); });
   }
   var lastFocus;
-  function openModal() { if (!modal) buildModal(); lastFocus = document.activeElement; modal.classList.add('is-open'); lockScroll(true); modal.querySelector('.modal__close').focus(); }
-  function closeModal() { modal.classList.remove('is-open'); lockScroll(false); if (lastFocus) lastFocus.focus(); }
+  // Idempotent: guard on is-open so a double open()/close() (e.g. a click caught
+  // by both the direct and delegated handlers) can't unbalance the scroll lock.
+  function openModal() {
+    if (!modal) buildModal();
+    if (modal.classList.contains('is-open')) return;
+    lastFocus = document.activeElement;
+    modal.classList.add('is-open');
+    lockScroll(true);
+    modal.querySelector('.modal__close').focus();
+  }
+  function closeModal() {
+    if (!modal || !modal.classList.contains('is-open')) return;
+    modal.classList.remove('is-open');
+    lockScroll(false);
+    if (lastFocus) lastFocus.focus();
+  }
 
   function wireRegisterButtons() {
     document.querySelectorAll('[data-register]').forEach(function (b) {
