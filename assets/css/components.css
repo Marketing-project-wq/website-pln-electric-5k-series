@@ -342,6 +342,16 @@ table.data tr.is-past td { opacity: 0.5; text-decoration: line-through; text-dec
 .sponsor:hover { filter: grayscale(0); opacity: 1; color: var(--color-teal); }
 .sponsor small { display: block; font-family: var(--font-kicker); font-size: var(--fs-12); letter-spacing: 0.1em; color: var(--color-muted-on-ink); }
 .sponsor img { height: 30px; width: auto; display: block; }
+.sponsor img.sp-pln { height: 44px; border-radius: 9px; }   /* PLN Mobile app icon (square) */
+.sponsor img.sp-mills { height: 34px; }
+/* MILLS logo ships black-only; invert to white on dark backgrounds (§10.1) */
+.on-dark-invert { filter: invert(1); }
+
+/* Product renders (jersey / jacket) — studio 3D on neutral grey, shown as-is */
+.merch-img { width: 100%; height: auto; display: block; border: 1px solid var(--color-line); background: #d7d7d7; }
+.merch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+.merch-cap { font-family: var(--font-kicker); letter-spacing: 0.08em; color: var(--color-muted-on-ink); font-size: var(--fs-14); margin-top: var(--space-2); }
+@media (max-width: 640px) { .merch-grid { grid-template-columns: 1fr; } }
 
 /* ---------- Image placeholder (branded) ---------------------------------- */
 .ph {
