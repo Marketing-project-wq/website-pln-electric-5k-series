@@ -1,19 +1,20 @@
 /* ==========================================================================
-   tokens.css — Design tokens for PLN Mobile Speed Land 5K Series 2026
+   tokens.css — Design tokens for PLN Mobile Electric 5K Series 2026
    Single source of truth for colour, type, spacing, motion.
-   Values extracted from the source pitch deck (see build brief §4).
+   Colours measured directly from the official logo, Key Visuals, and shard
+   graphics (see build brief §4.1). Contrast verified for WCAG AA.
    ========================================================================== */
 
 :root {
   /* --- Colour ------------------------------------------------------------ */
-  --color-ink: #0A0A0A;          /* dominant dark background */
-  --color-ink-soft: #17181C;     /* cards/panels above ink, subtle borders */
-  --color-volt: #0C6E9E;         /* primary accent — teal-electric ("electric"/PLN) */
-  --color-volt-bright: #3FA9D1;  /* lighter volt — for text/icons on ink (AA) */
-  --color-sage: #9CB35A;         /* secondary green — sustainability / Net Zero only */
-  --color-paper: #FFFFFF;        /* light background */
-  --color-paper-dim: #F4F6F7;    /* secondary light surface */
-  --color-ink-on-paper: #0A0A0A; /* text on paper */
+  --color-ink: #0A0A0A;            /* dominant dark background (KV bg #100F0D–#1F2730) */
+  --color-ink-soft: #17181C;       /* cards/panels above ink, subtle borders */
+  --color-teal: #1C99B1;           /* PRIMARY brand — from logo & shard graphics. 5.9:1 on ink (AA) */
+  --color-lime: #A6CF4D;           /* logo gradient end (teal→lime). Accent / sustainability. 11:1 on ink */
+  --color-signal: #F7EE24;         /* "POWER YOUR SPEED" banner yellow. Primary CTA / active tier. 16.2:1 on ink */
+  --color-paper: #FFFFFF;          /* light background */
+  --color-paper-dim: #F4F6F7;      /* secondary light surface */
+  --color-ink-on-paper: #0A0A0A;   /* text on paper */
 
   /* Derived / utility */
   --color-line: rgba(255, 255, 255, 0.10);
@@ -21,13 +22,17 @@
   --color-line-ink: rgba(10, 10, 10, 0.12);
   --color-muted-on-ink: #A7ADB4;
   --color-muted-on-paper: #55606A;
-  --color-volt-tint: rgba(12, 110, 158, 0.14);
-  --color-sage-tint: rgba(156, 179, 90, 0.16);
+  --color-teal-tint: rgba(28, 153, 177, 0.14);
+  --color-lime-tint: rgba(166, 207, 77, 0.16);
+  --color-signal-tint: rgba(247, 238, 36, 0.16);
+
+  /* Official brand gradient (mark runner in the logo) */
+  --gradient-brand: linear-gradient(135deg, var(--color-teal), var(--color-lime));
 
   /* Status colours (badges) */
   --status-upcoming: #A7ADB4;
-  --status-open: var(--color-volt-bright);
-  --status-rpc: var(--color-sage);
+  --status-open: var(--color-teal);
+  --status-rpc: var(--color-lime);
   --status-done: #6B7178;
 
   /* --- Typography -------------------------------------------------------- */
@@ -66,7 +71,7 @@
   --container: 1200px;
   --container-wide: 1360px;
   --container-narrow: 820px;
-  --radius: 4px;      /* used sparingly; the brand leans on angled clips */
+  --radius: 4px;      /* used sparingly; the brand leans on angled shard clips */
   --radius-pill: 999px;
   --shard: polygon(0 0, 100% 0, 100% calc(100% - 22px), calc(100% - 22px) 100%, 0 100%);
   --shard-lg: polygon(0 0, 100% 0, 100% calc(100% - 40px), calc(100% - 40px) 100%, 0 100%);
@@ -81,6 +86,6 @@
   --dur: 320ms;
   --dur-slow: 640ms;
 
-  /* --- Breakpoints (reference; used in media queries) -------------------- */
+  /* --- Breakpoints (reference) ------------------------------------------- */
   /* 375 / 768 / 1024 / 1440 */
 }

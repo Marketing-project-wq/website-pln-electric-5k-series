@@ -3,7 +3,7 @@
    All event numbers (dates, prices, quotas, prizes) live here and are rendered
    into pages by JS. Do NOT hardcode these values in individual HTML files.
 
-   Source: 20FIT x PLN "Speed Land 2026" pitch deck.
+   Source: 20FIT x PLN pitch deck (pitch-stage working title "Speed Land 2026").
    Race-day dates follow the "Event Timeline" slide (see build brief §2 / §8.3).
    <!-- TODO: konfirmasi tanggal final ke klien -->
    ========================================================================== */
@@ -119,7 +119,7 @@
       steps: [
         'Unduh atau perbarui aplikasi PLN Mobile.',
         'Buka menu Events di aplikasi.',
-        'Pilih PLN Mobile Speed Land Series & kota pilihanmu.',
+        'Pilih PLN Mobile Electric 5K Series & kota pilihanmu.',
         'Pilih tiket dan selesaikan pembayaran.'
       ],
       notifyTitle: 'Ingatkan saya saat pendaftaran dibuka',
@@ -146,7 +146,7 @@
       steps: [
         'Download or update the PLN Mobile app.',
         'Open the Events menu in the app.',
-        'Choose PLN Mobile Speed Land Series & your city.',
+        'Choose PLN Mobile Electric 5K Series & your city.',
         'Select your ticket and complete payment.'
       ],
       notifyTitle: 'Remind me when registration opens',
@@ -191,8 +191,8 @@
 
   window.EVENT_DATA = {
     LANG: LANG,
-    name: 'PLN Mobile Speed Land Series 2026',
-    tagline: '#PowerUpTheNation',
+    name: 'PLN Mobile Electric 5K Series 2026',
+    tagline: 'Power Your Speed',
     distance: '5K',
     cot: { id: 'COT 40 menit', en: 'COT 40 minutes' },
     REGISTRATION_OPEN: REGISTRATION_OPEN,

@@ -1,242 +1,242 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- TODO: ganti domain https://speedland.example dengan domain final klien -->
+<!-- TODO: ganti domain https://electric5k.example dengan domain final klien -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://speedland.example/id/index.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/index.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/index.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/index.html"/>
+    <loc>https://electric5k.example/id/index.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/index.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/index.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/index.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/id/about.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/about.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/about.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/about.html"/>
+    <loc>https://electric5k.example/id/about.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/about.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/about.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/about.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/id/schedule.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/schedule.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/schedule.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/schedule.html"/>
+    <loc>https://electric5k.example/id/schedule.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/schedule.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/schedule.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/schedule.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/id/city/jakarta.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/city/jakarta.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/city/jakarta.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/city/jakarta.html"/>
+    <loc>https://electric5k.example/id/city/jakarta.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/city/jakarta.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/city/jakarta.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/city/jakarta.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/id/city/yogyakarta.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/city/yogyakarta.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/city/yogyakarta.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/city/yogyakarta.html"/>
+    <loc>https://electric5k.example/id/city/yogyakarta.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/city/yogyakarta.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/city/yogyakarta.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/city/yogyakarta.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/id/city/bali.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/city/bali.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/city/bali.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/city/bali.html"/>
+    <loc>https://electric5k.example/id/city/bali.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/city/bali.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/city/bali.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/city/bali.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/id/category-prizes.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/category-prizes.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/category-prizes.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/category-prizes.html"/>
+    <loc>https://electric5k.example/id/category-prizes.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/category-prizes.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/category-prizes.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/category-prizes.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/id/tickets.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/tickets.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/tickets.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/tickets.html"/>
+    <loc>https://electric5k.example/id/tickets.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/tickets.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/tickets.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/tickets.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/id/special-programs.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/special-programs.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/special-programs.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/special-programs.html"/>
+    <loc>https://electric5k.example/id/special-programs.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/special-programs.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/special-programs.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/special-programs.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/id/race-pack.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/race-pack.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/race-pack.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/race-pack.html"/>
+    <loc>https://electric5k.example/id/race-pack.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/race-pack.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/race-pack.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/race-pack.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/id/road-to-event.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/road-to-event.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/road-to-event.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/road-to-event.html"/>
+    <loc>https://electric5k.example/id/road-to-event.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/road-to-event.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/road-to-event.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/road-to-event.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/id/sustainability.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/sustainability.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/sustainability.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/sustainability.html"/>
+    <loc>https://electric5k.example/id/sustainability.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/sustainability.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/sustainability.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/sustainability.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/id/gallery.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/gallery.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/gallery.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/gallery.html"/>
+    <loc>https://electric5k.example/id/gallery.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/gallery.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/gallery.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/gallery.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/id/news.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/news.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/news.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/news.html"/>
+    <loc>https://electric5k.example/id/news.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/news.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/news.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/news.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/id/faq.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/faq.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/faq.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/faq.html"/>
+    <loc>https://electric5k.example/id/faq.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/faq.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/faq.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/faq.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/id/rules.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/rules.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/rules.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/rules.html"/>
+    <loc>https://electric5k.example/id/rules.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/rules.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/rules.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/rules.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/id/contact.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/contact.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/contact.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/contact.html"/>
+    <loc>https://electric5k.example/id/contact.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/contact.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/contact.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/contact.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/en/index.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/index.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/index.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/index.html"/>
+    <loc>https://electric5k.example/en/index.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/index.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/index.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/index.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/en/about.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/about.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/about.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/about.html"/>
+    <loc>https://electric5k.example/en/about.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/about.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/about.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/about.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/en/schedule.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/schedule.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/schedule.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/schedule.html"/>
+    <loc>https://electric5k.example/en/schedule.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/schedule.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/schedule.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/schedule.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/en/city/jakarta.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/city/jakarta.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/city/jakarta.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/city/jakarta.html"/>
+    <loc>https://electric5k.example/en/city/jakarta.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/city/jakarta.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/city/jakarta.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/city/jakarta.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/en/city/yogyakarta.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/city/yogyakarta.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/city/yogyakarta.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/city/yogyakarta.html"/>
+    <loc>https://electric5k.example/en/city/yogyakarta.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/city/yogyakarta.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/city/yogyakarta.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/city/yogyakarta.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/en/city/bali.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/city/bali.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/city/bali.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/city/bali.html"/>
+    <loc>https://electric5k.example/en/city/bali.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/city/bali.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/city/bali.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/city/bali.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/en/category-prizes.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/category-prizes.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/category-prizes.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/category-prizes.html"/>
+    <loc>https://electric5k.example/en/category-prizes.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/category-prizes.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/category-prizes.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/category-prizes.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/en/tickets.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/tickets.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/tickets.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/tickets.html"/>
+    <loc>https://electric5k.example/en/tickets.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/tickets.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/tickets.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/tickets.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/en/special-programs.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/special-programs.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/special-programs.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/special-programs.html"/>
+    <loc>https://electric5k.example/en/special-programs.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/special-programs.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/special-programs.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/special-programs.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/en/race-pack.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/race-pack.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/race-pack.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/race-pack.html"/>
+    <loc>https://electric5k.example/en/race-pack.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/race-pack.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/race-pack.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/race-pack.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/en/road-to-event.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/road-to-event.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/road-to-event.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/road-to-event.html"/>
+    <loc>https://electric5k.example/en/road-to-event.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/road-to-event.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/road-to-event.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/road-to-event.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/en/sustainability.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/sustainability.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/sustainability.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/sustainability.html"/>
+    <loc>https://electric5k.example/en/sustainability.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/sustainability.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/sustainability.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/sustainability.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/en/gallery.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/gallery.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/gallery.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/gallery.html"/>
+    <loc>https://electric5k.example/en/gallery.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/gallery.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/gallery.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/gallery.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/en/news.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/news.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/news.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/news.html"/>
+    <loc>https://electric5k.example/en/news.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/news.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/news.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/news.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/en/faq.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/faq.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/faq.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/faq.html"/>
+    <loc>https://electric5k.example/en/faq.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/faq.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/faq.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/faq.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/en/rules.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/rules.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/rules.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/rules.html"/>
+    <loc>https://electric5k.example/en/rules.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/rules.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/rules.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/rules.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://speedland.example/en/contact.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://speedland.example/id/contact.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://speedland.example/en/contact.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://speedland.example/id/contact.html"/>
+    <loc>https://electric5k.example/en/contact.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/contact.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/contact.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/contact.html"/>
     <changefreq>weekly</changefreq>
   </url>
 </urlset>

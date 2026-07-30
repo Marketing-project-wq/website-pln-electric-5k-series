@@ -8,7 +8,7 @@
 .program-card h3 { font-family: var(--font-display); text-transform: uppercase; font-size: var(--fs-24); }
 
 /* Category page: big 5K focal */
-.big-5k { font-family: var(--font-display); font-size: clamp(6rem, 26vw, 20rem); line-height: 0.8; color: var(--color-volt-bright); text-transform: uppercase; }
+.big-5k { font-family: var(--font-display); font-size: clamp(6rem, 26vw, 20rem); line-height: 0.8; color: var(--color-teal); text-transform: uppercase; }
 
 /* Sustainability jersey block */
 .jersey-block { position: relative; }
@@ -17,7 +17,7 @@
 /* Gallery */
 .gallery-filters { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-6); }
 .gallery-filter { padding: 0.5em 1em; border: 1px solid var(--color-line-strong); color: var(--color-paper); font-weight: 600; font-size: var(--fs-14); font-family: var(--font-kicker); letter-spacing: 0.06em; }
-.gallery-filter[aria-pressed="true"] { background: var(--color-volt); color: #fff; border-color: var(--color-volt); }
+.gallery-filter[aria-pressed="true"] { background: var(--color-teal); color: #fff; border-color: var(--color-teal); }
 .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
 .gallery-grid .ph { aspect-ratio: 1 / 1; }
 .gallery-item.is-hidden { display: none; }
@@ -25,7 +25,7 @@
 
 /* News cards */
 .news-card { display: flex; flex-direction: column; gap: var(--space-2); }
-.news-card time { font-family: var(--font-kicker); letter-spacing: 0.08em; color: var(--color-volt-bright); font-size: var(--fs-14); }
+.news-card time { font-family: var(--font-kicker); letter-spacing: 0.08em; color: var(--color-teal); font-size: var(--fs-14); }
 .news-card h3 { font-size: var(--fs-24); font-weight: 700; }
 
 /* Contact cards */
@@ -33,20 +33,20 @@
 
 /* Road-to-event schedule list */
 .rte-info { display: grid; gap: var(--space-2); }
-.rte-info dt { font-family: var(--font-kicker); letter-spacing: 0.08em; color: var(--color-volt-bright); }
+.rte-info dt { font-family: var(--font-kicker); letter-spacing: 0.08em; color: var(--color-teal); }
 .rte-info dd { color: var(--color-muted-on-ink); }
 
 /* Info definition list (city / race pack) */
 .info-list { display: grid; gap: var(--space-4); }
 .info-list > div { display: grid; grid-template-columns: 30px 1fr; gap: var(--space-3); align-items: start; }
-.info-list svg { width: 24px; height: 24px; color: var(--color-volt-bright); margin-top: 2px; }
+.info-list svg { width: 24px; height: 24px; color: var(--color-teal); margin-top: 2px; }
 .info-list dt { font-family: var(--font-kicker); letter-spacing: 0.06em; color: var(--color-muted-on-ink); font-size: var(--fs-14); }
 .info-list dd { font-weight: 600; font-size: var(--fs-18); }
 
 /* What's on race day grid */
 .wo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); }
 .wo-item { padding: var(--space-4); border: 1px solid var(--color-line); background: var(--color-ink-soft); display: grid; gap: var(--space-2); }
-.wo-item svg { width: 30px; height: 30px; color: var(--color-volt-bright); }
+.wo-item svg { width: 30px; height: 30px; color: var(--color-teal); }
 .wo-item h3 { font-family: var(--font-kicker); letter-spacing: 0.06em; font-size: var(--fs-18); }
 @media (max-width: 767px) { .wo-grid { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 374px) { .wo-grid { grid-template-columns: 1fr; } }

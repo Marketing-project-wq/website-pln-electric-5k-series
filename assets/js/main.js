@@ -104,7 +104,7 @@
           '</div>' +
           '<h3 style="font-family:var(--font-kicker);letter-spacing:.06em;margin:1.5rem 0 .5rem;">' + ui.notifyTitle + '</h3>' +
           // mailto default; TODO: sambungkan ke Formspree/Netlify Forms bila perlu
-          '<form class="field-row" action="mailto:info@speedland.example?subject=Notify%20me%20-%20Speed%20Land%20Series" method="post" enctype="text/plain">' +
+          '<form class="field-row" action="mailto:info@electric5k.example?subject=Notify%20me%20-%20Speed%20Land%20Series" method="post" enctype="text/plain">' +
             '<input type="email" name="email" required placeholder="' + ui.notifyPlaceholder + '" aria-label="' + ui.notifyPlaceholder + '">' +
             '<button class="btn btn--sm" type="submit">' + ui.notifyBtn + '</button>' +
           '</form>' +
