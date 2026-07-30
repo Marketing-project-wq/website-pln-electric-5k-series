@@ -32,6 +32,10 @@ body {
 img, picture, svg, video { display: block; max-width: 100%; }
 img { height: auto; }
 
+/* Inline icon sizing — without this an unsized <svg> defaults to ~176×150px
+   and blows up buttons/links. Scales with the surrounding font-size. */
+.icon { width: 1.1em; height: 1.1em; flex: none; display: inline-block; vertical-align: middle; }
+
 input, button, textarea, select { font: inherit; color: inherit; }
 button { cursor: pointer; background: none; border: none; }
 

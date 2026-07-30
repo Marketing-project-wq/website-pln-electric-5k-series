@@ -37,15 +37,32 @@
     }).catch(function (e) { console.error('Partial load failed:', url, e); });
   }
 
+  // Body scroll lock shared by the mobile menu and the register modal.
+  var _locks = 0;
+  function lockScroll(on) {
+    _locks = Math.max(0, _locks + (on ? 1 : -1));
+    var locked = _locks > 0;
+    document.documentElement.style.overflow = locked ? 'hidden' : '';
+    document.body.style.overflow = locked ? 'hidden' : '';
+  }
+
   // ---- Nav interactions ---------------------------------------------------
   function wireNav() {
     var toggle = document.querySelector('.nav__toggle');
     var menu = document.querySelector('.nav__menu');
     if (toggle && menu) {
-      toggle.addEventListener('click', function () {
-        var open = menu.classList.toggle('is-open');
+      function setMenu(open) {
+        if (menu.classList.contains('is-open') === open) return;
+        menu.classList.toggle('is-open', open);
         toggle.setAttribute('aria-expanded', String(open));
-        document.body.style.overflow = open ? 'hidden' : '';
+        lockScroll(open);
+      }
+      toggle.addEventListener('click', function () {
+        setMenu(!menu.classList.contains('is-open'));
+      });
+      // Close (and unlock) if the viewport grows to desktop while the menu is open.
+      window.addEventListener('resize', function () {
+        if (window.innerWidth >= 1024) setMenu(false);
       });
     }
     // Mobile dropdown accordions
@@ -116,8 +133,8 @@
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal(); });
   }
   var lastFocus;
-  function openModal() { if (!modal) buildModal(); lastFocus = document.activeElement; modal.classList.add('is-open'); document.body.style.overflow = 'hidden'; modal.querySelector('.modal__close').focus(); }
-  function closeModal() { modal.classList.remove('is-open'); document.body.style.overflow = ''; if (lastFocus) lastFocus.focus(); }
+  function openModal() { if (!modal) buildModal(); lastFocus = document.activeElement; modal.classList.add('is-open'); lockScroll(true); modal.querySelector('.modal__close').focus(); }
+  function closeModal() { modal.classList.remove('is-open'); lockScroll(false); if (lastFocus) lastFocus.focus(); }
 
   function wireRegisterButtons() {
     document.querySelectorAll('[data-register]').forEach(function (b) {
