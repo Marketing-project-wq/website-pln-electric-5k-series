@@ -461,6 +461,11 @@ table.data tr.is-past td { opacity: 0.5; text-decoration: line-through; text-dec
 @media (max-width: 767px) { .grid-2, .grid-2--wide-left { grid-template-columns: 1fr; } }
 .stack > * + * { margin-top: var(--space-4); }
 .text-center { text-align: center; }
+/* In centered sections, center the section-head block too — its max-width:60ch
+   otherwise stays left-anchored while full-width elements (e.g. a .hero__cta
+   button row with justify-content:center) center in the container, so the text
+   and the buttons wouldn't line up. */
+.text-center .section-head { margin-inline: auto; }
 .mt-6 { margin-top: var(--space-6); }
 .note { font-size: var(--fs-14); color: var(--color-muted-on-ink); border-left: 2px solid var(--color-teal); padding-left: var(--space-3); }
 .surface-paper .note, .surface-paper-dim .note { color: var(--color-muted-on-paper); }
