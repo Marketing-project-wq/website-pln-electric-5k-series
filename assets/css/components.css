@@ -404,6 +404,62 @@ table.data tr.is-past td { opacity: 0.5; text-decoration: line-through; text-dec
   .hero__media--deco .deco-shard--tr { width: 62%; opacity: 0.28; }
   .hero__media--deco .deco-shard--bl { width: 50%; }
 }
+
+/* ---------- Per-section shard arrangements (v4) --------------------------- */
+/* Every deco hero draws from the same shard vocabulary but arranges it
+   differently, so no two sections repeat one composite. Layers per hero:
+   two fragment <img> (.deco-shard--tr / --bl, repositioned per variant) plus
+   one teal piece painted through ::before. Pieces used as background deco are
+   the abstract shards only (teal-01 bar, teal-02 burst, teal-04 fan) — never
+   the logo- or photo-content piece files. */
+.hero__media--deco::before {
+  content: ""; position: absolute; z-index: 0; pointer-events: none;
+  background-repeat: no-repeat; background-position: center; background-size: contain;
+  opacity: 0.16;
+}
+
+/* v1 — burst high-right, tight fragment echo lower-left */
+.hero__media--deco--v1 .deco-shard--tr { top: -14%; right: -3%; width: 39%; opacity: 0.33; transform: rotate(5deg); }
+.hero__media--deco--v1 .deco-shard--bl { bottom: -20%; left: -7%; width: 24%; opacity: 0.18; }
+.hero__media--deco--v1::before { background-image: url("/assets/img/graphics/pieces/shard-piece-teal-02.png"); top: -6%; right: 10%; width: 32%; height: 66%; opacity: 0.15; transform: rotate(-9deg); }
+
+/* v2 — fan sweeping in from bottom-left, small fragment top-left */
+.hero__media--deco--v2 .deco-shard--tr { top: -10%; left: -6%; right: auto; width: 26%; opacity: 0.20; }
+.hero__media--deco--v2 .deco-shard--bl { bottom: -14%; right: -6%; left: auto; width: 34%; opacity: 0.26; }
+.hero__media--deco--v2::before { background-image: url("/assets/img/graphics/pieces/shard-piece-teal-04.png"); bottom: -10%; left: 2%; width: 40%; height: 78%; opacity: 0.17; transform: rotate(4deg); }
+
+/* v3 — vertical bar along the right edge, burst grounded lower-right */
+.hero__media--deco--v3 .deco-shard--tr { top: -16%; right: 6%; width: 30%; opacity: 0.24; }
+.hero__media--deco--v3 .deco-shard--bl { bottom: -18%; left: -10%; width: 28%; opacity: 0.18; }
+.hero__media--deco--v3::before { background-image: url("/assets/img/graphics/pieces/shard-piece-teal-01.png"); top: -20%; right: -2%; width: 20%; height: 150%; opacity: 0.18; }
+
+/* v4 — fan high-right rotated back, fragment drifting mid-left */
+.hero__media--deco--v4 .deco-shard--tr { top: -8%; right: 4%; width: 34%; opacity: 0.20; transform: rotate(-6deg); }
+.hero__media--deco--v4 .deco-shard--bl { bottom: 6%; left: -12%; width: 30%; opacity: 0.16; }
+.hero__media--deco--v4::before { background-image: url("/assets/img/graphics/pieces/shard-piece-teal-04.png"); top: -14%; right: -4%; width: 42%; height: 74%; opacity: 0.15; transform: rotate(-16deg) scaleX(-1); }
+
+/* v5 — burst large and low-opacity centre-right, thin bar at left edge */
+.hero__media--deco--v5 .deco-shard--tr { top: -18%; right: -8%; width: 46%; opacity: 0.22; }
+.hero__media--deco--v5 .deco-shard--bl { bottom: -22%; left: -4%; width: 22%; opacity: 0.16; }
+.hero__media--deco--v5::before { background-image: url("/assets/img/graphics/pieces/shard-piece-teal-01.png"); top: -25%; left: -3%; width: 16%; height: 150%; opacity: 0.14; }
+
+/* v6 — fan bottom-right, fragment centred high */
+.hero__media--deco--v6 .deco-shard--tr { top: -16%; left: 28%; right: auto; width: 30%; opacity: 0.22; transform: rotate(10deg); }
+.hero__media--deco--v6 .deco-shard--bl { bottom: -16%; left: -8%; width: 26%; opacity: 0.18; }
+.hero__media--deco--v6::before { background-image: url("/assets/img/graphics/pieces/shard-piece-teal-02.png"); bottom: -12%; right: 4%; width: 36%; height: 72%; opacity: 0.16; transform: rotate(14deg); }
+
+@media (max-width: 640px) {
+  /* on phones keep the ::before piece subtle and clear of the headline */
+  .hero__media--deco::before { opacity: 0.12 !important; }
+  .hero__media--deco--v3::before,
+  .hero__media--deco--v5::before { height: 120%; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  /* one quiet "assembly": the ::before piece fades into place on load.
+     Opacity-only so it never overrides each variant's own transform. */
+  .hero__media--deco::before { animation: shard-settle 900ms var(--ease) both; }
+  @keyframes shard-settle { from { opacity: 0; } }
+}
 .hero__media::after {
   content: ""; position: absolute; inset: 0;
   background: linear-gradient(120deg, rgba(10,10,10,0.94) 30%, rgba(10,10,10,0.6) 65%, rgba(12,110,158,0.35) 100%);
