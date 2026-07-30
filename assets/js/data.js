@@ -85,8 +85,8 @@
 
   var TIMELINE = [
     { n: '01', month: { id: 'Juli 2026', en: 'July 2026' }, phase: { id: 'Launching', en: 'Launch' }, detail: { id: 'Press conference (Jumat, 31 Juli 2026 — tanggal & venue masih tbc) + teaser program.', en: 'Press conference (Friday, 31 July 2026 — date & venue still tbc) + programme teaser.' } },
-    { n: '02', month: { id: 'Agustus 2026', en: 'August 2026' }, phase: { id: 'Penjualan Tiket', en: 'Ticket Selling' }, detail: { id: 'Mgu 1 Super Early Bird → Mgu 2 Early Bird → Mgu 3 General Sales.', en: 'Wk 1 Super Early Bird → Wk 2 Early Bird → Wk 3 General Sales.' } },
-    { n: '03', month: { id: 'September 2026', en: 'September 2026' }, phase: { id: 'Event — Jakarta', en: 'Event — Jakarta' }, detail: { id: 'RPC 11–12 Sep · Race Day 13 Sep.', en: 'RPC 11–12 Sep · Race Day 13 Sep.' } },
+    { n: '02', month: { id: 'Agustus 2026', en: 'August 2026' }, phase: { id: 'Penjualan Tiket', en: 'Ticket Selling' }, detail: { id: 'Minggu 1 Super Early Bird → Minggu 2 Early Bird → Minggu 3 General Sales.', en: 'Week 1 Super Early Bird → Week 2 Early Bird → Week 3 General Sales.' } },
+    { n: '03', month: { id: 'September 2026', en: 'September 2026' }, phase: { id: 'Event — Jakarta', en: 'Event — Jakarta' }, detail: { id: 'Race Pack Collection (RPC) 11–12 Sep · Race Day 13 Sep', en: 'Race Pack Collection (RPC) 11–12 Sep · Race Day 13 Sep' } },
     { n: '04', month: { id: 'Oktober 2026', en: 'October 2026' }, phase: { id: 'Event — Yogyakarta & Bali', en: 'Event — Yogyakarta & Bali' }, detail: { id: 'RPC Yogyakarta 3 Okt · Race Day Yogyakarta 4 Okt · RPC Bali 31 Okt.', en: 'RPC Yogyakarta 3 Oct · Race Day Yogyakarta 4 Oct · RPC Bali 31 Oct.' } },
     { n: '05', month: { id: 'November 2026', en: 'November 2026' }, phase: { id: 'Event — Bali', en: 'Event — Bali' }, detail: { id: 'Race Day Bali 1 Nov.', en: 'Race Day Bali 1 Nov.' } },
     { n: '06', month: { id: 'Desember 2026', en: 'December 2026' }, phase: { id: 'After Event', en: 'After Event' }, detail: { id: 'Amplifikasi media, promosi pasca-event, teaser event berikutnya.', en: 'Media amplification, post-event promotion, next-event teaser.' } }
