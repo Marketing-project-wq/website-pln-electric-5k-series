@@ -260,7 +260,10 @@ table.data tr.is-past td { opacity: 0.5; text-decoration: line-through; text-dec
 /* ---------- Ticket tier card -------------------------------------------- */
 .tier { position: relative; padding: var(--space-5); background: var(--color-ink-soft); border: 1px solid var(--color-line); clip-path: var(--shard); display: flex; flex-direction: column; gap: var(--space-2); }
 .tier__name { font-family: var(--font-kicker); letter-spacing: 0.08em; font-size: var(--fs-18); color: var(--color-paper); }
-.tier__price { font-family: var(--font-display); font-size: var(--fs-48); line-height: 1; }
+/* Price is always signal-yellow so it stays readable on the dark tier card
+   (the card is dark even inside a paper-surfaced section) and reads as the
+   most eye-catching element. Applies to all four tiers, not just the active one. */
+.tier__price { font-family: var(--font-display); font-size: var(--fs-48); line-height: 1; color: var(--color-signal); }
 .tier__price small { font-family: var(--font-body); font-size: var(--fs-16); color: var(--color-muted-on-ink); font-weight: 600; }
 .tier__discount { align-self: flex-start; }
 .tier__period { color: var(--color-muted-on-ink); font-size: var(--fs-14); margin-top: auto; }
