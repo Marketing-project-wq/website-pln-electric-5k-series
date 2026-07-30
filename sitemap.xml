@@ -86,13 +86,6 @@
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://electric5k.example/id/gallery.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/gallery.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/gallery.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/gallery.html"/>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
     <loc>https://electric5k.example/id/news.html</loc>
     <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/news.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/news.html"/>
@@ -202,13 +195,6 @@
     <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/sustainability.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/sustainability.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/sustainability.html"/>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://electric5k.example/en/gallery.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/gallery.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/gallery.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/gallery.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
