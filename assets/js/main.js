@@ -239,8 +239,8 @@
     document.querySelectorAll('[data-schedule-table]').forEach(function (mount) {
       var ui = D.ui[LANG];
       var head = LANG === 'id'
-        ? ['Kota', 'Race Pack Collection', 'Race Day', 'Kuota', 'Status', '']
-        : ['City', 'Race Pack Collection', 'Race Day', 'Quota', 'Status', ''];
+        ? ['Kota', 'Race Pack Collection', 'Race Day', 'Peserta', 'Status', '']
+        : ['City', 'Race Pack Collection', 'Race Day', 'Participants', 'Status', ''];
       var rows = D.cities.map(function (c) {
         var st = D.cityStatus(c);
         return '<tr><td><strong>' + c.name + '</strong></td><td>' + D.loc(c.rpc) + '</td><td>' + D.loc(c.raceDay) + ' · ' + D.loc(c.startTime) + '</td><td class="num">' + c.quota.toLocaleString('id-ID') + '</td><td><span class="' + statusClass(st) + '">' + ui.status[st] + '</span></td><td><a href="' + cityHref(c) + '">' + ui.viewCity + ' →</a></td></tr>';
