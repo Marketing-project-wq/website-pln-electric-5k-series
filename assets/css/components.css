@@ -48,6 +48,11 @@
 .surface-paper .section-head p, .surface-paper-dim .section-head p { color: var(--color-muted-on-paper); }
 
 /* ---------- Header / Nav ------------------------------------------------- */
+/* The header partial is injected into #site-header. `display: contents` removes
+   the wrapper's box so .site-header becomes a layout child of <body> — otherwise
+   position:sticky is confined to the wrapper's (header-height) box and unsticks. */
+#site-header { display: contents; }
+
 .site-header {
   position: sticky;
   top: 0;
