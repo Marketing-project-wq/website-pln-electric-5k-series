@@ -83,27 +83,19 @@
   // <!-- angka total hadiah dihitung dari tabel podium, bukan disebut eksplisit di deck sumber -->
   var PRIZE_TOTAL_PER_CITY = PRIZES.reduce(function (s, p) { return s + p.men + p.women; }, 0); // 66,000,000
 
-  // Each phase's events are a per-language list (rendered as separate lines),
-  // not one run-on sentence. "RPC" is spelled out as "Race Pack Collection".
+  // The schedule timeline is one card per city (Race Pack Collection + Race Day).
+  // Ticket/launch/after-event info lives on the Tickets and News pages instead.
+  // Series names ("Electric 5K Series <City>") are NOT translated.
   var TIMELINE = [
-    { n: '01', month: { id: 'Juli 2026', en: 'July 2026' }, phase: { id: 'Launching', en: 'Launch' }, items: {
-      id: ['Konferensi pers — Jumat, 31 Juli 2026 (tanggal & venue masih dikonfirmasi)', 'Kampanye teaser dimulai'],
-      en: ['Press conference — Friday, 31 July 2026 (date & venue still to be confirmed)', 'Teaser campaign begins'] } },
-    { n: '02', month: { id: 'Agustus 2026', en: 'August 2026' }, phase: { id: 'Penjualan Tiket', en: 'Ticket Selling' }, items: {
-      id: ['Minggu 1 — Super Early Bird', 'Minggu 2 — Early Bird', 'Minggu 3 dan seterusnya — General Sales'],
-      en: ['Week 1 — Super Early Bird', 'Week 2 — Early Bird', 'Week 3 onwards — General Sales'] } },
-    { n: '03', month: { id: 'September 2026', en: 'September 2026' }, phase: { id: 'Event — Jakarta', en: 'Event — Jakarta' }, items: {
+    { n: '01', month: { id: 'September 2026', en: 'September 2026' }, phase: { id: 'Electric 5K Series Jakarta', en: 'Electric 5K Series Jakarta' }, items: {
       id: ['Race Pack Collection — 11–12 Sep', 'Race Day — 13 Sep'],
       en: ['Race Pack Collection — 11–12 Sep', 'Race Day — 13 Sep'] } },
-    { n: '04', month: { id: 'Oktober 2026', en: 'October 2026' }, phase: { id: 'Event — Yogyakarta & Bali', en: 'Event — Yogyakarta & Bali' }, items: {
-      id: ['Race Pack Collection Yogyakarta — 3 Oct', 'Race Day Yogyakarta — 4 Oct', 'Race Pack Collection Bali — 31 Oct'],
-      en: ['Race Pack Collection Yogyakarta — 3 Oct', 'Race Day Yogyakarta — 4 Oct', 'Race Pack Collection Bali — 31 Oct'] } },
-    { n: '05', month: { id: 'November 2026', en: 'November 2026' }, phase: { id: 'Event — Bali', en: 'Event — Bali' }, items: {
-      id: ['Race Day Bali — 1 November 2026'],
-      en: ['Race Day Bali — 1 November 2026'] } },
-    { n: '06', month: { id: 'Desember 2026', en: 'December 2026' }, phase: { id: 'After Event', en: 'After Event' }, items: {
-      id: ['Amplifikasi media', 'Promosi pasca-event', 'Teaser untuk event berikutnya'],
-      en: ['Media amplification', 'Post-event promotion', 'Teaser for the next event'] } }
+    { n: '02', month: { id: 'Oktober 2026', en: 'October 2026' }, phase: { id: 'Electric 5K Series Yogyakarta', en: 'Electric 5K Series Yogyakarta' }, items: {
+      id: ['Race Pack Collection — 3 Okt', 'Race Day — 4 Okt'],
+      en: ['Race Pack Collection — 3 Oct', 'Race Day — 4 Oct'] } },
+    { n: '03', month: { id: 'November 2026', en: 'November 2026' }, phase: { id: 'Electric 5K Series Bali', en: 'Electric 5K Series Bali' }, items: {
+      id: ['Race Pack Collection — 31 Okt', 'Race Day — 1 Nov'],
+      en: ['Race Pack Collection — 31 Oct', 'Race Day — 1 Nov'] } }
   ];
 
   var CONTEXT_STATS = [
