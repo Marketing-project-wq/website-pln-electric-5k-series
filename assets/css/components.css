@@ -204,6 +204,9 @@
 }
 .card:hover { transform: translateY(-4px); border-color: var(--color-teal); }
 .surface-paper .card, .surface-paper-dim .card { background: var(--color-paper); border-color: var(--color-line-ink); }
+/* Featured contact card — the primary channel (email + WhatsApp). */
+.contact-card--primary { border-color: var(--color-teal); box-shadow: inset 3px 0 0 var(--color-teal); }
+.contact-card--primary h3 { color: var(--color-teal); }
 
 .card-grid { display: grid; gap: var(--space-5); }
 .card-grid--3 { grid-template-columns: repeat(3, 1fr); }

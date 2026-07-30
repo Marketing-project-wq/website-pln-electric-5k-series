@@ -49,15 +49,15 @@
         </div>
         <div class="card-grid card-grid--3">
 
-          <!-- 2a — General participant contact -->
-          <article class="card contact-card" data-reveal>
+          <!-- 2a — General participant contact (jalur utama) -->
+          <article class="card contact-card contact-card--primary" data-reveal>
             <svg class="icon" aria-hidden="true"><use href="/assets/img/icons/sprite.svg#i-mail"></use></svg>
             <h3>Peserta &amp; Umum</h3>
-            <p>Pertanyaan soal pendaftaran, tiket via PLN Mobile, race pack, atau hari lomba.</p>
+            <p>Pertanyaan soal pendaftaran, tiket via PLN Mobile, race pack, atau hari lomba. Ini jalur tercepat untuk menghubungi kami.</p>
             <!-- TODO: ganti dengan email resmi klien -->
             <p><a href="mailto:info@electric5k.example">info@electric5k.example</a></p>
             <!-- TODO: nomor WhatsApp resmi -->
-            <a class="btn btn--sage btn--sm" href="#">
+            <a class="btn btn--sage" href="#">
               <svg class="icon" aria-hidden="true"><use href="/assets/img/icons/sprite.svg#i-whatsapp"></use></svg>
               Chat WhatsApp
             </a>
@@ -89,8 +89,10 @@
       </div>
     </section>
 
-    <!-- 3 — CONTACT FORM -->
-    <section class="section surface-ink-soft">
+    <!-- 3 — CONTACT FORM — disembunyikan sementara (kode tetap; belum ada backend).
+         `hidden` menghapusnya dari render + a11y tree; email + WhatsApp di atas jadi
+         jalur kontak utama selama form ini nonaktif. -->
+    <section class="section surface-ink-soft" hidden>
       <div class="container container--narrow">
         <div class="section-head">
           <span class="kicker">Kirim Pesan</span>
@@ -117,10 +119,10 @@
     </section>
 
     <!-- 4 — ORGANISER CREDIT -->
-    <section class="section--tight surface-ink">
+    <section class="section--tight surface-ink-soft">
       <div class="container text-center">
         <p class="kicker">Penyelenggara</p>
-        <p><img src="/assets/img/logo/partners/20fit-event-white.png" alt="20FIT Event" height="44" style="margin-bottom:var(--space-3)"></p>
+        <p><img src="/assets/img/logo/partners/20fit-event-white.png" alt="20FIT Event" height="44" style="height:44px;width:auto;margin:0 auto var(--space-3)"></p>
         <p>Diselenggarakan oleh 20FIT Event, bersama PLN Mobile.</p>
       </div>
     </section>

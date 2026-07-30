@@ -99,6 +99,7 @@ h1.display {
 
 .section { padding-block: var(--space-9); }
 .section--tight { padding-block: var(--space-7); }
+[hidden] { display: none !important; }
 
 main { display: block; }
 

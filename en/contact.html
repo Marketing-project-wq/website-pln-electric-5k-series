@@ -49,15 +49,15 @@
         </div>
         <div class="card-grid card-grid--3">
 
-          <!-- 2a — General participant contact -->
-          <article class="card contact-card" data-reveal>
+          <!-- 2a — General participant contact (primary channel) -->
+          <article class="card contact-card contact-card--primary" data-reveal>
             <svg class="icon" aria-hidden="true"><use href="/assets/img/icons/sprite.svg#i-mail"></use></svg>
             <h3>Participants &amp; General</h3>
-            <p>Questions about registration, tickets via PLN Mobile, race packs, or race day.</p>
+            <p>Questions about registration, tickets via PLN Mobile, race packs, or race day. This is the fastest way to reach us.</p>
             <!-- TODO: ganti dengan email resmi klien -->
             <p><a href="mailto:info@electric5k.example">info@electric5k.example</a></p>
             <!-- TODO: nomor WhatsApp resmi -->
-            <a class="btn btn--sage btn--sm" href="#">
+            <a class="btn btn--sage" href="#">
               <svg class="icon" aria-hidden="true"><use href="/assets/img/icons/sprite.svg#i-whatsapp"></use></svg>
               Chat on WhatsApp
             </a>
@@ -89,8 +89,10 @@
       </div>
     </section>
 
-    <!-- 3 — CONTACT FORM -->
-    <section class="section surface-ink-soft">
+    <!-- 3 — CONTACT FORM — temporarily hidden (kept in code; no backend yet).
+         `hidden` removes it from render + a11y tree; email + WhatsApp above are
+         the primary contact channels while this is off. -->
+    <section class="section surface-ink-soft" hidden>
       <div class="container container--narrow">
         <div class="section-head">
           <span class="kicker">Send a Message</span>
@@ -117,10 +119,10 @@
     </section>
 
     <!-- 4 — ORGANISER CREDIT -->
-    <section class="section--tight surface-ink">
+    <section class="section--tight surface-ink-soft">
       <div class="container text-center">
         <p class="kicker">Organiser</p>
-        <p><img src="/assets/img/logo/partners/20fit-event-white.png" alt="20FIT Event" height="44" style="margin-bottom:var(--space-3)"></p>
+        <p><img src="/assets/img/logo/partners/20fit-event-white.png" alt="20FIT Event" height="44" style="height:44px;width:auto;margin:0 auto var(--space-3)"></p>
         <p>Organised by 20FIT Event, together with PLN Mobile.</p>
       </div>
     </section>
