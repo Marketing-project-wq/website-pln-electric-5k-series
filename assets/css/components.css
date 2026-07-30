@@ -391,6 +391,16 @@ table.data tr.is-past td { opacity: 0.5; text-decoration: line-through; text-dec
 
 /* Decorative official shard graphic (assets/img/graphics/*) */
 .deco-shard { position: absolute; pointer-events: none; z-index: 0; opacity: 0.5; user-select: none; }
+
+/* Decorative hero background for pages without a dedicated Key Visual:
+   plain --color-ink + flat, text-free shard fragments (no floating label). */
+.hero__media--deco { background: var(--color-ink); }
+.hero__media--deco .deco-shard--tr { top: -12%; right: -6%; width: 42%; opacity: 0.35; }
+.hero__media--deco .deco-shard--bl { bottom: -16%; left: -8%; width: 30%; opacity: 0.22; }
+@media (max-width: 640px) {
+  .hero__media--deco .deco-shard--tr { width: 62%; opacity: 0.28; }
+  .hero__media--deco .deco-shard--bl { width: 50%; }
+}
 .hero__media::after {
   content: ""; position: absolute; inset: 0;
   background: linear-gradient(120deg, rgba(10,10,10,0.94) 30%, rgba(10,10,10,0.6) 65%, rgba(12,110,158,0.35) 100%);
