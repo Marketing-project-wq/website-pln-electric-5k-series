@@ -70,7 +70,7 @@
       link.addEventListener('click', function (e) {
         if (window.innerWidth <= 1023) {
           e.preventDefault();
-          link.parentElement.classList.toggle('is-open');
+          link.parentElement.classList.toggle('nav__item--open');
         }
       });
     });
@@ -234,7 +234,7 @@
         ? ['Tier', 'Diskon', 'Harga', 'Periode (indikatif)']
         : ['Tier', 'Discount', 'Price', 'Period (indicative)'];
       var rows = D.tickets.map(function (tk) {
-        return '<tr><td>' + D.loc(tk.name) + '</td><td>' + (tk.discount ? '-' + tk.discount + '%' : '—') + '</td><td class="num">' + D.formatIDR(tk.price) + '</td><td>' + D.loc(tk.period) + '</td></tr>';
+        return '<tr><td data-label="' + head[0] + '">' + D.loc(tk.name) + '</td><td data-label="' + head[1] + '">' + (tk.discount ? '-' + tk.discount + '%' : '—') + '</td><td data-label="' + head[2] + '" class="num">' + D.formatIDR(tk.price) + '</td><td data-label="' + head[3] + '">' + D.loc(tk.period) + '</td></tr>';
       }).join('');
       mount.innerHTML = '<div class="table-wrap"><table class="data"><thead><tr><th>' + head.join('</th><th>') + '</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
     });
@@ -244,7 +244,7 @@
     document.querySelectorAll('[data-prize-table]').forEach(function (mount) {
       var head = LANG === 'id' ? ['Posisi', '5K Putra', '5K Putri'] : ['Position', '5K Men', '5K Women'];
       var rows = D.prizes.map(function (p) {
-        return '<tr><td>' + D.loc(p.label) + '</td><td class="num">' + D.formatIDR(p.men) + '</td><td class="num">' + D.formatIDR(p.women) + '</td></tr>';
+        return '<tr><td data-label="' + head[0] + '">' + D.loc(p.label) + '</td><td data-label="' + head[1] + '" class="num">' + D.formatIDR(p.men) + '</td><td data-label="' + head[2] + '" class="num">' + D.formatIDR(p.women) + '</td></tr>';
       }).join('');
       mount.innerHTML = '<div class="table-wrap"><table class="data"><thead><tr><th>' + head.join('</th><th>') + '</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
     });
@@ -258,7 +258,7 @@
         : ['City', 'Race Pack Collection', 'Race Day', 'Participants', 'Status', ''];
       var rows = D.cities.map(function (c) {
         var st = D.cityStatus(c);
-        return '<tr><td><strong>' + c.name + '</strong></td><td>' + D.loc(c.rpc) + '</td><td>' + D.loc(c.raceDay) + ' · ' + D.loc(c.startTime) + '</td><td class="num">' + c.quota.toLocaleString('id-ID') + '</td><td><span class="' + statusClass(st) + '">' + ui.status[st] + '</span></td><td><a href="' + cityHref(c) + '">' + ui.viewCity + ' →</a></td></tr>';
+        return '<tr><td data-label="' + head[0] + '"><strong>' + c.name + '</strong></td><td data-label="' + head[1] + '">' + D.loc(c.rpc) + '</td><td data-label="' + head[2] + '">' + D.loc(c.raceDay) + ' · ' + D.loc(c.startTime) + '</td><td data-label="' + head[3] + '" class="num">' + c.quota.toLocaleString('id-ID') + '</td><td data-label="' + head[4] + '"><span class="' + statusClass(st) + '">' + ui.status[st] + '</span></td><td data-label="" class="cell-action"><a href="' + cityHref(c) + '">' + ui.viewCity + ' →</a></td></tr>';
       }).join('');
       mount.innerHTML = '<div class="table-wrap"><table class="data"><thead><tr><th>' + head.join('</th><th>') + '</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
     });
