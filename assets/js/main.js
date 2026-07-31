@@ -115,8 +115,8 @@
           '<p>' + ui.modalIntro + '</p>' +
           '<ol class="steps">' + stepsHtml + '</ol>' +
           '<div class="store-badges">' +
-            '<a class="store-badge" href="https://apps.apple.com/id/app/pln-mobile/id1299581030" target="_blank" rel="noopener noreferrer" aria-label="Download on the App Store">' + icon('i-download') + '<span><small>Download di</small><b>App Store</b></span></a>' +
-            '<a class="store-badge" href="https://play.google.com/store/apps/details?id=com.icon.pln123&hl=id&pli=1" target="_blank" rel="noopener noreferrer" aria-label="Get it on Google Play">' + icon('i-download') + '<span><small>Download di</small><b>Google Play</b></span></a>' +
+            '<a class="store-badge" href="https://apps.apple.com/id/app/pln-mobile/id1299581030" target="_blank" rel="noopener noreferrer" aria-label="Download on the App Store">' + icon('i-download') + '<span><small>' + ui.storeApple + '</small><b>App Store</b></span></a>' +
+            '<a class="store-badge" href="https://play.google.com/store/apps/details?id=com.icon.pln123&hl=id&pli=1" target="_blank" rel="noopener noreferrer" aria-label="Get it on Google Play">' + icon('i-download') + '<span><small>' + ui.storeGoogle + '</small><b>Google Play</b></span></a>' +
           '</div>' +
           '<h3 style="font-family:var(--font-kicker);letter-spacing:.06em;margin:1.5rem 0 .5rem;">' + ui.notifyTitle + '</h3>' +
           // mailto default; TODO: sambungkan ke Formspree/Netlify Forms bila perlu

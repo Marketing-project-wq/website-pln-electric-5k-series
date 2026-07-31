@@ -122,6 +122,8 @@
       allDone: 'Series 2026 telah selesai — sampai jumpa di edisi berikutnya.',
       modalTitle: 'Cara Daftar via PLN Mobile',
       modalIntro: 'Pendaftaran 100% lewat aplikasi PLN Mobile. Ikuti 4 langkah ini:',
+      // Store-badge top line. ID keeps "Download di" for both stores.
+      storeApple: 'Download di', storeGoogle: 'Download di',
       steps: [
         'Unduh atau perbarui aplikasi PLN Mobile.',
         'Buka menu Events di aplikasi.',
@@ -149,6 +151,8 @@
       allDone: 'The 2026 series is complete — see you at the next edition.',
       modalTitle: 'How to Register via PLN Mobile',
       modalIntro: 'Registration is 100% through the PLN Mobile app. Follow these 4 steps:',
+      // Official store-badge conventions — deliberately asymmetric (Apple vs Google).
+      storeApple: 'Download on the', storeGoogle: 'GET IT ON',
       steps: [
         'Download or update the PLN Mobile app.',
         'Open the Events menu in the app.',
