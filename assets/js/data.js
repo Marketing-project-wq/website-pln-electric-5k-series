@@ -130,9 +130,6 @@
         'Pilih PLN Mobile Electric 5K Series & kota pilihanmu.',
         'Pilih tiket dan selesaikan pembayaran.'
       ],
-      notifyTitle: 'Ingatkan saya saat pendaftaran dibuka',
-      notifyPlaceholder: 'Alamat email kamu',
-      notifyBtn: 'Ingatkan Saya',
       close: 'Tutup',
       derivedPrizeNote: 'Total hadiah podium per kota (dihitung dari tabel).'
     },
@@ -159,9 +156,6 @@
         'Choose PLN Mobile Electric 5K Series & your city.',
         'Select your ticket and complete payment.'
       ],
-      notifyTitle: 'Remind me when registration opens',
-      notifyPlaceholder: 'Your email address',
-      notifyBtn: 'Remind Me',
       close: 'Close',
       derivedPrizeNote: 'Total podium prize pool per city (calculated from the table).'
     }

@@ -382,6 +382,9 @@ table.data tr.is-past td { opacity: 0.5; text-decoration: line-through; text-dec
 .steps li { display: flex; gap: var(--space-3); align-items: flex-start; }
 .steps li::before { counter-increment: step; content: counter(step, decimal-leading-zero); font-family: var(--font-display); color: var(--color-teal); font-size: var(--fs-24); line-height: 1; flex: none; }
 .store-badges { display: flex; gap: var(--space-3); flex-wrap: wrap; margin: var(--space-4) 0; }
+/* Store badges are the modal's last element now (no notify form) — let the
+   dialog padding provide the bottom spacing instead of an extra margin. */
+.modal .store-badges:last-child { margin-bottom: 0; }
 .store-badge { display: inline-flex; align-items: center; gap: var(--space-2); border: 1px solid var(--color-line-strong); padding: 0.5em 0.9em; color: var(--color-paper); }
 .store-badge:hover { border-color: var(--color-teal); color: var(--color-teal); }
 .store-badge small { display: block; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-muted-on-ink); }
