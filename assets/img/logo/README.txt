@@ -55,3 +55,14 @@ arrangements. See .hero__media--deco--v1..v6 in components.css: every deco hero
 mixes the two fragments (repositioned) with one teal piece so each section gets its
 own shard "fingerprint" instead of one repeated composite. A quiet opacity-only
 "assembly" fade plays on load and is disabled under prefers-reduced-motion.
+
+Hero key visuals (assets/img/hero/) — logo-cleaned:
+- kv-runner-teal.jpg (home) and kv-community-black.jpg (about) were supplied with
+  the big "PLN mobile · ELECTRIC 5K SERIES · POWER YOUR SPEED" wordmark printed
+  INTO the artwork. That wordmark was intentionally painted out (teal on the
+  runner KV, black on the community KV) so the hero shows only the photo + shard
+  geometry, with the event logo appearing at normal size in the header/footer
+  instead. Do NOT "restore" it — a large logo baked into the hero is the
+  logo-as-watermark bug this site avoids.
+- The small "20FIT | EVENT" organiser credit printed in the corner is KEPT (it is
+  the legitimate organiser credit; there is no separate HTML overlay for it).
