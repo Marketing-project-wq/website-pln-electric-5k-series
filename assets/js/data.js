@@ -24,10 +24,10 @@
       order: 1,
       quota: 4000,
       tz: 'WIB',
-      rpcStartISO: '2026-09-11T10:00:00+07:00',
-      raceDayISO: '2026-09-13T06:00:00+07:00',
-      rpc: { id: 'Jumat–Sabtu, 11–12 September 2026 · 10.00–20.00 WIB', en: 'Friday–Saturday, 11–12 September 2026 · 10:00–20:00 WIB' },
-      raceDay: { id: 'Minggu, 13 September 2026', en: 'Sunday, 13 September 2026' },
+      rpcStartISO: '2026-09-25T10:00:00+07:00',
+      raceDayISO: '2026-09-27T06:00:00+07:00',
+      rpc: { id: 'Jumat–Sabtu, 25–26 September 2026 · 10.00–20.00 WIB', en: 'Friday–Saturday, 25–26 September 2026 · 10:00–20:00 WIB' },
+      raceDay: { id: 'Minggu, 27 September 2026', en: 'Sunday, 27 September 2026' },
       startTime: { id: 'Start 06.00 WIB', en: 'Start 06:00 WIB' },
       venue: { id: 'Segera diumumkan', en: 'To be announced' },
       note: { id: 'Kota pembuka series — ibu kota, energi metropolitan.', en: 'The opening city of the series — the capital, metropolitan energy.' }
@@ -38,10 +38,10 @@
       order: 2,
       quota: 3000,
       tz: 'WIB',
-      rpcStartISO: '2026-10-03T10:00:00+07:00',
-      raceDayISO: '2026-10-04T06:00:00+07:00',
-      rpc: { id: 'Sabtu, 3 Oktober 2026 · 10.00–20.00 WIB', en: 'Saturday, 3 October 2026 · 10:00–20:00 WIB' },
-      raceDay: { id: 'Minggu, 4 Oktober 2026', en: 'Sunday, 4 October 2026' },
+      rpcStartISO: '2026-10-10T10:00:00+07:00',
+      raceDayISO: '2026-10-11T06:00:00+07:00',
+      rpc: { id: 'Sabtu, 10 Oktober 2026 · 10.00–20.00 WIB', en: 'Saturday, 10 October 2026 · 10:00–20:00 WIB' },
+      raceDay: { id: 'Minggu, 11 Oktober 2026', en: 'Sunday, 11 October 2026' },
       startTime: { id: 'Start 06.00 WIB', en: 'Start 06:00 WIB' },
       venue: { id: 'Segera diumumkan', en: 'To be announced' },
       note: { id: 'Kota kedua — budaya & semangat komunitas lari yang tumbuh pesat.', en: 'The second city — culture and a fast-growing running community.' }
@@ -88,11 +88,11 @@
   // Series names ("Electric 5K Series <City>") are NOT translated.
   var TIMELINE = [
     { n: '01', month: { id: 'September 2026', en: 'September 2026' }, phase: { id: 'Electric 5K Series Jakarta', en: 'Electric 5K Series Jakarta' }, items: {
-      id: ['Race Pack Collection — 11–12 Sep', 'Race Day — 13 Sep'],
-      en: ['Race Pack Collection — 11–12 Sep', 'Race Day — 13 Sep'] } },
+      id: ['Race Pack Collection — 25–26 Sep', 'Race Day — 27 Sep'],
+      en: ['Race Pack Collection — 25–26 Sep', 'Race Day — 27 Sep'] } },
     { n: '02', month: { id: 'Oktober 2026', en: 'October 2026' }, phase: { id: 'Electric 5K Series Yogyakarta', en: 'Electric 5K Series Yogyakarta' }, items: {
-      id: ['Race Pack Collection — 3 Okt', 'Race Day — 4 Okt'],
-      en: ['Race Pack Collection — 3 Oct', 'Race Day — 4 Oct'] } },
+      id: ['Race Pack Collection — 10 Okt', 'Race Day — 11 Okt'],
+      en: ['Race Pack Collection — 10 Oct', 'Race Day — 11 Oct'] } },
     { n: '03', month: { id: 'November 2026', en: 'November 2026' }, phase: { id: 'Electric 5K Series Bali', en: 'Electric 5K Series Bali' }, items: {
       id: ['Race Pack Collection — 31 Okt', 'Race Day — 1 Nov'],
       en: ['Race Pack Collection — 31 Oct', 'Race Day — 1 Nov'] } }
