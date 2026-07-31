@@ -344,6 +344,22 @@ table.data tr.is-past td { opacity: 0.5; text-decoration: line-through; text-dec
 .countdown__u { display: block; font-family: var(--font-kicker); letter-spacing: 0.1em; font-size: var(--fs-12); color: var(--color-muted-on-ink); margin-top: var(--space-1); }
 .countdown__done { font-family: var(--font-kicker); letter-spacing: 0.1em; color: var(--color-lime); }
 
+/* Compact countdown that rides inline in the hero CTA row (home hero).
+   One-line small label + tight DD:HH:MM:SS digits, sized to sit level with the
+   two buttons — not the large standalone clock used on city pages. */
+.cta-countdown { display: inline-flex; }
+.cta-countdown .countdown { gap: var(--space-1); }
+.cta-countdown .countdown__label { font-size: var(--fs-12); letter-spacing: 0.08em; white-space: nowrap; }
+.cta-countdown .countdown__clock { gap: var(--space-2); align-items: baseline; flex-wrap: nowrap; }
+.cta-countdown .countdown__unit { min-width: 0; display: flex; align-items: baseline; }
+.cta-countdown .countdown__val { font-size: var(--fs-24); }
+.cta-countdown .countdown__u { display: none; }            /* label line already gives context */
+.cta-countdown .countdown__unit:not(:last-child)::after {
+  content: ":"; margin-left: var(--space-2);
+  font-family: var(--font-display); font-size: var(--fs-24); line-height: 1;
+  color: var(--color-muted-on-ink);
+}
+
 /* ---------- Accordion (FAQ) --------------------------------------------- */
 .accordion { border-top: 1px solid var(--color-line-ink); }
 .surface-ink .accordion, .surface-ink-soft .accordion { border-color: var(--color-line); }
@@ -516,7 +532,7 @@ table.data tr.is-past td { opacity: 0.5; text-decoration: line-through; text-dec
 .hero__title { font-family: var(--font-display); text-transform: uppercase; font-size: clamp(2.75rem, 9vw, var(--fs-96)); line-height: 0.95; letter-spacing: 0.01em; }
 .hero__title .volt { color: var(--color-teal); }
 .hero__sub { margin-top: var(--space-4); max-width: 52ch; font-size: var(--fs-18); color: #D8DDE2; }
-.hero__cta { margin-top: var(--space-6); display: flex; flex-wrap: wrap; gap: var(--space-4); }
+.hero__cta { margin-top: var(--space-6); display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); }
 .hero--compact .hero__inner { padding-block: var(--space-8); }
 
 /* ---------- Journey rail (home signature) -------------------------------- */
