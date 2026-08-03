@@ -246,7 +246,7 @@
       var rows = D.prizes.map(function (p) {
         return '<tr><td data-label="' + head[0] + '">' + D.loc(p.label) + '</td><td data-label="' + head[1] + '" class="num">' + D.formatIDR(p.men) + '</td><td data-label="' + head[2] + '" class="num">' + D.formatIDR(p.women) + '</td></tr>';
       }).join('');
-      mount.innerHTML = '<div class="table-wrap"><table class="data"><thead><tr><th>' + head.join('</th><th>') + '</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+      mount.innerHTML = '<div class="table-wrap table-wrap--prize"><table class="data data--prize"><thead><tr><th>' + head.join('</th><th>') + '</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
     });
   }
 
