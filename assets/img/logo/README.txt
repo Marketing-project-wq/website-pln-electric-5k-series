@@ -56,13 +56,15 @@ mixes the two fragments (repositioned) with one teal piece so each section gets 
 own shard "fingerprint" instead of one repeated composite. A quiet opacity-only
 "assembly" fade plays on load and is disabled under prefers-reduced-motion.
 
-Hero key visuals (assets/img/hero/) — logo-cleaned:
+Hero key visuals (assets/img/hero/) — fully logo-cleaned:
 - kv-runner-teal.jpg (home) and kv-community-black.jpg (about) were supplied with
-  the big "PLN mobile · ELECTRIC 5K SERIES · POWER YOUR SPEED" wordmark printed
-  INTO the artwork. That wordmark was intentionally painted out (teal on the
-  runner KV, black on the community KV) so the hero shows only the photo + shard
-  geometry, with the event logo appearing at normal size in the header/footer
-  instead. Do NOT "restore" it — a large logo baked into the hero is the
-  logo-as-watermark bug this site avoids.
-- The small "20FIT | EVENT" organiser credit printed in the corner is KEPT (it is
-  the legitimate organiser credit; there is no separate HTML overlay for it).
+  TWO logos printed INTO the artwork: the big "PLN mobile · ELECTRIC 5K SERIES ·
+  POWER YOUR SPEED" wordmark, and a small "20FIT | EVENT" organiser credit in the
+  corner. Both were intentionally painted out (teal on the runner KV, black on the
+  community KV) so the hero shows ONLY the photo + shard geometry — no baked-in
+  logo of any kind. The logos appear at normal size in the header/footer and the
+  sponsor strip instead. Do NOT "restore" either — a logo baked into the hero is
+  the logo-as-watermark bug this site avoids. There is no HTML logo overlay on the
+  hero; the 20fit-event / MILLS logos in the sponsor strip are separate and stay.
+- Hero <img> srcs carry a ?v=2 cache-buster so the cleaned files replace any
+  previously-cached versions; bump it (?v=3, …) if these JPGs are re-edited.
