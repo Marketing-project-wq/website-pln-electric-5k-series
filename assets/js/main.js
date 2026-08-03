@@ -171,7 +171,7 @@
           '<span class="' + statusClass(st) + '">' + ui.status[st] + '</span>' +
           '<dl class="city-card__meta">' +
             '<div><strong>' + D.loc(c.raceDay) + '</strong> · ' + D.loc(c.startTime) + '</div>' +
-            '<div>' + ui.quotaLabel + ': <strong>' + c.quota.toLocaleString('id-ID') + '</strong></div>' +
+            '<div>' + ui.quotaLabel + ': <strong>' + D.formatNum(c.quota) + '</strong></div>' +
           '</dl>' +
           '<div class="city-card__foot"><a class="btn btn--ghost btn--sm" href="' + cityHref(c) + '">' + ui.viewCity + ' ' + icon('i-arrow-right') + '</a></div>' +
         '</div>' +
@@ -258,7 +258,7 @@
         : ['City', 'Race Pack Collection', 'Race Day', 'Participants', 'Status', ''];
       var rows = D.cities.map(function (c) {
         var st = D.cityStatus(c);
-        return '<tr><td data-label="' + head[0] + '"><strong>' + c.name + '</strong></td><td data-label="' + head[1] + '">' + D.loc(c.rpc) + '</td><td data-label="' + head[2] + '">' + D.loc(c.raceDay) + ' · ' + D.loc(c.startTime) + '</td><td data-label="' + head[3] + '" class="num">' + c.quota.toLocaleString('id-ID') + '</td><td data-label="' + head[4] + '"><span class="' + statusClass(st) + '">' + ui.status[st] + '</span></td><td data-label="" class="cell-action"><a href="' + cityHref(c) + '">' + ui.viewCity + ' →</a></td></tr>';
+        return '<tr><td data-label="' + head[0] + '"><strong>' + c.name + '</strong></td><td data-label="' + head[1] + '">' + D.loc(c.rpc) + '</td><td data-label="' + head[2] + '">' + D.loc(c.raceDay) + ' · ' + D.loc(c.startTime) + '</td><td data-label="' + head[3] + '" class="num">' + D.formatNum(c.quota) + '</td><td data-label="' + head[4] + '"><span class="' + statusClass(st) + '">' + ui.status[st] + '</span></td><td data-label="" class="cell-action"><a href="' + cityHref(c) + '">' + ui.viewCity + ' →</a></td></tr>';
       }).join('');
       mount.innerHTML = '<div class="table-wrap"><table class="data"><thead><tr><th>' + head.join('</th><th>') + '</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
     });
@@ -276,10 +276,11 @@
   }
 
   function renderContextStats() {
+    var ui = D.ui[LANG];
     document.querySelectorAll('[data-context-stats]').forEach(function (mount) {
       mount.classList.add('fact-strip');
       mount.innerHTML = D.contextStats.map(function (s) {
-        return '<div class="fact" data-reveal><div class="fact__num">' + s.num + '</div><div class="fact__label">' + D.loc(s.label) + '<span class="fact__src">Sumber: ' + s.src + '</span></div></div>';
+        return '<div class="fact" data-reveal><div class="fact__num">' + D.loc(s.num) + '</div><div class="fact__label">' + D.loc(s.label) + '<span class="fact__src">' + ui.sourceLabel + ' ' + s.src + '</span></div></div>';
       }).join('');
     });
   }
@@ -306,7 +307,7 @@
       if (f === 'name') n.textContent = c.name;
       else if (f === 'raceDay') n.textContent = D.loc(c.raceDay);
       else if (f === 'startTime') n.textContent = D.loc(c.startTime);
-      else if (f === 'quota') n.textContent = c.quota.toLocaleString('id-ID');
+      else if (f === 'quota') n.textContent = D.formatNum(c.quota);
       else if (f === 'rpc') n.textContent = D.loc(c.rpc);
       else if (f === 'venue') n.textContent = D.loc(c.venue);
       else if (f === 'note') n.textContent = D.loc(c.note);
@@ -329,7 +330,7 @@
       mount.innerHTML =
         row('i-calendar', ui.rpcLabel, D.loc(c.rpc)) +
         row('i-flag', ui.raceDayLabel, D.loc(c.raceDay) + ' · ' + D.loc(c.startTime)) +
-        row('i-users', ui.quotaLabel, c.quota.toLocaleString('id-ID') + ' ' + runnersWord) +
+        row('i-users', ui.quotaLabel, D.formatNum(c.quota) + ' ' + runnersWord) +
         row('i-location', venueLabel, D.loc(c.venue) + ' 🟡');
     });
   }
@@ -338,7 +339,7 @@
   function fillFacts() {
     document.querySelectorAll('[data-fact]').forEach(function (n) {
       var k = n.getAttribute('data-fact');
-      if (k === 'totalRunners') n.textContent = D.totalRunners.toLocaleString('id-ID');
+      if (k === 'totalRunners') n.textContent = D.formatNum(D.totalRunners);
       else if (k === 'prizeTotalPerCity') n.textContent = D.formatIDR(D.prizeTotalPerCity);
       else if (k === 'tagline') n.textContent = D.tagline;
     });

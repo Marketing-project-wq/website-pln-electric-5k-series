@@ -99,10 +99,10 @@
   ];
 
   var CONTEXT_STATS = [
-    { num: '35.000 → 80.000', label: { id: 'Pengguna smartwatch lari di Indonesia (2023 → 2024)', en: 'Running smartwatch users in Indonesia (2023 → 2024)' }, src: 'Garmin Report; Good Stats' },
-    { num: '+330%', label: { id: 'Pertumbuhan aktivitas lari nasional — 242.000 pelari (Mei 2025)', en: 'National running activity growth — 242,000 runners (May 2025)' }, src: 'Garmin Report; Good Stats' },
-    { num: '558', label: { id: 'Event lari di Indonesia sepanjang 2025 (rekor tertinggi)', en: 'Running events in Indonesia during 2025 (all-time high)' }, src: 'Garmin Report; Good Stats' },
-    { num: '280 juta', label: { id: 'Orang yang perlu sadar transisi energi', en: 'People who must embrace the energy transition' }, src: 'Garmin Report; Good Stats' }
+    { num: { id: '35.000 → 80.000', en: '35,000 → 80,000' }, label: { id: 'Pengguna smartwatch lari di Indonesia (2023 → 2024)', en: 'Running smartwatch users in Indonesia (2023 → 2024)' }, src: 'Garmin Report; Good Stats' },
+    { num: { id: '+330%', en: '+330%' }, label: { id: 'Pertumbuhan aktivitas lari nasional — 242.000 pelari (Mei 2025)', en: 'National running activity growth — 242,000 runners (May 2025)' }, src: 'Garmin Report; Good Stats' },
+    { num: { id: '558', en: '558' }, label: { id: 'Event lari di Indonesia sepanjang 2025 (rekor tertinggi)', en: 'Running events in Indonesia during 2025 (all-time high)' }, src: 'Garmin Report; Good Stats' },
+    { num: { id: '280 juta', en: '280 million' }, label: { id: 'Orang yang perlu sadar transisi energi', en: 'People who must embrace the energy transition' }, src: 'Garmin Report; Good Stats' }
   ];
 
   // ---- Shared UI strings (header/footer/components) ----
@@ -115,6 +115,7 @@
       quotaLabel: 'Peserta',
       raceDayLabel: 'Race Day',
       rpcLabel: 'Race Pack Collection',
+      sourceLabel: 'Sumber:',
       status: { upcoming: 'Akan Datang', open: 'Pendaftaran Dibuka', rpc: 'Race Pack Collection', done: 'Selesai' },
       countdownTo: 'Menuju Race Day',
       countdownUnits: { d: 'Hari', h: 'Jam', m: 'Menit', s: 'Detik' },
@@ -141,6 +142,7 @@
       quotaLabel: 'Participants',
       raceDayLabel: 'Race Day',
       rpcLabel: 'Race Pack Collection',
+      sourceLabel: 'Source:',
       status: { upcoming: 'Upcoming', open: 'Registration Open', rpc: 'Race Pack Collection', done: 'Completed' },
       countdownTo: 'Counting down to Race Day',
       countdownUnits: { d: 'Days', h: 'Hrs', m: 'Min', s: 'Sec' },
@@ -186,9 +188,11 @@
     return null;
   }
 
-  function formatIDR(n) {
-    return 'Rp ' + n.toLocaleString('id-ID');
-  }
+  // Number formatting follows the active language: EN uses commas for
+  // thousands (4,000 / Rp 10,000,000), ID uses dots (4.000 / Rp 10.000.000).
+  var NUM_LOCALE = (LANG === 'en') ? 'en-US' : 'id-ID';
+  function formatNum(n) { return n.toLocaleString(NUM_LOCALE); }
+  function formatIDR(n) { return 'Rp ' + n.toLocaleString(NUM_LOCALE); }
 
   function t(key) { return UI[LANG][key]; }
   function loc(obj) { return obj ? (obj[LANG] != null ? obj[LANG] : obj.id) : ''; }
@@ -212,6 +216,7 @@
     cityStatus: cityStatus,
     nextCity: nextCity,
     formatIDR: formatIDR,
+    formatNum: formatNum,
     t: t,
     loc: loc
   };
