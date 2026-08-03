@@ -19,7 +19,7 @@
 .gallery-filter { padding: 0.5em 1em; border: 1px solid var(--color-line-strong); color: var(--color-paper); font-weight: 600; font-size: var(--fs-14); font-family: var(--font-kicker); letter-spacing: 0.06em; }
 .gallery-filter[aria-pressed="true"] { background: var(--color-teal); color: #fff; border-color: var(--color-teal); }
 .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
-.gallery-grid .ph { aspect-ratio: 1 / 1; }
+.gallery-grid .ph { aspect-ratio: 4 / 3; }   /* landscape gallery slot → 1200 × 900 */
 .gallery-item.is-hidden { display: none; }
 @media (max-width: 767px) { .gallery-grid { grid-template-columns: 1fr 1fr; } }
 

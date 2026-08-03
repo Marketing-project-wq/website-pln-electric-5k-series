@@ -218,7 +218,7 @@
 
 /* ---------- City card ---------------------------------------------------- */
 .city-card { display: flex; flex-direction: column; overflow: hidden; padding: 0; }
-.city-card__media { position: relative; aspect-ratio: 16 / 10; }
+.city-card__media { position: relative; aspect-ratio: 16 / 9; }   /* city-card photo → 1600 × 900 */
 .city-card__body { padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-3); flex: 1; }
 .city-card__index { font-family: var(--font-kicker); color: var(--color-teal); letter-spacing: 0.1em; }
 .city-card__name { font-family: var(--font-display); text-transform: uppercase; font-size: var(--fs-32); line-height: 1; }
@@ -470,6 +470,9 @@ table.data tr.is-past td { opacity: 0.5; text-decoration: line-through; text-dec
 }
 .ph__label { position: relative; z-index: 1; font-family: var(--font-kicker); letter-spacing: 0.1em; color: var(--color-muted-on-ink); font-size: var(--fs-14); text-align: center; padding: var(--space-4); }
 .ph__label svg { width: 34px; height: 34px; margin: 0 auto var(--space-2); color: var(--color-teal); }
+/* Third line: the target pixel size for the final image — small + dimmed so it
+   never competes with the main label. Aspect-ratio is set per placeholder box. */
+.ph__size { display: block; margin-top: 0.45em; font-family: var(--font-kicker); font-weight: 600; font-size: 12px; letter-spacing: 0.06em; text-transform: none; opacity: 0.6; }
 .ph--empty { border-style: dashed; }
 
 /* ---------- Shard divider ------------------------------------------------ */

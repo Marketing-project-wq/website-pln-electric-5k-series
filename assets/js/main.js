@@ -164,7 +164,7 @@
     var st = D.cityStatus(c);
     return (
       '<article class="card city-card" data-reveal>' +
-        '<div class="ph city-card__media"><span class="ph__label">' + icon('i-image') + 'Foto: ' + c.name + '</span></div>' +
+        '<div class="ph city-card__media"><span class="ph__label"><svg aria-hidden="true"><use href="/assets/img/icons/sprite.svg#i-image"></use></svg>Foto: ' + c.name + '<small class="ph__size">1600 × 900 px · 16:9</small></span></div>' +
         '<div class="city-card__body">' +
           '<span class="city-card__index">' + ('0' + c.order) + ' / 03</span>' +
           '<h3 class="city-card__name">' + c.name + '</h3>' +
