@@ -38,9 +38,9 @@
       order: 2,
       quota: 3000,
       tz: 'WIB',
-      rpcStartISO: '2026-10-10T10:00:00+07:00',
+      rpcStartISO: '2026-10-09T10:00:00+07:00',
       raceDayISO: '2026-10-11T06:00:00+07:00',
-      rpc: { id: 'Sabtu, 10 Oktober 2026 · 10.00–20.00 WIB', en: 'Saturday, 10 October 2026 · 10:00–20:00 WIB' },
+      rpc: { id: 'Jumat–Sabtu, 9–10 Oktober 2026 · 10.00–20.00 WIB', en: 'Friday–Saturday, 9–10 October 2026 · 10:00–20:00 WIB' },
       raceDay: { id: 'Minggu, 11 Oktober 2026', en: 'Sunday, 11 October 2026' },
       startTime: { id: 'Start 06.00 WIB', en: 'Start 06:00 WIB' },
       venue: { id: 'Segera diumumkan', en: 'To be announced' },
@@ -52,9 +52,9 @@
       order: 3,
       quota: 3000,
       tz: 'WITA',
-      rpcStartISO: '2026-10-31T10:00:00+07:00',   // deck lists RPC in WIB — see brief §7.8
+      rpcStartISO: '2026-10-30T10:00:00+07:00',   // deck lists RPC in WIB — see brief §7.8
       raceDayISO: '2026-11-01T06:00:00+08:00',     // race day start in WITA
-      rpc: { id: 'Sabtu, 31 Oktober 2026 · 10.00–20.00 WIB', en: 'Saturday, 31 October 2026 · 10:00–20:00 WIB' },
+      rpc: { id: 'Jumat–Sabtu, 30–31 Oktober 2026 · 10.00–20.00 WIB', en: 'Friday–Saturday, 30–31 October 2026 · 10:00–20:00 WIB' },
       raceDay: { id: 'Minggu, 1 November 2026', en: 'Sunday, 1 November 2026' },
       startTime: { id: 'Start 06.00 WITA', en: 'Start 06:00 WITA' },
       venue: { id: 'Segera diumumkan', en: 'To be announced' },
@@ -63,9 +63,9 @@
   ];
 
   var TICKETS = [
-    { key: 'super-early', name: { id: 'Super Early Bird', en: 'Super Early Bird' }, discount: 40, price: 166000, week: 1, period: { id: 'Agustus, minggu ke-1', en: 'August, week 1' } },
-    { key: 'early', name: { id: 'Early Bird', en: 'Early Bird' }, discount: 30, price: 192500, week: 2, period: { id: 'Agustus, minggu ke-2', en: 'August, week 2' } },
-    { key: 'general', name: { id: 'General Sales', en: 'General Sales' }, discount: 0, price: 275000, week: 3, period: { id: 'Agustus, minggu ke-3 dan seterusnya', en: 'August, week 3 onwards' } },
+    { key: 'super-early', name: { id: 'Super Early Bird', en: 'Super Early Bird' }, discount: 40, price: 166000, week: 1, period: { id: 'Agustus, minggu ke-3', en: 'August, week 3' } },
+    { key: 'early', name: { id: 'Early Bird', en: 'Early Bird' }, discount: 30, price: 192500, week: 2, period: { id: 'Agustus, minggu ke-4', en: 'August, week 4' } },
+    { key: 'general', name: { id: 'General Sales', en: 'General Sales' }, discount: 0, price: 275000, week: 3, period: { id: 'September, minggu ke-1 dan seterusnya', en: 'September, week 1 onwards' } },
     // Community Price period NOT specified in deck — shown as a separate track.
     // <!-- periode Community Price tidak disebutkan di deck, konfirmasi ke klien -->
     { key: 'community', name: { id: 'Community Price', en: 'Community Price' }, discount: 20, price: 220000, week: null, period: { id: 'Jalur komunitas — periode menyusul', en: 'Community track — period to be confirmed' } }
@@ -91,11 +91,11 @@
       id: ['Race Pack Collection — 25–26 Sep', 'Race Day — 27 Sep'],
       en: ['Race Pack Collection — 25–26 Sep', 'Race Day — 27 Sep'] } },
     { n: '02', month: { id: 'Oktober 2026', en: 'October 2026' }, phase: { id: 'Electric 5K Series Yogyakarta', en: 'Electric 5K Series Yogyakarta' }, items: {
-      id: ['Race Pack Collection — 10 Okt', 'Race Day — 11 Okt'],
-      en: ['Race Pack Collection — 10 Oct', 'Race Day — 11 Oct'] } },
+      id: ['Race Pack Collection — 9–10 Okt', 'Race Day — 11 Okt'],
+      en: ['Race Pack Collection — 9–10 Oct', 'Race Day — 11 Oct'] } },
     { n: '03', month: { id: 'November 2026', en: 'November 2026' }, phase: { id: 'Electric 5K Series Bali', en: 'Electric 5K Series Bali' }, items: {
-      id: ['Race Pack Collection — 31 Okt', 'Race Day — 1 Nov'],
-      en: ['Race Pack Collection — 31 Oct', 'Race Day — 1 Nov'] } }
+      id: ['Race Pack Collection — 30–31 Okt', 'Race Day — 1 Nov'],
+      en: ['Race Pack Collection — 30–31 Oct', 'Race Day — 1 Nov'] } }
   ];
 
   var CONTEXT_STATS = [
