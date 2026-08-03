@@ -248,6 +248,21 @@
 .surface-paper .chip, .surface-paper-dim .chip { border-color: var(--color-line-ink); color: var(--color-ink-on-paper); }
 .chip-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 
+/* Home Special Programs banner — one horizontal text block, no visuals.
+   Text (eyebrow/title/intro + program-name chips) on the left, CTA on the right;
+   ink-soft panel with a subtle shard accent behind. Stacks on narrow screens. */
+.program-banner {
+  position: relative; overflow: hidden;
+  display: flex; align-items: center; gap: var(--space-6); flex-wrap: wrap;
+  background: var(--color-ink-soft);
+  border: 1px solid var(--color-line);
+  padding: clamp(var(--space-6), 5vw, var(--space-8));
+  clip-path: var(--shard-lg);
+}
+.program-banner__text { position: relative; z-index: 1; flex: 1 1 460px; }
+.program-banner__cta { position: relative; z-index: 1; flex: 0 0 auto; }
+.program-banner .deco-shard { z-index: 0; opacity: 0.16; }
+
 /* ---------- Tables ------------------------------------------------------- */
 .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 table.data {
