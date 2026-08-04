@@ -208,6 +208,13 @@
 /* Featured contact card — the primary channel (email + WhatsApp). */
 .contact-card--primary { border-color: var(--color-teal); box-shadow: inset 3px 0 0 var(--color-teal); }
 .contact-card--primary h3 { color: var(--color-teal); }
+/* Prominent email block — the single direct-contact channel. */
+.email-cta { display: inline-flex; align-items: center; gap: var(--space-3); margin-top: var(--space-4); max-width: 100%; padding: 0.8em 1.1em; border: 1px solid var(--color-teal); background: var(--color-teal-tint); clip-path: var(--shard); transition: background var(--dur) var(--ease); }
+.email-cta:hover { background: var(--color-teal); }
+.email-cta__icon { flex: none; width: 1.7em; height: 1.7em; color: var(--color-teal); }
+.email-cta small { display: block; font-family: var(--font-kicker); font-size: var(--fs-12); letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-muted-on-ink); }
+.email-cta b { display: block; font-size: var(--fs-18); line-height: 1.2; color: var(--color-paper); overflow-wrap: anywhere; }
+.email-cta:hover .email-cta__icon, .email-cta:hover small, .email-cta:hover b { color: #fff; }
 
 .card-grid { display: grid; gap: var(--space-5); }
 .card-grid--3 { grid-template-columns: repeat(3, 1fr); }
