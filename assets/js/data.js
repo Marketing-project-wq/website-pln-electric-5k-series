@@ -15,7 +15,9 @@
   var LANG = (location.pathname.indexOf('/en/') !== -1) ? 'en' : 'id';
 
   // Registration opens (August 2026). Before this: "upcoming".
-  var REGISTRATION_OPEN = '2026-08-01T00:00:00+07:00';
+  // Registration/ticket sales open with Super Early Bird on 14 August 2026.
+  // Before this, all cities show "upcoming".
+  var REGISTRATION_OPEN = '2026-08-14T00:00:00+07:00';
 
   var CITIES = [
     {
@@ -63,9 +65,9 @@
   ];
 
   var TICKETS = [
-    { key: 'super-early', name: { id: 'Super Early Bird', en: 'Super Early Bird' }, discount: 40, price: 166000, week: 1, period: { id: 'Agustus, minggu ke-3', en: 'August, week 3' } },
-    { key: 'early', name: { id: 'Early Bird', en: 'Early Bird' }, discount: 30, price: 192500, week: 2, period: { id: 'Agustus, minggu ke-4', en: 'August, week 4' } },
-    { key: 'general', name: { id: 'General Sales', en: 'General Sales' }, discount: 0, price: 275000, week: 3, period: { id: 'September, minggu ke-1 dan seterusnya', en: 'September, week 1 onwards' } },
+    { key: 'super-early', name: { id: 'Super Early Bird', en: 'Super Early Bird' }, discount: 40, price: 166000, week: 1, period: { id: 'Mulai 14 Agustus', en: 'From 14 August' } },
+    { key: 'early', name: { id: 'Early Bird', en: 'Early Bird' }, discount: 30, price: 192500, week: 2, period: { id: 'Mulai 18 Agustus', en: 'From 18 August' } },
+    { key: 'general', name: { id: 'General Sales', en: 'General Sales' }, discount: 0, price: 275000, week: 3, period: { id: 'Mulai 28 Agustus', en: 'From 28 August' } },
     // Community Price period NOT specified in deck — shown as a separate track.
     // <!-- periode Community Price tidak disebutkan di deck, konfirmasi ke klien -->
     { key: 'community', name: { id: 'Community Price', en: 'Community Price' }, discount: 20, price: 220000, week: null, period: { id: 'Jalur komunitas — periode menyusul', en: 'Community track — period to be confirmed' } }
