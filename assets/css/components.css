@@ -412,6 +412,12 @@ table.data tr.is-past td { opacity: 0.5; text-decoration: line-through; text-dec
 .accordion__panel { overflow: hidden; max-height: 0; transition: max-height var(--dur) var(--ease); }
 .accordion__panel-inner { padding-bottom: var(--space-5); color: var(--color-muted-on-ink); max-width: 68ch; }
 .surface-paper .accordion__panel-inner, .surface-paper-dim .accordion__panel-inner { color: var(--color-muted-on-paper); }
+/* Lists inside answers get real markers (global reset strips them otherwise). */
+.accordion__panel-inner ul, .accordion__panel-inner ol { display: grid; gap: var(--space-2); margin: var(--space-2) 0 var(--space-3); padding-left: 1.6rem; }
+.accordion__panel-inner ul { list-style: disc; }
+.accordion__panel-inner ol { list-style: decimal; }
+.accordion__panel-inner li::marker { color: var(--color-teal); }
+.accordion__panel-inner > :last-child { margin-bottom: 0; }
 
 /* ---------- Modal (Cara Daftar) ----------------------------------------- */
 .modal { position: fixed; inset: 0; z-index: 200; display: none; }
