@@ -162,15 +162,19 @@
   function cityCard(c) {
     var ui = D.ui[LANG];
     var st = D.cityStatus(c);
+    // The poster (card-<city>.jpg) already carries the city name, tagline and
+    // race-day date, so those are NOT repeated below the image — only the status,
+    // participants and CTA are. City name stays in markup for SEO/a11y via a
+    // descriptive alt + a visually-hidden heading.
+    var alt = c.name + ' — PLN Mobile Electric 5K Series poster, Race Day ' + D.loc(c.raceDay);
     return (
       '<article class="card city-card" data-reveal>' +
-        '<div class="ph city-card__media"><span class="ph__label"><svg aria-hidden="true"><use href="/assets/img/icons/sprite.svg#i-image"></use></svg>Foto: ' + c.name + '<small class="ph__size">1600 × 900 px · 16:9</small></span></div>' +
+        '<img class="city-card__media" src="/assets/img/cities/card-' + c.key + '.jpg" alt="' + alt + '" loading="lazy">' +
         '<div class="city-card__body">' +
+          '<h3 class="city-card__name visually-hidden">' + c.name + '</h3>' +
           '<span class="city-card__index">' + ('0' + c.order) + ' / 03</span>' +
-          '<h3 class="city-card__name">' + c.name + '</h3>' +
           '<span class="' + statusClass(st) + '">' + ui.status[st] + '</span>' +
           '<dl class="city-card__meta">' +
-            '<div><strong>' + D.loc(c.raceDay) + '</strong> · ' + D.loc(c.startTime) + '</div>' +
             '<div>' + ui.quotaLabel + ': <strong>' + D.formatNum(c.quota) + '</strong></div>' +
           '</dl>' +
           '<div class="city-card__foot"><a class="btn btn--ghost btn--sm" href="' + cityHref(c) + '">' + ui.viewCity + ' ' + icon('i-arrow-right') + '</a></div>' +

@@ -29,14 +29,20 @@
 
   <main id="main">
     <!-- 1 — HERO (compact) -->
-    <section class="hero hero--compact">
-      <div class="hero__media hero__media--deco hero__media--deco--v3" aria-hidden="true"><img class="deco-shard deco-shard--tr" src="/assets/img/graphics/shard-fragment-01.png" alt=""><img class="deco-shard deco-shard--bl" src="/assets/img/graphics/shard-fragment-02.png" alt=""></div>
+    <section class="hero hero--compact hero--city">
+      <div class="hero__media"><img class="hero__img" src="/assets/img/cities/hero-jakarta.jpg" alt="Runner in motion — Jakarta, PLN Mobile Electric 5K Series"></div>
       <div class="hero__inner container container--wide">
-        <span class="kicker">City 01 of 03</span>
-        <h1 class="hero__title">Jakarta</h1>
-        <!-- TODO: konfirmasi tanggal final ke klien -->
-        <p class="hero__sub">The opening city of the Electric 5K Series. Race Day <span data-city="jakarta" data-city-field="raceDay"></span> — <span data-city="jakarta" data-city-field="quota"></span> runners, one starting line.</p>
-        <p style="margin-top:1rem"><span data-city="jakarta" data-city-field="status"></span></p>
+        <div class="hero__city-main">
+          <span class="kicker">City 01 of 03</span>
+          <h1 class="hero__title">Jakarta</h1>
+          <!-- TODO: konfirmasi tanggal final ke klien -->
+          <p class="hero__sub">The opening city of the Electric 5K Series. Race Day <span data-city="jakarta" data-city-field="raceDay"></span> — <span data-city="jakarta" data-city-field="quota"></span> runners, one starting line.</p>
+          <p style="margin-top:1rem"><span data-city="jakarta" data-city-field="status"></span></p>
+        </div>
+        <div class="hero__city-countdown">
+          <span class="kicker">Countdown</span>
+          <div data-countdown="jakarta"></div>
+        </div>
       </div>
     </section>
     <div class="shard-divider" aria-hidden="true"></div>
@@ -49,13 +55,7 @@
           <h2>Jakarta — The Capital, Metropolitan Energy</h2>
           <p>The opening city of the series: the capital, with metropolitan energy that lights up the first starting line of the Electric 5K Series.</p>
         </div>
-        <div class="grid-2">
-          <dl data-city-info="jakarta"></dl>
-          <div class="stack">
-            <span class="kicker">Countdown</span>
-            <div data-countdown="jakarta"></div>
-          </div>
-        </div>
+        <dl data-city-info="jakarta"></dl>
         <div class="mt-6">
           <!-- TODO: konfirmasi tanggal final ke klien -->
           <div class="ph ph--empty" style="aspect-ratio:10/7"><span class="ph__label"><svg aria-hidden="true"><use href="/assets/img/icons/sprite.svg#i-location"></use></svg>Route map will be announced closer to race day<small class="ph__size">2000 × 1400 px · 10:7</small></span></div>

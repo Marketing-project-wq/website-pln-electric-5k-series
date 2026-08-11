@@ -225,7 +225,7 @@
 
 /* ---------- City card ---------------------------------------------------- */
 .city-card { display: flex; flex-direction: column; overflow: hidden; padding: 0; }
-.city-card__media { position: relative; aspect-ratio: 16 / 9; }   /* city-card photo → 1600 × 900 */
+.city-card__media { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }   /* poster card-<city>.jpg 1600 × 900 */
 .city-card__body { padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-3); flex: 1; }
 .city-card__index { font-family: var(--font-kicker); color: var(--color-teal); letter-spacing: 0.1em; }
 .city-card__name { font-family: var(--font-display); text-transform: uppercase; font-size: var(--fs-32); line-height: 1; }
@@ -570,6 +570,34 @@ table.data tr.is-past td { opacity: 0.5; text-decoration: line-through; text-dec
 .hero__sub { margin-top: var(--space-4); max-width: 52ch; font-size: var(--fs-18); color: #D8DDE2; }
 .hero__cta { margin-top: var(--space-6); display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); }
 .hero--compact .hero__inner { padding-block: var(--space-8); }
+
+/* ---------- City KV hero (photo bg → text left, countdown right) --------- */
+/* Photo has a dark right side by design; keep the whole frame readable while
+   still letting the runner read through the middle. */
+.hero--city .hero__media::after {
+  background: linear-gradient(100deg, rgba(10,10,10,0.90) 24%, rgba(10,10,10,0.5) 54%, rgba(10,10,10,0.72) 100%);
+}
+.hero--city .hero__inner {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: var(--space-6);
+  align-items: center;
+}
+.hero__city-main { min-width: 0; }
+.hero__city-countdown {
+  justify-self: end;
+  width: 100%;
+  max-width: 340px;
+  padding: var(--space-5);
+  background: rgba(10,10,10,0.55);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 6px;
+}
+.hero__city-countdown .kicker { display: block; margin-bottom: var(--space-3); }
+@media (max-width: 860px) {
+  .hero--city .hero__inner { grid-template-columns: 1fr; gap: var(--space-5); }
+  .hero__city-countdown { justify-self: stretch; max-width: none; }
+}
 
 /* ---------- Journey rail (home signature) -------------------------------- */
 .journey { position: relative; }

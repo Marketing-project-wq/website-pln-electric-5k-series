@@ -29,14 +29,21 @@
 
   <main id="main">
     <!-- 1 — HERO (compact) -->
-    <section class="hero hero--compact">
-      <div class="hero__media hero__media--deco hero__media--deco--v2" aria-hidden="true"><img class="deco-shard deco-shard--tr" src="/assets/img/graphics/shard-fragment-01.png" alt=""><img class="deco-shard deco-shard--bl" src="/assets/img/graphics/shard-fragment-02.png" alt=""></div>
+    <section class="hero hero--compact hero--city">
+      <div class="hero__media"><img class="hero__img" src="/assets/img/cities/hero-bali.jpg" alt="Pelari dalam gerakan — Bali, PLN Mobile Electric 5K Series"></div>
       <div class="hero__inner container container--wide">
-        <span class="kicker">Kota 03 dari 03</span>
-        <h1 class="hero__title">Bali</h1>
-        <!-- TODO: konfirmasi tanggal final ke klien -->
-        <p class="hero__sub">Kota penutup Electric 5K Series. Race Day <span data-city="bali" data-city-field="raceDay"></span> — <span data-city="bali" data-city-field="quota"></span> pelari, satu garis start.</p>
-        <p style="margin-top:1rem"><span data-city="bali" data-city-field="status"></span></p>
+        <div class="hero__city-main">
+          <span class="kicker">Kota 03 dari 03</span>
+          <h1 class="hero__title">Bali</h1>
+          <!-- TODO: konfirmasi tanggal final ke klien -->
+          <p class="hero__sub">Kota penutup Electric 5K Series. Race Day <span data-city="bali" data-city-field="raceDay"></span> — <span data-city="bali" data-city-field="quota"></span> pelari, satu garis start.</p>
+          <p style="margin-top:1rem"><span data-city="bali" data-city-field="status"></span></p>
+        </div>
+        <div class="hero__city-countdown">
+          <span class="kicker">Hitung Mundur</span>
+          <div data-countdown="bali"></div>
+          <p class="note">Semua waktu Bali mengikuti zona <strong>WITA</strong>.</p>
+        </div>
       </div>
     </section>
     <div class="shard-divider" aria-hidden="true"></div>
@@ -49,14 +56,7 @@
           <h2>Bali — Garis Finis Perjalanan</h2>
           <p>Kota penutup series: tempat garis finis perjalanan tiga kota. Catat zona waktu <strong>WITA</strong> — satu jam lebih awal dari WIB.</p>
         </div>
-        <div class="grid-2">
-          <dl data-city-info="bali"></dl>
-          <div class="stack">
-            <span class="kicker">Hitung Mundur</span>
-            <div data-countdown="bali"></div>
-            <p class="note">Semua waktu Bali mengikuti zona <strong>WITA</strong>.</p>
-          </div>
-        </div>
+        <dl data-city-info="bali"></dl>
         <div class="mt-6">
           <!-- TODO: konfirmasi tanggal final ke klien -->
           <div class="ph ph--empty" style="aspect-ratio:10/7"><span class="ph__label"><svg aria-hidden="true"><use href="/assets/img/icons/sprite.svg#i-location"></use></svg>Peta rute akan diumumkan mendekati hari-H<small class="ph__size">2000 × 1400 px · 10:7</small></span></div>
