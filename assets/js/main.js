@@ -191,11 +191,11 @@
 
   function activeTicketWeek() {
     // Determine current ticket phase by sale window (all August 2026):
-    //   Super Early Bird from 14 Aug, Early Bird from 18 Aug, General from 28 Aug.
+    //   Super Early Bird from 18 Aug, Early Bird from 21 Aug, General from 28 Aug.
     var ref = new Date();
     var phase = {
-      1: new Date('2026-08-14T00:00:00+07:00'),  // Super Early Bird
-      2: new Date('2026-08-18T00:00:00+07:00'),  // Early Bird
+      1: new Date('2026-08-18T00:00:00+07:00'),  // Super Early Bird
+      2: new Date('2026-08-21T00:00:00+07:00'),  // Early Bird
       3: new Date('2026-08-28T00:00:00+07:00')   // General Sales onwards
     };
     if (ref < phase[1]) return 0;        // not yet on sale
