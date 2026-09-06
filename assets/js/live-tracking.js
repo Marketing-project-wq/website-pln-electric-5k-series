@@ -1,11 +1,11 @@
 /* ==========================================================================
-   live-tracking.js — Live course map (Leaflet) with animated runners.
+   live-tracking.js — Live course map (Leaflet) with a full runner field.
    Self-initialising. Reads window.EVENT_DATA.liveTracking (real TMII route +
-   checkpoints from the organiser's KML) and animates demo runner markers along
-   the real route, keeping a live leaderboard in sync.
+   checkpoints + a ~200-runner demo field) and animates every runner along the
+   real route on a canvas layer, with a searchable live leaderboard.
 
-   The ROUTE and timing points are the real surveyed course. Runner positions
-   are a SIMULATION — on race day they come from the chip-timing feed.
+   Route + timing points are the real surveyed course. Runner positions are a
+   SIMULATION — on race day they come from the chip-timing feed.
    Requires Leaflet (vendored at /assets/vendor/leaflet/).
    ========================================================================== */
 (function () {
@@ -25,13 +25,16 @@
   var checkpoints = (CFG.checkpoints || []).slice().sort(function (a, b) { return a.frac - b.frac; });
   var runners = CFG.runners || [];
   var leaderFinish = runners.reduce(function (m, r) { return Math.min(m, r.finishSec); }, Infinity);
-  var animSeconds = CFG.animSeconds || 30;
+  var animSeconds = CFG.animSeconds || 24;
+  var TOP_N = 12, MAX_RESULTS = 40;
 
   function pad2(n) { return (n < 10 ? '0' : '') + n; }
   function clock(sec) { sec = Math.max(0, Math.round(sec)); return pad2(Math.floor(sec / 60)) + ':' + pad2(sec % 60); }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function tier(r) { return r.finishSec < 1200 ? '#8CD867' : r.finishSec < 1800 ? '#22C3D6' : '#3FA9F5'; }
+  var HL = '#F2D024';
 
-  // ---- Distance table for interpolating a position at fraction f ----------
+  // ---- Route distance table (interpolate a latlng at fraction f) ----------
   function hav(a, b) {
     var R = 6371000, dLat = (b[0] - a[0]) * Math.PI / 180, dLon = (b[1] - a[1]) * Math.PI / 180;
     var la1 = a[0] * Math.PI / 180, la2 = b[0] * Math.PI / 180;
@@ -41,124 +44,162 @@
   var cum = [0];
   for (var i = 1; i < route.length; i++) cum.push(cum[i - 1] + hav(route[i - 1], route[i]));
   var totalLen = cum[cum.length - 1] || 1;
-
   function latlngAt(frac) {
-    if (route.length === 0) return [0, 0];
+    if (!route.length) return [0, 0];
     var target = Math.max(0, Math.min(1, frac)) * totalLen;
     for (var j = 1; j < route.length; j++) {
       if (cum[j] >= target) {
-        var seg = cum[j] - cum[j - 1] || 1;
-        var t = (target - cum[j - 1]) / seg;
-        return [route[j - 1][0] + (route[j][0] - route[j - 1][0]) * t,
-                route[j - 1][1] + (route[j][1] - route[j - 1][1]) * t];
+        var seg = cum[j] - cum[j - 1] || 1, t = (target - cum[j - 1]) / seg;
+        return [route[j - 1][0] + (route[j][0] - route[j - 1][0]) * t, route[j - 1][1] + (route[j][1] - route[j - 1][1]) * t];
       }
     }
     return route[route.length - 1];
   }
-
   function durationFor(r) { return animSeconds * (r.finishSec / leaderFinish); }
-  function progressFor(r, elapsed) { return Math.min(elapsed / durationFor(r), 1); }
+  function progressFor(r, e) { return Math.min(e / durationFor(r), 1); }
   function lastCheckpoint(p) {
     var last = checkpoints[0];
     for (var k = 0; k < checkpoints.length; k++) if (checkpoints[k].frac <= p + 1e-9) last = checkpoints[k];
     return last;
   }
 
-  // ---- Leaflet map --------------------------------------------------------
-  var map = null, runnerMarkers = [];
+  // ---- Map ----------------------------------------------------------------
+  var map = null, dots = [], hlMarker = null, selectedBib = null;
   var L = window.L;
   if (L) {
     map = L.map(mapEl, { zoomControl: true, scrollWheelZoom: false, attributionControl: true });
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
       maxZoom: 19, attribution: 'Imagery &copy; Esri, Maxar, Earthstar Geographics'
     }).addTo(map);
-    // Optional place/road labels over the imagery (fails gracefully if blocked).
-    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
-      maxZoom: 19, opacity: 0.9
-    }).addTo(map);
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, opacity: 0.9 }).addTo(map);
 
-    // Route: glow underlay + solid line.
     L.polyline(route, { color: '#0A0A0A', weight: 11, opacity: 0.45, lineJoin: 'round', lineCap: 'round' }).addTo(map);
     L.polyline(route, { color: '#1FE0D6', weight: 5, opacity: 0.95, lineJoin: 'round', lineCap: 'round' }).addTo(map);
+    if (CFG.speed200) L.polyline(CFG.speed200, { color: '#FF4D4D', weight: 6, opacity: 0.95, lineCap: 'round' }).addTo(map).bindTooltip('200 m Speed', { direction: 'top', className: 'lt-tip' });
 
-    // 200 m speed segment (highlighted).
-    if (CFG.speed200) L.polyline(CFG.speed200, { color: '#FF4D4D', weight: 6, opacity: 0.95, lineCap: 'round' }).addTo(map)
-      .bindTooltip('200 m Speed', { direction: 'top', className: 'lt-tip' });
-
-    // Timing points.
     checkpoints.forEach(function (cp, idx) {
       var start = idx === 0, finish = idx === checkpoints.length - 1;
-      var fill = start ? '#8CD867' : finish ? '#F2D024' : '#1FE0D6';
-      L.circleMarker([cp.lat, cp.lng], { radius: start || finish ? 8 : 6, color: '#0A0A0A', weight: 2, fillColor: fill, fillOpacity: 1 })
+      L.circleMarker([cp.lat, cp.lng], { radius: start || finish ? 8 : 6, color: '#0A0A0A', weight: 2, fillColor: start ? '#8CD867' : finish ? '#F2D024' : '#1FE0D6', fillOpacity: 1 })
         .addTo(map).bindTooltip(loc(cp.label), { permanent: true, direction: 'top', className: 'lt-tip' + (start || finish ? ' lt-tip--key' : '') });
     });
-
-    // POIs (water station, etc.).
     (CFG.pois || []).forEach(function (p) {
-      L.circleMarker([p.lat, p.lng], { radius: 6, color: '#0A0A0A', weight: 2, fillColor: '#2CA6E0', fillOpacity: 1 })
-        .addTo(map).bindTooltip(loc(p.label), { direction: 'top', className: 'lt-tip lt-tip--poi' });
+      L.circleMarker([p.lat, p.lng], { radius: 6, color: '#0A0A0A', weight: 2, fillColor: '#2CA6E0', fillOpacity: 1 }).addTo(map).bindTooltip(loc(p.label), { direction: 'top', className: 'lt-tip lt-tip--poi' });
     });
 
-    // Runner markers (divIcons; positioned each frame).
-    runnerMarkers = runners.map(function (r) {
-      var icon = L.divIcon({
-        className: 'lt-rmark',
-        html: '<span class="lt-rmark__halo" style="background:' + r.color + '"></span><span class="lt-rmark__dot" style="background:' + r.color + '"></span>',
-        iconSize: [24, 24], iconAnchor: [12, 12]
-      });
-      return L.marker(latlngAt(0), { icon: icon, keyboard: false, interactive: false, zIndexOffset: 1000 }).addTo(map);
+    // Runner field on a fast canvas renderer.
+    var canvas = L.canvas({ padding: 0.5 });
+    dots = runners.map(function (r) {
+      return L.circleMarker(latlngAt(0), { renderer: canvas, radius: 4, weight: 0, fillColor: tier(r), fillOpacity: 0.85 }).addTo(map);
     });
+
+    // Highlight marker (follows the selected runner).
+    hlMarker = L.marker(latlngAt(0), {
+      icon: L.divIcon({ className: 'lt-hl', html: '<span class="lt-hl__pulse"></span><span class="lt-hl__dot"></span>', iconSize: [26, 26], iconAnchor: [13, 13] }),
+      interactive: false, keyboard: false, zIndexOffset: 2000, opacity: 0
+    }).addTo(map);
 
     if (route.length) map.fitBounds(L.latLngBounds(route), { padding: [34, 34] });
     setTimeout(function () { map.invalidateSize(); }, 0);
   }
 
+  function selectedIndex() {
+    if (selectedBib == null) return -1;
+    for (var i = 0; i < runners.length; i++) if (runners[i].bib === selectedBib) return i;
+    return -1;
+  }
+  function styleSelection() {
+    if (!map) return;
+    dots.forEach(function (d, i) {
+      var sel = runners[i].bib === selectedBib;
+      d.setStyle({ radius: sel ? 7 : 4, weight: sel ? 2 : 0, color: '#0A0A0A', fillColor: sel ? HL : tier(runners[i]), fillOpacity: sel ? 1 : 0.85 });
+      if (sel) d.bringToFront();
+    });
+    var idx = selectedIndex();
+    if (hlMarker) hlMarker.setOpacity(idx >= 0 ? 1 : 0);
+  }
+
   function positionMarkers(elapsed) {
     if (!map) return;
-    runners.forEach(function (r, idx) {
-      var p = progressFor(r, elapsed);
-      runnerMarkers[idx].setLatLng(latlngAt(p));
-      var elm = runnerMarkers[idx].getElement && runnerMarkers[idx].getElement();
-      if (elm) elm.classList.toggle('is-finished', p >= 1);
+    for (var i = 0; i < runners.length; i++) dots[i].setLatLng(latlngAt(progressFor(runners[i], elapsed)));
+    var idx = selectedIndex();
+    if (idx >= 0 && hlMarker) hlMarker.setLatLng(latlngAt(progressFor(runners[idx], elapsed)));
+  }
+
+  // ---- Board (built once; only rows + count update) -----------------------
+  var rowsEl = null, countEl = null, emptyEl = null, searchEl = null, query = '';
+  function buildBoard() {
+    if (!board) return;
+    board.innerHTML =
+      '<div class="lt-board__head">' + esc(T.board || 'Live Board') +
+        ' <span class="lt-count" data-lt-count></span> <span class="lt-sim">' + esc(T.sim || 'SIMULATION') + '</span></div>' +
+      '<div class="lt-search"><input type="search" class="lt-search__input" data-lt-search placeholder="' +
+        esc(LANG === 'id' ? 'Cari No. BIB atau nama…' : 'Search bib or name…') + '" aria-label="' +
+        esc(LANG === 'id' ? 'Cari peserta' : 'Search participants') + '" autocomplete="off"></div>' +
+      '<div class="table-wrap lt-board__scroll"><table class="lt-table"><thead><tr><th>#</th><th>' +
+        esc(T.bib || 'Bib') + '</th><th>' + esc(T.name || 'Name') + '</th><th>' + esc(T.last || 'Last Detected') +
+        '</th><th>' + esc(T.clock || 'Time') + '</th></tr></thead><tbody data-lt-rows></tbody></table></div>' +
+      '<p class="lt-empty" data-lt-empty hidden>' + esc(LANG === 'id' ? 'Peserta tidak ditemukan.' : 'No participant found.') + '</p>';
+    rowsEl = board.querySelector('[data-lt-rows]');
+    countEl = board.querySelector('[data-lt-count]');
+    emptyEl = board.querySelector('[data-lt-empty]');
+    searchEl = board.querySelector('[data-lt-search]');
+    if (countEl) countEl.textContent = '· ' + runners.length + ' ' + (LANG === 'id' ? 'peserta' : 'participants');
+    if (searchEl) searchEl.addEventListener('input', function () { query = searchEl.value.trim().toLowerCase(); renderRows(lastElapsed); });
+    if (rowsEl) rowsEl.addEventListener('click', function (e) {
+      var tr = e.target.closest('tr[data-bib]'); if (!tr) return;
+      var bib = tr.getAttribute('data-bib');
+      selectRunner(selectedBib === bib ? null : bib);
     });
   }
 
-  // ---- Live board ---------------------------------------------------------
-  function renderBoard(elapsed) {
-    if (!board) return;
-    var rows = runners.map(function (r) {
+  function renderRows(elapsed) {
+    if (!rowsEl) return;
+    // Rank the whole field by progress, then filter/slice for display.
+    var all = runners.map(function (r) {
       var p = progressFor(r, elapsed);
-      var cp = lastCheckpoint(p);
-      var done = p >= 1;
-      return { r: r, p: p, last: loc(cp.label), time: clock(p * r.finishSec),
-        status: done ? (T.finished || 'Finished') : (p > 0 ? (T.running || 'Running') : (T.waiting || '')), done: done };
+      return { r: r, p: p };
     }).sort(function (a, b) { return b.p - a.p; });
 
-    var head = '<thead><tr><th>#</th><th>' + esc(T.bib || 'Bib') + '</th><th>' + esc(T.name || 'Name') +
-      '</th><th>' + esc(T.last || 'Last Detected') + '</th><th>' + esc(T.clock || 'Time') + '</th></tr></thead>';
-    var body = rows.map(function (row, idx) {
-      return '<tr class="' + (row.done ? 'is-finished' : '') + '">' +
-        '<td class="lt-pos">' + (idx + 1) + '</td>' +
-        '<td><span class="lt-swatch" style="background:' + esc(row.r.color) + '"></span>' + esc(row.r.bib) + '</td>' +
-        '<td class="lt-name">' + esc(row.r.name) + '</td>' +
-        '<td>' + esc(row.last) + ' <span class="lt-status ' + (row.done ? 'lt-status--done' : 'lt-status--run') + '">' + esc(row.status) + '</span></td>' +
-        '<td class="lt-time">' + esc(row.time) + '</td></tr>';
+    var list = all, filtered = false;
+    if (query) {
+      filtered = true;
+      list = all.filter(function (x) { return x.r.bib.indexOf(query) >= 0 || x.r.name.toLowerCase().indexOf(query) >= 0; });
+    }
+    var shown = list.slice(0, filtered ? MAX_RESULTS : TOP_N);
+
+    if (emptyEl) emptyEl.hidden = !(filtered && shown.length === 0);
+    rowsEl.innerHTML = shown.map(function (x, i) {
+      var p = x.p, done = p >= 1, rank = all.indexOf(x) + 1;
+      var last = loc(lastCheckpoint(p).label);
+      var status = done ? (T.finished || 'Finished') : (p > 0 ? (T.running || 'Running') : (T.waiting || ''));
+      return '<tr data-bib="' + esc(x.r.bib) + '" class="' + (x.r.bib === selectedBib ? 'is-selected ' : '') + (done ? 'is-finished' : '') + '">' +
+        '<td class="lt-pos">' + rank + '</td>' +
+        '<td><span class="lt-swatch" style="background:' + tier(x.r) + '"></span>' + esc(x.r.bib) + '</td>' +
+        '<td class="lt-name">' + esc(x.r.name) + '</td>' +
+        '<td>' + esc(last) + ' <span class="lt-status ' + (done ? 'lt-status--done' : 'lt-status--run') + '">' + esc(status) + '</span></td>' +
+        '<td class="lt-time">' + clock(p * x.r.finishSec) + '</td></tr>';
     }).join('');
-    board.innerHTML = '<div class="lt-board__head">' + esc(T.board || 'Live Board') +
-      ' <span class="lt-sim">' + esc(T.sim || 'SIMULATION') + '</span></div>' +
-      '<div class="table-wrap"><table class="lt-table">' + head + '<tbody>' + body + '</tbody></table></div>';
   }
 
-  // ---- Animation loop -----------------------------------------------------
-  var elapsed = 0, lastTs = null, playing = false, raf = null, lastBoard = -1;
+  function selectRunner(bib) {
+    selectedBib = bib;
+    styleSelection();
+    var idx = selectedIndex();
+    if (idx >= 0 && map) { var ll = latlngAt(progressFor(runners[idx], lastElapsed)); hlMarker.setLatLng(ll); map.panTo(ll, { animate: true }); }
+    renderRows(lastElapsed);
+  }
+
+  // ---- Animation ----------------------------------------------------------
+  var elapsed = 0, lastElapsed = 0, lastTs = null, playing = false, raf = null, lastBoard = -1;
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var toggleBtn = document.querySelector('[data-lt-toggle]');
   var restartBtn = document.querySelector('[data-lt-restart]');
 
   function allDone(e) { for (var i = 0; i < runners.length; i++) if (progressFor(runners[i], e) < 1) return false; return true; }
   function draw(e) {
+    lastElapsed = e;
     positionMarkers(e);
-    if (lastBoard < 0 || Math.abs(e - lastBoard) >= 0.25 || allDone(e)) { renderBoard(e); lastBoard = e; }
+    if (lastBoard < 0 || Math.abs(e - lastBoard) >= 0.25 || allDone(e)) { renderRows(e); lastBoard = e; }
   }
   function setToggle(on) { if (toggleBtn) { toggleBtn.textContent = on ? (T.pause || 'Pause') : (T.play || 'Play'); toggleBtn.setAttribute('aria-pressed', String(on)); } }
   function tick(ts) {
@@ -175,15 +216,13 @@
   if (toggleBtn) toggleBtn.addEventListener('click', function () { playing ? pause() : play(); });
   if (restartBtn) restartBtn.addEventListener('click', restart);
 
-  if (reduce) {
-    draw(animSeconds * 0.45);
-    setToggle(false);
-  } else {
+  buildBoard();
+  styleSelection();
+  if (reduce) { draw(animSeconds * 0.5); setToggle(false); }
+  else {
     draw(0);
     if ('IntersectionObserver' in window) {
-      var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (en) { if (en.isIntersecting) { play(); io.disconnect(); } });
-      }, { threshold: 0.3 });
+      var io = new IntersectionObserver(function (entries) { entries.forEach(function (en) { if (en.isIntersecting) { play(); io.disconnect(); } }); }, { threshold: 0.3 });
       io.observe(mapEl);
     } else { play(); }
   }
