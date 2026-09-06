@@ -153,6 +153,40 @@
     ]
   };
 
+  // ---- Live Tracking (DEMO / SIMULATION) ----------------------------------
+  // Front-end preview of race-day live tracking. On race day, chip timing +
+  // antennas/decoders along the 5K route feed real positions from the timing
+  // API (https://time.feibot.com/api/teams-data/…). Until then this drives a
+  // self-contained animation: demo runners moving along the course, crossing
+  // the checkpoints below. NONE of this is real data.
+  // <!-- TODO: ganti simulasi ini dengan feed API timing (feibot) + rute KML asli -->
+  var LIVE_TRACKING = {
+    // Timing points ("antena/decoder") along the route, by distance in km.
+    checkpoints: [
+      { km: 0, label: { id: 'Start', en: 'Start' } },
+      { km: 1, label: { id: 'Antena KM 1', en: 'Antenna KM 1' } },
+      { km: 2, label: { id: 'Antena KM 2', en: 'Antenna KM 2' } },
+      { km: 3, label: { id: 'Antena KM 3', en: 'Antenna KM 3' } },
+      { km: 4, label: { id: 'Antena KM 4', en: 'Antenna KM 4' } },
+      { km: 5, label: { id: 'Finish', en: 'Finish' } }
+    ],
+    // Demo participants. `finishSec` = simulated real finish time (seconds) used
+    // for the on-board clock; `color` = marker colour on the course.
+    runners: [
+      { bib: '1024', name: 'Rangga Wijaya', finishSec: 942,  color: '#F2D024' },
+      { bib: '2031', name: 'Arif Setiawan', finishSec: 1006, color: '#1FC7E6' },
+      { bib: '3012', name: 'Komang Adi',    finishSec: 1071, color: '#8CD867' },
+      { bib: '1097', name: 'Bayu Saputra',  finishSec: 1134, color: '#FF8A5B' },
+      { bib: '2008', name: 'Panji Nugraha', finishSec: 1218, color: '#FFFFFF' }
+    ],
+    // Seconds of wall-clock for the animation to play start→finish (leader).
+    animSeconds: 26,
+    ui: {
+      id: { board: 'Papan Live', bib: 'No. BIB', name: 'Nama', last: 'Terakhir Terdeteksi', clock: 'Waktu', restart: 'Ulangi', pause: 'Jeda', play: 'Main', sim: 'SIMULASI', running: 'Berlari', finished: 'Finish', waiting: 'Menunggu start', distance: 'Jarak' },
+      en: { board: 'Live Board', bib: 'Bib', name: 'Name', last: 'Last Detected', clock: 'Time', restart: 'Restart', pause: 'Pause', play: 'Play', sim: 'SIMULATION', running: 'Running', finished: 'Finished', waiting: 'Awaiting start', distance: 'Distance' }
+    }
+  };
+
   // ---- Shared UI strings (header/footer/components) ----
   var UI = {
     id: {
@@ -259,6 +293,7 @@
     prizes: PRIZES,
     prizeTotalPerCity: PRIZE_TOTAL_PER_CITY,
     results: RESULTS,
+    liveTracking: LIVE_TRACKING,
     timeline: TIMELINE,
     contextStats: CONTEXT_STATS,
     totalRunners: 10000,

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link rel="icon" type="image/png" href="/assets/img/graphics/shard-runner-mark.png">
+  <link rel="apple-touch-icon" href="/assets/img/graphics/shard-runner-mark.png">
+  <title>Live Tracking — PLN Mobile Electric 5K Series 2026</title>
+  <meta name="description" content="Follow the PLN Mobile Electric 5K Series in real time. Chip timing and antennas along the 5K route track every runner's position live — with a course map and live board.">
+  <link rel="canonical" href="https://electric5k.example/en/live-tracking.html">
+  <link rel="alternate" hreflang="id" href="https://electric5k.example/id/live-tracking.html">
+  <link rel="alternate" hreflang="en" href="https://electric5k.example/en/live-tracking.html">
+  <link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/live-tracking.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Live Tracking — PLN Mobile Electric 5K Series 2026">
+  <meta property="og:description" content="A live course map that follows every runner along the 5K route on race day. Power Your Speed.">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="id_ID">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/tokens.css">
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="/assets/css/pages.css">
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main id="main">
+    <!-- 1 — HERO -->
+    <section class="hero hero--compact">
+      <div class="hero__media hero__media--deco hero__media--deco--v2" aria-hidden="true"><img class="deco-shard deco-shard--tr" src="/assets/img/graphics/shard-fragment-01.png" alt=""><img class="deco-shard deco-shard--bl" src="/assets/img/graphics/shard-fragment-02.png" alt=""></div>
+      <div class="hero__inner container container--wide">
+        <span class="kicker">Live Tracking</span>
+        <h1 class="hero__title">Follow the Race in Real Time</h1>
+        <p class="hero__sub">On race day, every runner wears a timing chip and passes antennas placed along the 5K route — so their position updates live on the course map below.</p>
+      </div>
+    </section>
+    <div class="shard-divider" aria-hidden="true"></div>
+
+    <!-- 2 — LIVE COURSE -->
+    <section class="section surface-ink">
+      <div class="container container--wide">
+        <div class="section-head">
+          <span class="kicker">Course Map</span>
+          <h2>The 5K Route, Live</h2>
+          <p>Antennas (timing points) sit at every kilometre. As runners cross each one, their chip is detected and the board updates. The preview below is a <strong>simulation</strong> — real positions appear here on race day.</p>
+        </div>
+
+        <div class="lt-wrap">
+          <!-- Course map -->
+          <svg class="lt-map" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet" data-live-map role="img" aria-label="Animated 5K course map with runners moving between timing points (simulation).">
+            <path id="lt-route-base" d="M 140 470 C 96 372, 150 262, 258 258 C 350 254, 396 350, 492 336 C 604 320, 628 196, 736 208 C 838 219, 892 330, 828 416 C 772 491, 648 476, 556 470 C 470 464, 430 500, 344 496 C 268 492, 224 500, 196 456"/>
+            <path id="lt-route" d="M 140 470 C 96 372, 150 262, 258 258 C 350 254, 396 350, 492 336 C 604 320, 628 196, 736 208 C 838 219, 892 330, 828 416 C 772 491, 648 476, 556 470 C 470 464, 430 500, 344 496 C 268 492, 224 500, 196 456"/>
+            <path class="lt-flow" d="M 140 470 C 96 372, 150 262, 258 258 C 350 254, 396 350, 492 336 C 604 320, 628 196, 736 208 C 838 219, 892 330, 828 416 C 772 491, 648 476, 556 470 C 470 464, 430 500, 344 496 C 268 492, 224 500, 196 456"/>
+            <g data-lt-checkpoints></g>
+            <g data-lt-runners></g>
+          </svg>
+
+          <!-- Live board (rendered by live-tracking.js) -->
+          <div class="lt-board" data-live-board></div>
+        </div>
+
+        <div class="lt-controls">
+          <button class="btn btn--ghost btn--sm" type="button" data-lt-toggle aria-pressed="true">Pause</button>
+          <button class="btn btn--ghost btn--sm" type="button" data-lt-restart>Restart</button>
+          <span class="lt-legend">Coloured dots are participants — matched by colour to the live board.</span>
+        </div>
+
+        <!-- Demo now; real feed wired on race day. -->
+        <p class="note" style="margin-top:var(--space-5)">This is a demo simulation for layout. On race day the map is driven by the official chip-timing feed, and the route is replaced with the surveyed course.</p>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="/assets/js/data.js"></script>
+  <script src="/assets/js/main.js" defer></script>
+  <script src="/assets/js/countdown.js" defer></script>
+  <script src="/assets/js/accordion.js" defer></script>
+  <script src="/assets/js/live-tracking.js" defer></script>
+</body>
+</html>

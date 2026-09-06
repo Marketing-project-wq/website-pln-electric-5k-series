@@ -30,6 +30,60 @@
 .data--results .bib { font-family: var(--font-kicker); letter-spacing: 0.05em; }
 .data--results .results-empty { text-align: center; font-style: italic; padding: var(--space-6); color: var(--color-muted-on-paper); }
 
+/* ==========================================================================
+   Live Tracking — animated course map (demo). Built for a dark (ink) surface.
+   ========================================================================== */
+.lt-wrap { display: grid; grid-template-columns: 1.6fr 1fr; gap: var(--space-5); align-items: start; }
+@media (max-width: 900px) { .lt-wrap { grid-template-columns: 1fr; } }
+
+.lt-map {
+  width: 100%; height: auto; display: block; border-radius: 14px;
+  border: 1px solid var(--color-line);
+  background: radial-gradient(circle at 28% 18%, rgba(28,153,177,0.16), transparent 62%),
+              radial-gradient(circle at 80% 90%, rgba(140,216,103,0.10), transparent 55%),
+              var(--color-ink);
+}
+#lt-route-base { fill: none; stroke: rgba(255,255,255,0.10); stroke-width: 14; stroke-linecap: round; stroke-linejoin: round; }
+#lt-route { fill: none; stroke: var(--color-teal); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+.lt-flow { fill: none; stroke: var(--color-lime); stroke-width: 2.5; stroke-linecap: round; opacity: 0.7;
+  stroke-dasharray: 2 22; animation: lt-flow 1.4s linear infinite; }
+@keyframes lt-flow { to { stroke-dashoffset: -24; } }
+
+.lt-cp__ring { fill: none; stroke: rgba(255,255,255,0.55); stroke-width: 2; }
+.lt-cp__dot { stroke: var(--color-ink); stroke-width: 1.5; }
+.lt-cp__label { fill: var(--color-muted-on-ink); font-family: var(--font-kicker); font-size: 15px; letter-spacing: 0.06em; }
+.lt-cp__label--key { fill: var(--color-paper); }
+
+.lt-runner__pulse { transform-origin: center; animation: lt-pulse 1.7s ease-out infinite; }
+.lt-runner__dot { stroke: var(--color-ink); stroke-width: 1.6; }
+.lt-runner__bib { display: none; }        /* identity lives in the board; keep the map clean */
+.lt-runner.is-finished .lt-runner__pulse { animation: none; opacity: 0; }
+@keyframes lt-pulse { 0% { transform: scale(0.5); opacity: 0.55; } 70% { transform: scale(1.7); opacity: 0; } 100% { opacity: 0; } }
+
+/* Live board (leaderboard) */
+.lt-board { background: var(--color-ink-soft); border: 1px solid var(--color-line); border-radius: 14px; padding: var(--space-4); }
+.lt-board__head { font-family: var(--font-kicker); letter-spacing: 0.08em; color: var(--color-paper); font-size: var(--fs-18); margin-bottom: var(--space-3); display: flex; align-items: center; gap: var(--space-2); }
+.lt-sim, .lt-sim-badge { font-family: var(--font-kicker); letter-spacing: 0.1em; font-size: 11px; color: var(--color-ink); background: #F2D024; padding: 2px 8px; border-radius: 999px; }
+.lt-table { width: 100%; border-collapse: collapse; font-size: var(--fs-14); }
+.lt-table th { text-align: left; font-family: var(--font-kicker); letter-spacing: 0.06em; font-weight: 400; color: var(--color-muted-on-ink); padding: 4px 8px; border-bottom: 1px solid var(--color-line); }
+.lt-table td { padding: 8px; border-bottom: 1px solid var(--color-line); color: var(--color-paper); vertical-align: middle; }
+.lt-table tr:last-child td { border-bottom: 0; }
+.lt-table tr.is-finished .lt-name { color: var(--color-muted-on-ink); }
+.lt-pos { font-family: var(--font-kicker); color: var(--color-teal); width: 1.5em; }
+.lt-time { text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+.lt-swatch { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+.lt-status { font-family: var(--font-kicker); font-size: 10px; letter-spacing: 0.06em; padding: 1px 6px; border-radius: 999px; margin-left: 4px; white-space: nowrap; }
+.lt-status--run { background: var(--color-teal-tint); color: var(--color-teal); }
+.lt-status--done { background: rgba(140,216,103,0.18); color: var(--color-lime); }
+
+.lt-controls { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; margin-top: var(--space-4); }
+.lt-legend { color: var(--color-muted-on-ink); font-size: var(--fs-14); margin-left: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lt-flow { animation: none; }
+  .lt-runner__pulse { animation: none; opacity: 0.4; }
+}
+
 /* News cards */
 .news-card { display: flex; flex-direction: column; gap: var(--space-2); }
 .news-card time { font-family: var(--font-kicker); letter-spacing: 0.08em; color: var(--color-teal); font-size: var(--fs-14); }
