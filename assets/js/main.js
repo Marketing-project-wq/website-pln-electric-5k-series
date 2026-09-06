@@ -267,6 +267,43 @@
     });
   }
 
+  // Race results: a per-city filter bar plus a Bib No. / Name / Time table.
+  // Column headers are intentionally kept in English on both language sites.
+  function renderResults() {
+    var results = D.results || {};
+    var ui = D.ui[LANG];
+    var head = ['Bib No.', 'Name', 'Time'];
+    document.querySelectorAll('[data-results]').forEach(function (mount) {
+      function tableFor(key) {
+        var rows = results[key] || [];
+        if (!rows.length) return '<p class="note">' + ui.resultsEmpty + '</p>';
+        var body = rows.map(function (r) {
+          return '<tr>' +
+            '<td data-label="' + head[0] + '">' + r.bib + '</td>' +
+            '<td data-label="' + head[1] + '">' + r.name + '</td>' +
+            '<td data-label="' + head[2] + '" class="num">' + r.time + '</td>' +
+          '</tr>';
+        }).join('');
+        return '<div class="table-wrap"><table class="data data--results"><thead><tr><th>' + head.join('</th><th>') + '</th></tr></thead><tbody>' + body + '</tbody></table></div>';
+      }
+      var filters = D.cities.map(function (c, i) {
+        return '<button class="gallery-filter" type="button" data-results-filter="' + c.key + '" aria-pressed="' + (i === 0 ? 'true' : 'false') + '">' + c.name + '</button>';
+      }).join('');
+      mount.innerHTML =
+        '<div class="gallery-filters" role="group" aria-label="' + ui.resultsFilterLabel + '">' + filters + '</div>' +
+        '<div data-results-table aria-live="polite"></div>';
+      var tableMount = mount.querySelector('[data-results-table]');
+      function show(key) { tableMount.innerHTML = tableFor(key); }
+      mount.querySelectorAll('[data-results-filter]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          mount.querySelectorAll('[data-results-filter]').forEach(function (b) { b.setAttribute('aria-pressed', String(b === btn)); });
+          show(btn.getAttribute('data-results-filter'));
+        });
+      });
+      show(D.cities[0].key);
+    });
+  }
+
   function renderTimeline() {
     document.querySelectorAll('[data-timeline]').forEach(function (mount) {
       mount.classList.add('timeline');
@@ -388,6 +425,7 @@
     renderTicketTable();
     renderPrizeTable();
     renderScheduleTable();
+    renderResults();
     renderTimeline();
     renderContextStats();
     renderJourney();

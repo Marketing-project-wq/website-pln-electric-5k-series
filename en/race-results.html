@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link rel="icon" type="image/png" href="/assets/img/graphics/shard-runner-mark.png">
+  <link rel="apple-touch-icon" href="/assets/img/graphics/shard-runner-mark.png">
+  <title>Race Results — PLN Mobile Electric 5K Series 2026</title>
+  <meta name="description" content="Total 5K finish times for the PLN Mobile Electric 5K Series 2026 — bib number, name, and time, per city. Results are published after each Race Day.">
+  <link rel="canonical" href="https://electric5k.example/en/race-results.html">
+  <link rel="alternate" hreflang="id" href="https://electric5k.example/id/race-results.html">
+  <link rel="alternate" hreflang="en" href="https://electric5k.example/en/race-results.html">
+  <link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/race-results.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Race Results — PLN Mobile Electric 5K Series 2026">
+  <meta property="og:description" content="Every runner's total 5K time — bib number, name, and time, per city. Power Your Speed.">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="id_ID">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/tokens.css">
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="/assets/css/pages.css">
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main id="main">
+    <!-- 1 — HERO -->
+    <section class="hero hero--compact">
+      <div class="hero__media hero__media--deco hero__media--deco--v4" aria-hidden="true"><img class="deco-shard deco-shard--tr" src="/assets/img/graphics/shard-fragment-01.png" alt=""><img class="deco-shard deco-shard--bl" src="/assets/img/graphics/shard-fragment-02.png" alt=""></div>
+      <div class="hero__inner container container--wide">
+        <span class="kicker">Race Results</span>
+        <h1 class="hero__title">Your 5K Finish Time, On the Record</h1>
+        <p class="hero__sub">Every runner's total 5K time across the three-city series. Pick a city to see the finishers — bib number, name, and time. Results are published here after each Race Day.</p>
+      </div>
+    </section>
+    <div class="shard-divider" aria-hidden="true"></div>
+
+    <!-- 2 — RESULTS TABLE -->
+    <section class="section surface-paper">
+      <div class="container container--wide">
+        <div class="section-head">
+          <span class="kicker">Results</span>
+          <h2>5K Finish Times by City</h2>
+          <p>Total finish time for the 5K, fastest first. Switch cities to view each race's finishers.</p>
+        </div>
+        <div data-results></div>
+        <!-- TODO: ganti dengan hasil timing resmi tiap kota setelah race day -->
+        <p class="note" style="margin-top:var(--space-4)">The entries shown are sample / preview data. Official timing results follow after each Race Day.</p>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="/assets/js/data.js"></script>
+  <script src="/assets/js/main.js" defer></script>
+  <script src="/assets/js/countdown.js" defer></script>
+  <script src="/assets/js/accordion.js" defer></script>
+</body>
+</html>

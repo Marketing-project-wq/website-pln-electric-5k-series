@@ -100,6 +100,52 @@
       en: ['Race Pack Collection — 30–31 Oct', 'Race Day — 1 Nov'] } }
   ];
 
+  // ---- Race results (per city) ------------------------------------------
+  // Total 5K finish times per city. Rows are ordered fastest-first; `time` is
+  // the total (gun-to-finish) time in HH:MM:SS. Columns rendered on the page
+  // are Bib No. / Name / Time (headers stay in English in both languages).
+  // NOTE: the entries below are SAMPLE / PREVIEW data so the page and table are
+  // demonstrable before race day — none of the races have been run yet.
+  // <!-- TODO: ganti dengan hasil timing resmi tiap kota setelah Race Day -->
+  var RESULTS = {
+    jakarta: [
+      { bib: 1042, name: 'Rizky Pratama', time: '00:15:47' },
+      { bib: 2588, name: 'Dewi Anggraini', time: '00:16:09' },
+      { bib: 1177, name: 'Bagas Nugroho', time: '00:16:33' },
+      { bib: 3021, name: 'Putri Maharani', time: '00:16:58' },
+      { bib: 1450, name: 'Andi Kurniawan', time: '00:17:24' },
+      { bib: 2764, name: 'Siti Rahmawati', time: '00:17:51' },
+      { bib: 1903, name: 'Fajar Ramadhan', time: '00:18:22' },
+      { bib: 3312, name: 'Nadia Salsabila', time: '00:18:47' },
+      { bib: 1288, name: 'Yoga Setiawan', time: '00:19:15' },
+      { bib: 2019, name: 'Intan Permata', time: '00:19:53' }
+    ],
+    yogyakarta: [
+      { bib: 4108, name: 'Aditya Wibowo', time: '00:16:02' },
+      { bib: 4677, name: 'Larasati Dewi', time: '00:16:28' },
+      { bib: 4231, name: 'Bayu Saputra', time: '00:16:54' },
+      { bib: 4890, name: 'Anisa Rahma', time: '00:17:19' },
+      { bib: 4055, name: 'Galih Prasetyo', time: '00:17:46' },
+      { bib: 4562, name: 'Ratih Kusuma', time: '00:18:11' },
+      { bib: 4319, name: 'Hendra Gunawan', time: '00:18:40' },
+      { bib: 4744, name: 'Melati Ayu', time: '00:19:08' },
+      { bib: 4187, name: 'Wahyu Aji', time: '00:19:37' },
+      { bib: 4603, name: 'Salsa Oktaviani', time: '00:20:14' }
+    ],
+    bali: [
+      { bib: 5120, name: 'Gede Arya', time: '00:16:15' },
+      { bib: 5688, name: 'Kadek Sari', time: '00:16:41' },
+      { bib: 5233, name: 'Made Surya', time: '00:17:06' },
+      { bib: 5901, name: 'Komang Ayu', time: '00:17:33' },
+      { bib: 5077, name: 'Putu Wirawan', time: '00:18:00' },
+      { bib: 5544, name: 'Ni Luh Cahaya', time: '00:18:29' },
+      { bib: 5310, name: 'Wayan Adnyana', time: '00:18:58' },
+      { bib: 5762, name: 'Dayu Pramesti', time: '00:19:26' },
+      { bib: 5198, name: 'Ketut Bagus', time: '00:19:55' },
+      { bib: 5615, name: 'Ida Ayu Ratih', time: '00:20:33' }
+    ]
+  };
+
   var CONTEXT_STATS = [
     { num: { id: '35.000 → 80.000', en: '35,000 → 80,000' }, label: { id: 'Pengguna smartwatch lari di Indonesia (2023 → 2024)', en: 'Running smartwatch users in Indonesia (2023 → 2024)' }, src: 'Garmin Report; Good Stats' },
     { num: { id: '+330%', en: '+330%' }, label: { id: 'Pertumbuhan aktivitas lari nasional — 242.000 pelari (Mei 2025)', en: 'National running activity growth — 242,000 runners (May 2025)' }, src: 'Garmin Report; Good Stats' },
@@ -134,7 +180,10 @@
         'Pilih tiket dan selesaikan pembayaran.'
       ],
       close: 'Tutup',
-      derivedPrizeNote: 'Total hadiah podium per kota (dihitung dari tabel).'
+      derivedPrizeNote: 'Total hadiah podium per kota (dihitung dari tabel).',
+      resultsFilterLabel: 'Pilih kota',
+      resultsEmpty: 'Hasil resmi akan dipublikasikan di sini setelah Race Day kota ini.',
+      resultsPreviewNote: 'Data yang ditampilkan saat ini adalah contoh/pratinjau. Hasil timing resmi menyusul setelah tiap Race Day.'
     },
     en: {
       registerCta: 'Register Now',
@@ -161,7 +210,10 @@
         'Select your ticket and complete payment.'
       ],
       close: 'Close',
-      derivedPrizeNote: 'Total podium prize pool per city (calculated from the table).'
+      derivedPrizeNote: 'Total podium prize pool per city (calculated from the table).',
+      resultsFilterLabel: 'Choose a city',
+      resultsEmpty: 'Official results will be published here after this city’s Race Day.',
+      resultsPreviewNote: 'The entries shown are sample / preview data. Official timing results follow after each Race Day.'
     }
   };
 
@@ -212,6 +264,7 @@
     prizeTotalPerCity: PRIZE_TOTAL_PER_CITY,
     timeline: TIMELINE,
     contextStats: CONTEXT_STATS,
+    results: RESULTS,
     totalRunners: 10000,
     ui: UI,
     // helpers
