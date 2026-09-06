@@ -160,6 +160,30 @@
   // DEMO simulation (runners move along the real route); on race day they are
   // replaced by the chip-timing feed.
   // <!-- TODO: sambungkan posisi pelari ke API timing (feibot); rute sudah final -->
+  // Demo participant field (~200) for the Live Tracking page. Names and bibs
+  // are illustrative and positions are simulated; the field is deterministic
+  // (seeded) so it stays stable across reloads. On race day this list comes
+  // from the chip-timing API instead.
+  var LT_RUNNERS = (function () {
+    var FIRST = ['Rangga', 'Bayu', 'Dimas', 'Fajar', 'Reza', 'Yoga', 'Aldo', 'Gilang', 'Hendra', 'Rizky', 'Arif', 'Panji', 'Wahyu', 'Bagus', 'Iqbal', 'Tri', 'Dwi', 'Eko', 'Galih', 'Surya', 'Komang', 'Made', 'Wayan', 'Kadek', 'Gede', 'Putu', 'Nyoman', 'Bagas', 'Ketut', 'Agus', 'Andi', 'Budi', 'Candra', 'Dedi', 'Eka', 'Ferry', 'Gunawan', 'Hadi', 'Indra', 'Joko', 'Krisna', 'Lukman', 'Miko', 'Nanda', 'Oka', 'Prama', 'Rama', 'Satya', 'Teguh', 'Umar', 'Vino', 'Wisnu', 'Yudha', 'Zaki', 'Ayu', 'Dewi', 'Sari', 'Intan', 'Maya', 'Nadia', 'Putri', 'Rina', 'Sinta', 'Tari', 'Wulan', 'Farel', 'Rafi', 'Naufal', 'Alif'];
+    var LAST = ['Wijaya', 'Saputra', 'Prasetyo', 'Nugroho', 'Aditya', 'Kurniawan', 'Firmansyah', 'Ramadhan', 'Wibowo', 'Maulana', 'Setiawan', 'Nugraha', 'Hidayat', 'Santoso', 'Atmojo', 'Cahyono', 'Prabowo', 'Pratama', 'Darma', 'Putra', 'Arya', 'Andika', 'Dharma', 'Prakoso', 'Wirawan', 'Hakim', 'Halim', 'Susanto', 'Hartono', 'Permana', 'Utomo', 'Rahardjo', 'Simanjuntak', 'Sinaga', 'Tanjung', 'Siregar', 'Panjaitan', 'Lubis', 'Handoko', 'Wibisono'];
+    var seed = 20260927 >>> 0;
+    function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+    var out = [], usedBib = {};
+    // A few known entries first (continuity with Race Results; easy to search).
+    [['1024', 'Rangga Wijaya', 942], ['2031', 'Arif Setiawan', 1006], ['3012', 'Komang Adi', 1071], ['1097', 'Bayu Saputra', 1134], ['2008', 'Panji Nugraha', 1218]]
+      .forEach(function (k) { out.push({ bib: k[0], name: k[1], finishSec: k[2] }); usedBib[k[0]] = 1; });
+    while (out.length < 200) {
+      var bib = String(1000 + Math.floor(rnd() * 8999));
+      if (usedBib[bib]) continue;
+      usedBib[bib] = 1;
+      var name = FIRST[Math.floor(rnd() * FIRST.length)] + ' ' + LAST[Math.floor(rnd() * LAST.length)];
+      // 5K finish times skewed toward 25–35 min with a tail to ~48 min.
+      out.push({ bib: bib, name: name, finishSec: Math.round(900 + Math.pow(rnd(), 1.35) * 1980) });
+    }
+    return out;
+  })();
+
   var LIVE_TRACKING = {
     // [lat, lng] polyline of the official course.
     route: [
@@ -204,17 +228,11 @@
     ],
     // Optional 200 m speed segment [start, finish].
     speed200: [[-6.303649,106.895609],[-6.303658,106.893801]],
-    // Demo participants. finishSec = simulated finish time (board clock);
-    // colour = marker colour on the course.
-    runners: [
-      { bib: '1024', name: 'Rangga Wijaya', finishSec: 942,  color: '#F2D024' },
-      { bib: '2031', name: 'Arif Setiawan', finishSec: 1006, color: '#1FC7E6' },
-      { bib: '3012', name: 'Komang Adi',    finishSec: 1071, color: '#8CD867' },
-      { bib: '1097', name: 'Bayu Saputra',  finishSec: 1134, color: '#FF8A5B' },
-      { bib: '2008', name: 'Panji Nugraha', finishSec: 1218, color: '#FFFFFF' }
-    ],
+    // Demo participant field (generated above as LT_RUNNERS). finishSec = the
+    // simulated finish time used for the board clock. Positions are simulated.
+    runners: LT_RUNNERS,
     // Seconds of wall-clock for the leader to run start->finish in the demo.
-    animSeconds: 30,
+    animSeconds: 24,
     ui: {
       id: { board: 'Papan Live', bib: 'No. BIB', name: 'Nama', last: 'Terakhir Terdeteksi', clock: 'Waktu', restart: 'Ulangi', pause: 'Jeda', play: 'Main', sim: 'SIMULASI', running: 'Berlari', finished: 'Finish', waiting: 'Menunggu start', distance: 'Jarak' },
       en: { board: 'Live Board', bib: 'Bib', name: 'Name', last: 'Last Detected', clock: 'Time', restart: 'Restart', pause: 'Pause', play: 'Play', sim: 'SIMULATION', running: 'Running', finished: 'Finished', waiting: 'Awaiting start', distance: 'Distance' }

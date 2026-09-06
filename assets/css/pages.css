@@ -45,13 +45,11 @@
 @media (max-width: 900px) { .lt-map { height: 380px; } }
 .lt-map.leaflet-container { background: var(--color-ink); font-family: inherit; }
 
-/* Runner markers (Leaflet divIcon) */
-.lt-rmark { position: relative; }
-.lt-rmark__dot, .lt-rmark__halo { position: absolute; top: 50%; left: 50%; border-radius: 50%; transform: translate(-50%, -50%); }
-.lt-rmark__dot { width: 12px; height: 12px; box-shadow: 0 0 0 1.6px var(--color-ink); }
-.lt-rmark__halo { width: 12px; height: 12px; transform-origin: center; animation: lt-pulse 1.7s ease-out infinite; }
-.lt-rmark.is-finished .lt-rmark__halo { animation: none; opacity: 0; }
-@keyframes lt-pulse { 0% { transform: translate(-50%, -50%) scale(0.6); opacity: 0.55; } 70% { transform: translate(-50%, -50%) scale(2.6); opacity: 0; } 100% { opacity: 0; } }
+/* Selected-runner highlight marker (divIcon that follows the searched runner) */
+.lt-hl__dot, .lt-hl__pulse { position: absolute; top: 50%; left: 50%; border-radius: 50%; transform: translate(-50%, -50%); background: #F2D024; }
+.lt-hl__dot { width: 12px; height: 12px; box-shadow: 0 0 0 2px #0A0A0A; }
+.lt-hl__pulse { width: 12px; height: 12px; transform-origin: center; animation: lt-pulse 1.5s ease-out infinite; }
+@keyframes lt-pulse { 0% { transform: translate(-50%, -50%) scale(0.7); opacity: 0.6; } 70% { transform: translate(-50%, -50%) scale(3); opacity: 0; } 100% { opacity: 0; } }
 
 /* Checkpoint / POI tooltips */
 .lt-tip.leaflet-tooltip { background: rgba(10,10,10,0.85); color: var(--color-paper); border: 1px solid var(--color-line); border-radius: 6px; font-family: var(--font-kicker); letter-spacing: 0.06em; font-size: 12px; padding: 2px 7px; box-shadow: none; }
@@ -75,11 +73,23 @@
 .lt-status--run { background: var(--color-teal-tint); color: var(--color-teal); }
 .lt-status--done { background: rgba(140,216,103,0.18); color: var(--color-lime); }
 
+/* Participant count + search + selection */
+.lt-count { font-family: var(--font-body); font-weight: 400; letter-spacing: 0; font-size: var(--fs-14); color: var(--color-muted-on-ink); }
+.lt-search { margin-bottom: var(--space-3); }
+.lt-search__input { width: 100%; box-sizing: border-box; padding: 9px 12px; background: var(--color-ink); border: 1px solid var(--color-line); border-radius: 8px; color: var(--color-paper); font-family: var(--font-body); font-size: var(--fs-14); }
+.lt-search__input::placeholder { color: var(--color-muted-on-ink); }
+.lt-search__input:focus { outline: none; border-color: var(--color-teal); }
+.lt-board__scroll { max-height: 430px; overflow-y: auto; }
+.lt-table tr[data-bib] { cursor: pointer; }
+.lt-table tr[data-bib]:hover td { background: rgba(255,255,255,0.05); }
+.lt-table tr.is-selected td { background: rgba(242,208,36,0.16); }
+.lt-empty { color: var(--color-muted-on-ink); font-size: var(--fs-14); text-align: center; padding: var(--space-4); }
+
 .lt-controls { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; margin-top: var(--space-4); }
 .lt-legend { color: var(--color-muted-on-ink); font-size: var(--fs-14); margin-left: auto; }
 
 @media (prefers-reduced-motion: reduce) {
-  .lt-rmark__halo { animation: none; opacity: 0.4; }
+  .lt-hl__pulse { animation: none; opacity: 0.5; }
 }
 
 /* News cards */
