@@ -30,6 +30,58 @@
 .data--results .bib { font-family: var(--font-kicker); letter-spacing: 0.05em; }
 .data--results .results-empty { text-align: center; font-style: italic; padding: var(--space-6); color: var(--color-muted-on-paper); }
 
+/* ==========================================================================
+   Live Tracking — animated course map (demo). Built for a dark (ink) surface.
+   ========================================================================== */
+.lt-wrap { display: grid; grid-template-columns: 1.6fr 1fr; gap: var(--space-5); align-items: start; }
+@media (max-width: 900px) { .lt-wrap { grid-template-columns: 1fr; } }
+
+/* Leaflet map container — needs an explicit height. Dark ground shows through
+   until satellite tiles load, so the route stays legible either way. */
+.lt-map {
+  width: 100%; height: 480px; border-radius: 14px; overflow: hidden;
+  border: 1px solid var(--color-line); background: var(--color-ink);
+}
+@media (max-width: 900px) { .lt-map { height: 380px; } }
+.lt-map.leaflet-container { background: var(--color-ink); font-family: inherit; }
+
+/* Runner markers (Leaflet divIcon) */
+.lt-rmark { position: relative; }
+.lt-rmark__dot, .lt-rmark__halo { position: absolute; top: 50%; left: 50%; border-radius: 50%; transform: translate(-50%, -50%); }
+.lt-rmark__dot { width: 12px; height: 12px; box-shadow: 0 0 0 1.6px var(--color-ink); }
+.lt-rmark__halo { width: 12px; height: 12px; transform-origin: center; animation: lt-pulse 1.7s ease-out infinite; }
+.lt-rmark.is-finished .lt-rmark__halo { animation: none; opacity: 0; }
+@keyframes lt-pulse { 0% { transform: translate(-50%, -50%) scale(0.6); opacity: 0.55; } 70% { transform: translate(-50%, -50%) scale(2.6); opacity: 0; } 100% { opacity: 0; } }
+
+/* Checkpoint / POI tooltips */
+.lt-tip.leaflet-tooltip { background: rgba(10,10,10,0.85); color: var(--color-paper); border: 1px solid var(--color-line); border-radius: 6px; font-family: var(--font-kicker); letter-spacing: 0.06em; font-size: 12px; padding: 2px 7px; box-shadow: none; }
+.lt-tip.leaflet-tooltip::before { display: none; }
+.lt-tip--key.leaflet-tooltip { color: #F2D024; }
+.lt-tip--poi.leaflet-tooltip { color: #7FD3F2; }
+
+/* Live board (leaderboard) */
+.lt-board { background: var(--color-ink-soft); border: 1px solid var(--color-line); border-radius: 14px; padding: var(--space-4); }
+.lt-board__head { font-family: var(--font-kicker); letter-spacing: 0.08em; color: var(--color-paper); font-size: var(--fs-18); margin-bottom: var(--space-3); display: flex; align-items: center; gap: var(--space-2); }
+.lt-sim, .lt-sim-badge { font-family: var(--font-kicker); letter-spacing: 0.1em; font-size: 11px; color: var(--color-ink); background: #F2D024; padding: 2px 8px; border-radius: 999px; }
+.lt-table { width: 100%; border-collapse: collapse; font-size: var(--fs-14); }
+.lt-table th { text-align: left; font-family: var(--font-kicker); letter-spacing: 0.06em; font-weight: 400; color: var(--color-muted-on-ink); padding: 4px 8px; border-bottom: 1px solid var(--color-line); }
+.lt-table td { padding: 8px; border-bottom: 1px solid var(--color-line); color: var(--color-paper); vertical-align: middle; }
+.lt-table tr:last-child td { border-bottom: 0; }
+.lt-table tr.is-finished .lt-name { color: var(--color-muted-on-ink); }
+.lt-pos { font-family: var(--font-kicker); color: var(--color-teal); width: 1.5em; }
+.lt-time { text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+.lt-swatch { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+.lt-status { font-family: var(--font-kicker); font-size: 10px; letter-spacing: 0.06em; padding: 1px 6px; border-radius: 999px; margin-left: 4px; white-space: nowrap; }
+.lt-status--run { background: var(--color-teal-tint); color: var(--color-teal); }
+.lt-status--done { background: rgba(140,216,103,0.18); color: var(--color-lime); }
+
+.lt-controls { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; margin-top: var(--space-4); }
+.lt-legend { color: var(--color-muted-on-ink); font-size: var(--fs-14); margin-left: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lt-rmark__halo { animation: none; opacity: 0.4; }
+}
+
 /* News cards */
 .news-card { display: flex; flex-direction: column; gap: var(--space-2); }
 .news-card time { font-family: var(--font-kicker); letter-spacing: 0.08em; color: var(--color-teal); font-size: var(--fs-14); }

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link rel="icon" type="image/png" href="/assets/img/graphics/shard-runner-mark.png">
+  <link rel="apple-touch-icon" href="/assets/img/graphics/shard-runner-mark.png">
+  <title>Live Tracking — PLN Mobile Electric 5K Series 2026</title>
+  <meta name="description" content="Ikuti PLN Mobile Electric 5K Series secara real time. Chip timing dan antena di sepanjang rute 5K melacak posisi tiap pelari secara langsung — dengan peta rute dan papan live.">
+  <link rel="canonical" href="https://electric5k.example/id/live-tracking.html">
+  <link rel="alternate" hreflang="id" href="https://electric5k.example/id/live-tracking.html">
+  <link rel="alternate" hreflang="en" href="https://electric5k.example/en/live-tracking.html">
+  <link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/live-tracking.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Live Tracking — PLN Mobile Electric 5K Series 2026">
+  <meta property="og:description" content="Peta rute langsung yang mengikuti tiap pelari di sepanjang lintasan 5K saat hari-H. Power Your Speed.">
+  <meta property="og:locale" content="id_ID">
+  <meta property="og:locale:alternate" content="en_US">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/tokens.css">
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="/assets/css/pages.css">
+  <link rel="stylesheet" href="/assets/vendor/leaflet/leaflet.css">
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main id="main">
+    <!-- 1 — HERO -->
+    <section class="hero hero--compact">
+      <div class="hero__media hero__media--deco hero__media--deco--v2" aria-hidden="true"><img class="deco-shard deco-shard--tr" src="/assets/img/graphics/shard-fragment-01.png" alt=""><img class="deco-shard deco-shard--bl" src="/assets/img/graphics/shard-fragment-02.png" alt=""></div>
+      <div class="hero__inner container container--wide">
+        <span class="kicker">Live Tracking</span>
+        <h1 class="hero__title">Ikuti Lomba Secara Real Time</h1>
+        <p class="hero__sub">Saat hari-H, tiap pelari memakai chip timing dan melewati antena yang dipasang di sepanjang rute 5K — sehingga posisinya ter-update langsung di peta rute di bawah.</p>
+      </div>
+    </section>
+    <div class="shard-divider" aria-hidden="true"></div>
+
+    <!-- 2 — RUTE LANGSUNG -->
+    <section class="section surface-ink">
+      <div class="container container--wide">
+        <div class="section-head">
+          <span class="kicker">Peta Rute</span>
+          <h2>Rute 5K, Secara Langsung</h2>
+          <p>Lintasan resmi di Taman Mini Indonesia Indah (TMII), dengan antena timing di tiap kilometer. Saat pelari melewatinya, chip-nya terdeteksi dan papan diperbarui. Posisi pelari di bawah adalah <strong>simulasi</strong> — feed asli tersambung saat hari-H.</p>
+        </div>
+
+        <div class="lt-wrap">
+          <!-- Peta rute (Leaflet, dirender oleh live-tracking.js) -->
+          <div class="lt-map" data-live-map role="application" aria-label="Peta satelit rute 5K di TMII dengan posisi pelari beranimasi (simulasi)."></div>
+
+          <!-- Papan live (dirender oleh live-tracking.js) -->
+          <div class="lt-board" data-live-board></div>
+        </div>
+
+        <div class="lt-controls">
+          <button class="btn btn--ghost btn--sm" type="button" data-lt-toggle aria-pressed="true">Jeda</button>
+          <button class="btn btn--ghost btn--sm" type="button" data-lt-restart>Ulangi</button>
+          <span class="lt-legend">Titik berwarna adalah peserta — dicocokkan warnanya dengan papan live.</span>
+        </div>
+
+        <!-- Rute asli; feed pelari disambungkan saat hari-H. -->
+        <p class="note" style="margin-top:var(--space-5)">Rute yang ditampilkan adalah lintasan resmi hasil survei di TMII. Posisi pelari masih simulasi demo — saat hari-H papan digerakkan oleh feed chip timing resmi.</p>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="/assets/js/data.js"></script>
+  <script src="/assets/js/main.js" defer></script>
+  <script src="/assets/js/countdown.js" defer></script>
+  <script src="/assets/js/accordion.js" defer></script>
+  <script src="/assets/vendor/leaflet/leaflet.js" defer></script>
+  <script src="/assets/js/live-tracking.js" defer></script>
+</body>
+</html>

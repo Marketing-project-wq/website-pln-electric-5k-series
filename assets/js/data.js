@@ -153,6 +153,74 @@
     ]
   };
 
+  // ---- Live Tracking ------------------------------------------------------
+  // Course + runner positions for the Live Tracking page. The route, timing
+  // points and POIs below are the REAL surveyed TMII course (exported from the
+  // organiser's Google Earth project, ~5.1 km). Runner positions are still a
+  // DEMO simulation (runners move along the real route); on race day they are
+  // replaced by the chip-timing feed.
+  // <!-- TODO: sambungkan posisi pelari ke API timing (feibot); rute sudah final -->
+  var LIVE_TRACKING = {
+    // [lat, lng] polyline of the official course.
+    route: [
+      [-6.302264,106.889089], [-6.302258,106.889306], [-6.301853,106.889337], [-6.300544,106.889358],
+      [-6.300542,106.89038], [-6.300465,106.890736], [-6.300464,106.892201], [-6.301267,106.892261],
+      [-6.301257,106.893764], [-6.301205,106.89411], [-6.300995,106.894152], [-6.300715,106.894159],
+      [-6.300563,106.894122], [-6.300419,106.89406], [-6.299918,106.894023], [-6.29987,106.895557],
+      [-6.299825,106.898576], [-6.299689,106.898612], [-6.299583,106.898696], [-6.299575,106.898719],
+      [-6.299573,106.898721], [-6.299569,106.898725], [-6.299568,106.898726], [-6.299613,106.901791],
+      [-6.299656,106.901877], [-6.299716,106.901949], [-6.299822,106.902001], [-6.300751,106.902005],
+      [-6.300774,106.903429], [-6.300835,106.903576], [-6.301008,106.903844], [-6.301235,106.904091],
+      [-6.30155,106.904324], [-6.301778,106.904443], [-6.302026,106.904511], [-6.302305,106.904537],
+      [-6.30266,106.904475], [-6.302964,106.904322], [-6.303199,106.904126], [-6.30336,106.903851],
+      [-6.303474,106.903557], [-6.303509,106.90239], [-6.303497,106.902053], [-6.303487,106.902037],
+      [-6.303471,106.90203], [-6.303442,106.902026], [-6.303428,106.902028], [-6.303425,106.902028],
+      [-6.303411,106.902034], [-6.303396,106.902058], [-6.303393,106.90216], [-6.303397,106.902312],
+      [-6.303387,106.903165], [-6.303371,106.903392], [-6.303337,106.90366], [-6.303145,106.904006],
+      [-6.302988,106.90416], [-6.302716,106.904324], [-6.302494,106.904401], [-6.302255,106.904431],
+      [-6.302025,106.9044], [-6.301877,106.904374], [-6.301707,106.904304], [-6.301477,106.904171],
+      [-6.301238,106.903967], [-6.301099,106.90375], [-6.30102,106.903615], [-6.30094,106.903389],
+      [-6.300898,106.903185], [-6.300885,106.902948], [-6.30087,106.902297], [-6.300857,106.902002],
+      [-6.30115,106.901996], [-6.303314,106.902001], [-6.303341,106.900651], [-6.303453,106.900637],
+      [-6.303544,106.900568], [-6.303559,106.900503], [-6.303584,106.8998], [-6.303587,106.898713],
+      [-6.303601,106.89748], [-6.303614,106.897387], [-6.30365,106.89708], [-6.303652,106.89686],
+      [-6.30365,106.896141], [-6.303651,106.895162], [-6.303654,106.894774], [-6.303657,106.893753],
+      [-6.303667,106.892854], [-6.30367,106.892615], [-6.303719,106.892201], [-6.303781,106.89181],
+      [-6.303824,106.891453], [-6.30383,106.890399], [-6.303835,106.889942], [-6.303842,106.889554],
+      [-6.304115,106.889207], [-6.304134,106.889101]
+    ],
+    // Timing points ("antena/decoder"); frac = position along the route [0..1].
+    checkpoints: [
+      { label: { id: 'Start', en: 'Start' }, lat: -6.302271, lng: 106.88909, frac: 0.0 },
+      { label: { id: 'KM 1', en: 'KM 1' }, lat: -6.299868, lng: 106.895556, frac: 0.2217 },
+      { label: { id: 'KM 2', en: 'KM 2' }, lat: -6.300774, lng: 106.903392, frac: 0.4158 },
+      { label: { id: 'KM 3', en: 'KM 3' }, lat: -6.301619, lng: 106.90425, frac: 0.6096 },
+      { label: { id: 'KM 4', en: 'KM 4' }, lat: -6.303596, lng: 106.898081, frac: 0.8045 },
+      { label: { id: 'Finish', en: 'Finish' }, lat: -6.304131, lng: 106.889101, frac: 1.0 }
+    ],
+    // Extra on-course markers (not timing points).
+    pois: [
+      { kind: 'hydration', label: { id: 'Water Station', en: 'Water Station' }, lat: -6.303569, lng: 106.902414 }
+    ],
+    // Optional 200 m speed segment [start, finish].
+    speed200: [[-6.303649,106.895609],[-6.303658,106.893801]],
+    // Demo participants. finishSec = simulated finish time (board clock);
+    // colour = marker colour on the course.
+    runners: [
+      { bib: '1024', name: 'Rangga Wijaya', finishSec: 942,  color: '#F2D024' },
+      { bib: '2031', name: 'Arif Setiawan', finishSec: 1006, color: '#1FC7E6' },
+      { bib: '3012', name: 'Komang Adi',    finishSec: 1071, color: '#8CD867' },
+      { bib: '1097', name: 'Bayu Saputra',  finishSec: 1134, color: '#FF8A5B' },
+      { bib: '2008', name: 'Panji Nugraha', finishSec: 1218, color: '#FFFFFF' }
+    ],
+    // Seconds of wall-clock for the leader to run start->finish in the demo.
+    animSeconds: 30,
+    ui: {
+      id: { board: 'Papan Live', bib: 'No. BIB', name: 'Nama', last: 'Terakhir Terdeteksi', clock: 'Waktu', restart: 'Ulangi', pause: 'Jeda', play: 'Main', sim: 'SIMULASI', running: 'Berlari', finished: 'Finish', waiting: 'Menunggu start', distance: 'Jarak' },
+      en: { board: 'Live Board', bib: 'Bib', name: 'Name', last: 'Last Detected', clock: 'Time', restart: 'Restart', pause: 'Pause', play: 'Play', sim: 'SIMULATION', running: 'Running', finished: 'Finished', waiting: 'Awaiting start', distance: 'Distance' }
+    }
+  };
+
   // ---- Shared UI strings (header/footer/components) ----
   var UI = {
     id: {
@@ -259,6 +327,7 @@
     prizes: PRIZES,
     prizeTotalPerCity: PRIZE_TOTAL_PER_CITY,
     results: RESULTS,
+    liveTracking: LIVE_TRACKING,
     timeline: TIMELINE,
     contextStats: CONTEXT_STATS,
     totalRunners: 10000,
