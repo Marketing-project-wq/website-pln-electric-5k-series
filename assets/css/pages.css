@@ -36,29 +36,28 @@
 .lt-wrap { display: grid; grid-template-columns: 1.6fr 1fr; gap: var(--space-5); align-items: start; }
 @media (max-width: 900px) { .lt-wrap { grid-template-columns: 1fr; } }
 
+/* Leaflet map container — needs an explicit height. Dark ground shows through
+   until satellite tiles load, so the route stays legible either way. */
 .lt-map {
-  width: 100%; height: auto; display: block; border-radius: 14px;
-  border: 1px solid var(--color-line);
-  background: radial-gradient(circle at 28% 18%, rgba(28,153,177,0.16), transparent 62%),
-              radial-gradient(circle at 80% 90%, rgba(140,216,103,0.10), transparent 55%),
-              var(--color-ink);
+  width: 100%; height: 480px; border-radius: 14px; overflow: hidden;
+  border: 1px solid var(--color-line); background: var(--color-ink);
 }
-#lt-route-base { fill: none; stroke: rgba(255,255,255,0.10); stroke-width: 14; stroke-linecap: round; stroke-linejoin: round; }
-#lt-route { fill: none; stroke: var(--color-teal); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
-.lt-flow { fill: none; stroke: var(--color-lime); stroke-width: 2.5; stroke-linecap: round; opacity: 0.7;
-  stroke-dasharray: 2 22; animation: lt-flow 1.4s linear infinite; }
-@keyframes lt-flow { to { stroke-dashoffset: -24; } }
+@media (max-width: 900px) { .lt-map { height: 380px; } }
+.lt-map.leaflet-container { background: var(--color-ink); font-family: inherit; }
 
-.lt-cp__ring { fill: none; stroke: rgba(255,255,255,0.55); stroke-width: 2; }
-.lt-cp__dot { stroke: var(--color-ink); stroke-width: 1.5; }
-.lt-cp__label { fill: var(--color-muted-on-ink); font-family: var(--font-kicker); font-size: 15px; letter-spacing: 0.06em; }
-.lt-cp__label--key { fill: var(--color-paper); }
+/* Runner markers (Leaflet divIcon) */
+.lt-rmark { position: relative; }
+.lt-rmark__dot, .lt-rmark__halo { position: absolute; top: 50%; left: 50%; border-radius: 50%; transform: translate(-50%, -50%); }
+.lt-rmark__dot { width: 12px; height: 12px; box-shadow: 0 0 0 1.6px var(--color-ink); }
+.lt-rmark__halo { width: 12px; height: 12px; transform-origin: center; animation: lt-pulse 1.7s ease-out infinite; }
+.lt-rmark.is-finished .lt-rmark__halo { animation: none; opacity: 0; }
+@keyframes lt-pulse { 0% { transform: translate(-50%, -50%) scale(0.6); opacity: 0.55; } 70% { transform: translate(-50%, -50%) scale(2.6); opacity: 0; } 100% { opacity: 0; } }
 
-.lt-runner__pulse { transform-origin: center; animation: lt-pulse 1.7s ease-out infinite; }
-.lt-runner__dot { stroke: var(--color-ink); stroke-width: 1.6; }
-.lt-runner__bib { display: none; }        /* identity lives in the board; keep the map clean */
-.lt-runner.is-finished .lt-runner__pulse { animation: none; opacity: 0; }
-@keyframes lt-pulse { 0% { transform: scale(0.5); opacity: 0.55; } 70% { transform: scale(1.7); opacity: 0; } 100% { opacity: 0; } }
+/* Checkpoint / POI tooltips */
+.lt-tip.leaflet-tooltip { background: rgba(10,10,10,0.85); color: var(--color-paper); border: 1px solid var(--color-line); border-radius: 6px; font-family: var(--font-kicker); letter-spacing: 0.06em; font-size: 12px; padding: 2px 7px; box-shadow: none; }
+.lt-tip.leaflet-tooltip::before { display: none; }
+.lt-tip--key.leaflet-tooltip { color: #F2D024; }
+.lt-tip--poi.leaflet-tooltip { color: #7FD3F2; }
 
 /* Live board (leaderboard) */
 .lt-board { background: var(--color-ink-soft); border: 1px solid var(--color-line); border-radius: 14px; padding: var(--space-4); }
@@ -80,8 +79,7 @@
 .lt-legend { color: var(--color-muted-on-ink); font-size: var(--fs-14); margin-left: auto; }
 
 @media (prefers-reduced-motion: reduce) {
-  .lt-flow { animation: none; }
-  .lt-runner__pulse { animation: none; opacity: 0.4; }
+  .lt-rmark__halo { animation: none; opacity: 0.4; }
 }
 
 /* News cards */

@@ -1,11 +1,12 @@
 /* ==========================================================================
-   live-tracking.js — DEMO course map with animated runners.
-   Self-initialising (like countdown.js / accordion.js). Reads the demo config
-   from data.js (window.EVENT_DATA.liveTracking) and animates marker dots along
-   the SVG route path (#lt-route), keeping a live "leaderboard" in sync.
+   live-tracking.js — Live course map (Leaflet) with animated runners.
+   Self-initialising. Reads window.EVENT_DATA.liveTracking (real TMII route +
+   checkpoints from the organiser's KML) and animates demo runner markers along
+   the real route, keeping a live leaderboard in sync.
 
-   This is a SIMULATION. On race day the runner positions come from the chip
-   timing feed (feibot API) and the route path is replaced with the real course.
+   The ROUTE and timing points are the real surveyed course. Runner positions
+   are a SIMULATION — on race day they come from the chip-timing feed.
+   Requires Leaflet (vendored at /assets/vendor/leaflet/).
    ========================================================================== */
 (function () {
   'use strict';
@@ -18,85 +19,107 @@
   var CFG = D.liveTracking;
   var T = (CFG.ui && CFG.ui[LANG]) || {};
   var loc = D.loc || function (o) { return o ? (o[LANG] != null ? o[LANG] : o.id) : ''; };
-
-  var route = mapEl.querySelector('#lt-route');
-  var cpLayer = mapEl.querySelector('[data-lt-checkpoints]');
-  var runnerLayer = mapEl.querySelector('[data-lt-runners]');
   var board = document.querySelector('[data-live-board]');
-  if (!route || !cpLayer || !runnerLayer) return;
 
-  var SVGNS = 'http://www.w3.org/2000/svg';
-  function svg(tag, attrs) {
-    var e = document.createElementNS(SVGNS, tag);
-    for (var k in attrs) if (attrs.hasOwnProperty(k)) e.setAttribute(k, attrs[k]);
-    return e;
-  }
-  function pad2(n) { return (n < 10 ? '0' : '') + n; }
-  function clock(sec) {
-    sec = Math.max(0, Math.round(sec));
-    var m = Math.floor(sec / 60), s = sec % 60;
-    return pad2(m) + ':' + pad2(s);
-  }
-  function esc(str) {
-    return String(str).replace(/[&<>"]/g, function (c) {
-      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
-    });
-  }
-
-  var LEN = route.getTotalLength();
-  var checkpoints = CFG.checkpoints || [];
-  var maxKm = checkpoints.length ? checkpoints[checkpoints.length - 1].km : 5;
-  var runners = (CFG.runners || []).map(function (r) { return r; });
+  var route = CFG.route || [];
+  var checkpoints = (CFG.checkpoints || []).slice().sort(function (a, b) { return a.frac - b.frac; });
+  var runners = CFG.runners || [];
   var leaderFinish = runners.reduce(function (m, r) { return Math.min(m, r.finishSec); }, Infinity);
-  var animSeconds = CFG.animSeconds || 26;
+  var animSeconds = CFG.animSeconds || 30;
 
-  // Distance (km) -> point on the path.
-  function pointAtKm(km) { return route.getPointAtLength((km / maxKm) * LEN); }
+  function pad2(n) { return (n < 10 ? '0' : '') + n; }
+  function clock(sec) { sec = Math.max(0, Math.round(sec)); return pad2(Math.floor(sec / 60)) + ':' + pad2(sec % 60); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
 
-  // ---- Draw checkpoints (the antenna/decoder timing points) ---------------
-  checkpoints.forEach(function (cp, i) {
-    var p = pointAtKm(cp.km);
-    var isStart = i === 0, isFinish = i === checkpoints.length - 1;
-    var fill = isStart ? '#8CD867' : isFinish ? '#F2D024' : 'var(--color-ink, #0A0A0A)';
-    var g = svg('g', { 'class': 'lt-cp' });
-    g.appendChild(svg('circle', { cx: p.x, cy: p.y, r: 9, 'class': 'lt-cp__ring' }));
-    g.appendChild(svg('circle', { cx: p.x, cy: p.y, r: 5.5, 'class': 'lt-cp__dot', fill: fill }));
-    var label = isStart || isFinish ? loc(cp.label) : String(cp.km);
-    var txt = svg('text', {
-      x: p.x, y: p.y - 15, 'class': 'lt-cp__label' + (isStart || isFinish ? ' lt-cp__label--key' : ''),
-      'text-anchor': 'middle'
-    });
-    txt.textContent = label;
-    g.appendChild(txt);
-    cpLayer.appendChild(g);
-  });
+  // ---- Distance table for interpolating a position at fraction f ----------
+  function hav(a, b) {
+    var R = 6371000, dLat = (b[0] - a[0]) * Math.PI / 180, dLon = (b[1] - a[1]) * Math.PI / 180;
+    var la1 = a[0] * Math.PI / 180, la2 = b[0] * Math.PI / 180;
+    var x = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(la1) * Math.cos(la2) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    return 2 * R * Math.asin(Math.min(1, Math.sqrt(x)));
+  }
+  var cum = [0];
+  for (var i = 1; i < route.length; i++) cum.push(cum[i - 1] + hav(route[i - 1], route[i]));
+  var totalLen = cum[cum.length - 1] || 1;
 
-  // ---- Create runner markers ----------------------------------------------
-  var markers = runners.map(function (r) {
-    var g = svg('g', { 'class': 'lt-runner' });
-    g.appendChild(svg('circle', { r: 11, 'class': 'lt-runner__pulse', fill: r.color }));
-    g.appendChild(svg('circle', { r: 6, 'class': 'lt-runner__dot', fill: r.color }));
-    var t = svg('text', { 'class': 'lt-runner__bib', 'text-anchor': 'middle', y: -14 });
-    t.textContent = r.bib;
-    g.appendChild(t);
-    runnerLayer.appendChild(g);
-    return g;
-  });
+  function latlngAt(frac) {
+    if (route.length === 0) return [0, 0];
+    var target = Math.max(0, Math.min(1, frac)) * totalLen;
+    for (var j = 1; j < route.length; j++) {
+      if (cum[j] >= target) {
+        var seg = cum[j] - cum[j - 1] || 1;
+        var t = (target - cum[j - 1]) / seg;
+        return [route[j - 1][0] + (route[j][0] - route[j - 1][0]) * t,
+                route[j - 1][1] + (route[j][1] - route[j - 1][1]) * t];
+      }
+    }
+    return route[route.length - 1];
+  }
 
   function durationFor(r) { return animSeconds * (r.finishSec / leaderFinish); }
   function progressFor(r, elapsed) { return Math.min(elapsed / durationFor(r), 1); }
-  function lastCheckpoint(km) {
+  function lastCheckpoint(p) {
     var last = checkpoints[0];
-    for (var i = 0; i < checkpoints.length; i++) if (checkpoints[i].km <= km + 1e-6) last = checkpoints[i];
+    for (var k = 0; k < checkpoints.length; k++) if (checkpoints[k].frac <= p + 1e-9) last = checkpoints[k];
     return last;
   }
 
+  // ---- Leaflet map --------------------------------------------------------
+  var map = null, runnerMarkers = [];
+  var L = window.L;
+  if (L) {
+    map = L.map(mapEl, { zoomControl: true, scrollWheelZoom: false, attributionControl: true });
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom: 19, attribution: 'Imagery &copy; Esri, Maxar, Earthstar Geographics'
+    }).addTo(map);
+    // Optional place/road labels over the imagery (fails gracefully if blocked).
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom: 19, opacity: 0.9
+    }).addTo(map);
+
+    // Route: glow underlay + solid line.
+    L.polyline(route, { color: '#0A0A0A', weight: 11, opacity: 0.45, lineJoin: 'round', lineCap: 'round' }).addTo(map);
+    L.polyline(route, { color: '#1FE0D6', weight: 5, opacity: 0.95, lineJoin: 'round', lineCap: 'round' }).addTo(map);
+
+    // 200 m speed segment (highlighted).
+    if (CFG.speed200) L.polyline(CFG.speed200, { color: '#FF4D4D', weight: 6, opacity: 0.95, lineCap: 'round' }).addTo(map)
+      .bindTooltip('200 m Speed', { direction: 'top', className: 'lt-tip' });
+
+    // Timing points.
+    checkpoints.forEach(function (cp, idx) {
+      var start = idx === 0, finish = idx === checkpoints.length - 1;
+      var fill = start ? '#8CD867' : finish ? '#F2D024' : '#1FE0D6';
+      L.circleMarker([cp.lat, cp.lng], { radius: start || finish ? 8 : 6, color: '#0A0A0A', weight: 2, fillColor: fill, fillOpacity: 1 })
+        .addTo(map).bindTooltip(loc(cp.label), { permanent: true, direction: 'top', className: 'lt-tip' + (start || finish ? ' lt-tip--key' : '') });
+    });
+
+    // POIs (water station, etc.).
+    (CFG.pois || []).forEach(function (p) {
+      L.circleMarker([p.lat, p.lng], { radius: 6, color: '#0A0A0A', weight: 2, fillColor: '#2CA6E0', fillOpacity: 1 })
+        .addTo(map).bindTooltip(loc(p.label), { direction: 'top', className: 'lt-tip lt-tip--poi' });
+    });
+
+    // Runner markers (divIcons; positioned each frame).
+    runnerMarkers = runners.map(function (r) {
+      var icon = L.divIcon({
+        className: 'lt-rmark',
+        html: '<span class="lt-rmark__halo" style="background:' + r.color + '"></span><span class="lt-rmark__dot" style="background:' + r.color + '"></span>',
+        iconSize: [24, 24], iconAnchor: [12, 12]
+      });
+      return L.marker(latlngAt(0), { icon: icon, keyboard: false, interactive: false, zIndexOffset: 1000 }).addTo(map);
+    });
+
+    if (route.length) map.fitBounds(L.latLngBounds(route), { padding: [34, 34] });
+    setTimeout(function () { map.invalidateSize(); }, 0);
+  }
+
   function positionMarkers(elapsed) {
-    runners.forEach(function (r, i) {
+    if (!map) return;
+    runners.forEach(function (r, idx) {
       var p = progressFor(r, elapsed);
-      var pt = route.getPointAtLength(p * LEN);
-      markers[i].setAttribute('transform', 'translate(' + pt.x.toFixed(2) + ',' + pt.y.toFixed(2) + ')');
-      markers[i].setAttribute('class', 'lt-runner' + (p >= 1 ? ' is-finished' : ''));
+      runnerMarkers[idx].setLatLng(latlngAt(p));
+      var elm = runnerMarkers[idx].getElement && runnerMarkers[idx].getElement();
+      if (elm) elm.classList.toggle('is-finished', p >= 1);
     });
   }
 
@@ -105,16 +128,10 @@
     if (!board) return;
     var rows = runners.map(function (r) {
       var p = progressFor(r, elapsed);
-      var km = p * maxKm;
-      var cp = lastCheckpoint(km);
+      var cp = lastCheckpoint(p);
       var done = p >= 1;
-      return {
-        r: r, p: p, km: km,
-        last: loc(cp.label),
-        time: clock(p * r.finishSec),
-        status: done ? (T.finished || 'Finished') : (p > 0 ? (T.running || 'Running') : (T.waiting || '')),
-        done: done
-      };
+      return { r: r, p: p, last: loc(cp.label), time: clock(p * r.finishSec),
+        status: done ? (T.finished || 'Finished') : (p > 0 ? (T.running || 'Running') : (T.waiting || '')), done: done };
     }).sort(function (a, b) { return b.p - a.p; });
 
     var head = '<thead><tr><th>#</th><th>' + esc(T.bib || 'Bib') + '</th><th>' + esc(T.name || 'Name') +
@@ -125,8 +142,7 @@
         '<td><span class="lt-swatch" style="background:' + esc(row.r.color) + '"></span>' + esc(row.r.bib) + '</td>' +
         '<td class="lt-name">' + esc(row.r.name) + '</td>' +
         '<td>' + esc(row.last) + ' <span class="lt-status ' + (row.done ? 'lt-status--done' : 'lt-status--run') + '">' + esc(row.status) + '</span></td>' +
-        '<td class="lt-time">' + esc(row.time) + '</td>' +
-      '</tr>';
+        '<td class="lt-time">' + esc(row.time) + '</td></tr>';
     }).join('');
     board.innerHTML = '<div class="lt-board__head">' + esc(T.board || 'Live Board') +
       ' <span class="lt-sim">' + esc(T.sim || 'SIMULATION') + '</span></div>' +
@@ -139,58 +155,36 @@
   var toggleBtn = document.querySelector('[data-lt-toggle]');
   var restartBtn = document.querySelector('[data-lt-restart]');
 
-  function allDone(e) {
-    for (var i = 0; i < runners.length; i++) if (progressFor(runners[i], e) < 1) return false;
-    return true;
-  }
+  function allDone(e) { for (var i = 0; i < runners.length; i++) if (progressFor(runners[i], e) < 1) return false; return true; }
   function draw(e) {
     positionMarkers(e);
     if (lastBoard < 0 || Math.abs(e - lastBoard) >= 0.25 || allDone(e)) { renderBoard(e); lastBoard = e; }
   }
-  function setToggle(isPlaying) {
-    if (!toggleBtn) return;
-    toggleBtn.textContent = isPlaying ? (T.pause || 'Pause') : (T.play || 'Play');
-    toggleBtn.setAttribute('aria-pressed', String(isPlaying));
-  }
+  function setToggle(on) { if (toggleBtn) { toggleBtn.textContent = on ? (T.pause || 'Pause') : (T.play || 'Play'); toggleBtn.setAttribute('aria-pressed', String(on)); } }
   function tick(ts) {
     if (lastTs == null) lastTs = ts;
     elapsed += (ts - lastTs) / 1000; lastTs = ts;
     draw(elapsed);
-    if (playing && !allDone(elapsed)) { raf = requestAnimationFrame(tick); }
+    if (playing && !allDone(elapsed)) raf = requestAnimationFrame(tick);
     else { playing = false; setToggle(false); }
   }
-  function play() {
-    if (playing) return;
-    if (allDone(elapsed)) elapsed = 0;
-    playing = true; lastTs = null; setToggle(true);
-    raf = requestAnimationFrame(tick);
-  }
-  function pause() {
-    playing = false; if (raf) cancelAnimationFrame(raf);
-    setToggle(false);
-  }
+  function play() { if (playing) return; if (allDone(elapsed)) elapsed = 0; playing = true; lastTs = null; setToggle(true); raf = requestAnimationFrame(tick); }
+  function pause() { playing = false; if (raf) cancelAnimationFrame(raf); setToggle(false); }
   function restart() { pause(); elapsed = 0; draw(0); play(); }
 
   if (toggleBtn) toggleBtn.addEventListener('click', function () { playing ? pause() : play(); });
   if (restartBtn) restartBtn.addEventListener('click', restart);
 
-  // Initial frame.
   if (reduce) {
-    // Static, mid-race snapshot; let the viewer opt in to motion via controls.
     draw(animSeconds * 0.45);
     setToggle(false);
   } else {
     draw(0);
-    // Auto-play when scrolled into view (once).
     if ('IntersectionObserver' in window) {
       var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (en) {
-          if (en.isIntersecting) { play(); io.disconnect(); }
-        });
-      }, { threshold: 0.35 });
+        entries.forEach(function (en) { if (en.isIntersecting) { play(); io.disconnect(); } });
+      }, { threshold: 0.3 });
       io.observe(mapEl);
-    } else {
-      play();
-    }
+    } else { play(); }
   }
 })();

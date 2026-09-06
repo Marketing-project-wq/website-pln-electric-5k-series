@@ -23,6 +23,7 @@
   <link rel="stylesheet" href="/assets/css/base.css">
   <link rel="stylesheet" href="/assets/css/components.css">
   <link rel="stylesheet" href="/assets/css/pages.css">
+  <link rel="stylesheet" href="/assets/vendor/leaflet/leaflet.css">
 </head>
 <body>
   <div id="site-header"></div>
@@ -45,18 +46,12 @@
         <div class="section-head">
           <span class="kicker">Peta Rute</span>
           <h2>Rute 5K, Secara Langsung</h2>
-          <p>Antena (titik timing) ada di tiap kilometer. Saat pelari melewatinya, chip-nya terdeteksi dan papan diperbarui. Pratinjau di bawah adalah <strong>simulasi</strong> — posisi asli akan tampil di sini saat hari-H.</p>
+          <p>Lintasan resmi di Taman Mini Indonesia Indah (TMII), dengan antena timing di tiap kilometer. Saat pelari melewatinya, chip-nya terdeteksi dan papan diperbarui. Posisi pelari di bawah adalah <strong>simulasi</strong> — feed asli tersambung saat hari-H.</p>
         </div>
 
         <div class="lt-wrap">
-          <!-- Peta rute -->
-          <svg class="lt-map" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet" data-live-map role="img" aria-label="Peta rute 5K beranimasi dengan pelari bergerak antar titik timing (simulasi).">
-            <path id="lt-route-base" d="M 140 470 C 96 372, 150 262, 258 258 C 350 254, 396 350, 492 336 C 604 320, 628 196, 736 208 C 838 219, 892 330, 828 416 C 772 491, 648 476, 556 470 C 470 464, 430 500, 344 496 C 268 492, 224 500, 196 456"/>
-            <path id="lt-route" d="M 140 470 C 96 372, 150 262, 258 258 C 350 254, 396 350, 492 336 C 604 320, 628 196, 736 208 C 838 219, 892 330, 828 416 C 772 491, 648 476, 556 470 C 470 464, 430 500, 344 496 C 268 492, 224 500, 196 456"/>
-            <path class="lt-flow" d="M 140 470 C 96 372, 150 262, 258 258 C 350 254, 396 350, 492 336 C 604 320, 628 196, 736 208 C 838 219, 892 330, 828 416 C 772 491, 648 476, 556 470 C 470 464, 430 500, 344 496 C 268 492, 224 500, 196 456"/>
-            <g data-lt-checkpoints></g>
-            <g data-lt-runners></g>
-          </svg>
+          <!-- Peta rute (Leaflet, dirender oleh live-tracking.js) -->
+          <div class="lt-map" data-live-map role="application" aria-label="Peta satelit rute 5K di TMII dengan posisi pelari beranimasi (simulasi)."></div>
 
           <!-- Papan live (dirender oleh live-tracking.js) -->
           <div class="lt-board" data-live-board></div>
@@ -68,8 +63,8 @@
           <span class="lt-legend">Titik berwarna adalah peserta — dicocokkan warnanya dengan papan live.</span>
         </div>
 
-        <!-- Demo sekarang; feed asli disambungkan saat hari-H. -->
-        <p class="note" style="margin-top:var(--space-5)">Ini simulasi demo untuk tata letak. Saat hari-H, peta digerakkan oleh feed chip timing resmi, dan rute diganti dengan hasil survei lintasan asli.</p>
+        <!-- Rute asli; feed pelari disambungkan saat hari-H. -->
+        <p class="note" style="margin-top:var(--space-5)">Rute yang ditampilkan adalah lintasan resmi hasil survei di TMII. Posisi pelari masih simulasi demo — saat hari-H papan digerakkan oleh feed chip timing resmi.</p>
       </div>
     </section>
   </main>
@@ -80,6 +75,7 @@
   <script src="/assets/js/main.js" defer></script>
   <script src="/assets/js/countdown.js" defer></script>
   <script src="/assets/js/accordion.js" defer></script>
+  <script src="/assets/vendor/leaflet/leaflet.js" defer></script>
   <script src="/assets/js/live-tracking.js" defer></script>
 </body>
 </html>
