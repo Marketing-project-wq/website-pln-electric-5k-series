@@ -267,6 +267,53 @@
     });
   }
 
+  // Race results: city filter + finisher table (bib · name · time).
+  // Column headers are English in BOTH languages by request, so they are not
+  // pulled from the UI strings. Data is the per-city RESULTS in data.js.
+  function resultsTableHtml(cityKey) {
+    var head = ['Bib No.', 'Name', 'Time'];
+    var list = (D.results && D.results[cityKey]) || [];
+    var body;
+    if (!list.length) {
+      body = '<tr><td class="results-empty" colspan="3">' + D.ui[LANG].resultsEmpty + '</td></tr>';
+    } else {
+      body = list.map(function (r) {
+        return '<tr>' +
+          '<td data-label="' + head[0] + '"><span class="bib">' + r.bib + '</span></td>' +
+          '<td data-label="' + head[1] + '">' + r.name + '</td>' +
+          '<td data-label="' + head[2] + '" class="num">' + r.time + '</td>' +
+        '</tr>';
+      }).join('');
+    }
+    return '<div class="table-wrap"><table class="data data--results"><thead><tr><th>' + head.join('</th><th>') + '</th></tr></thead><tbody>' + body + '</tbody></table></div>';
+  }
+
+  function renderResults() {
+    var table = document.querySelector('[data-results]');
+    if (!table) return;
+    var filters = document.querySelector('[data-results-filters]');
+    var cities = D.cities.slice().sort(function (a, b) { return a.order - b.order; });
+
+    function paint(key) {
+      table.innerHTML = resultsTableHtml(key);
+      if (filters) filters.querySelectorAll('[data-city-filter]').forEach(function (b) {
+        b.setAttribute('aria-pressed', String(b.getAttribute('data-city-filter') === key));
+      });
+    }
+
+    if (filters) {
+      filters.classList.add('gallery-filters');
+      filters.innerHTML = cities.map(function (c, i) {
+        return '<button class="gallery-filter" type="button" data-city-filter="' + c.key + '" aria-pressed="' + (i === 0 ? 'true' : 'false') + '">' + c.name + '</button>';
+      }).join('');
+      filters.addEventListener('click', function (e) {
+        var b = e.target.closest('[data-city-filter]');
+        if (b) paint(b.getAttribute('data-city-filter'));
+      });
+    }
+    paint(cities[0].key);
+  }
+
   function renderTimeline() {
     document.querySelectorAll('[data-timeline]').forEach(function (mount) {
       mount.classList.add('timeline');
@@ -388,6 +435,7 @@
     renderTicketTable();
     renderPrizeTable();
     renderScheduleTable();
+    renderResults();
     renderTimeline();
     renderContextStats();
     renderJourney();
