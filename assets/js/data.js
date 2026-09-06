@@ -107,6 +107,52 @@
     { num: { id: '280 juta', en: '280 million' }, label: { id: 'Orang yang perlu sadar transisi energi', en: 'People who must embrace the energy transition' }, src: 'Garmin Report; Good Stats' }
   ];
 
+  // ---- Race results, per city ---------------------------------------------
+  // SAMPLE / PLACEHOLDER finisher data so the Race Results page (bib · name ·
+  // time) and its city filter are fully functional before race day. Each list
+  // is ordered fastest-first. Replace every array with the official chip-timed
+  // results after each Race Day — keep the { bib, name, time } shape.
+  // Column headers on the page are English in BOTH languages by request.
+  // <!-- TODO: ganti dengan hasil timing resmi (export penyedia timing) tiap kota -->
+  var RESULTS = {
+    jakarta: [
+      { bib: '1024', name: 'Rangga Wijaya', time: '15:12' },
+      { bib: '1097', name: 'Bayu Saputra', time: '15:38' },
+      { bib: '1002', name: 'Dimas Prasetyo', time: '15:54' },
+      { bib: '1141', name: 'Fajar Nugroho', time: '16:10' },
+      { bib: '1056', name: 'Reza Aditya', time: '16:29' },
+      { bib: '1088', name: 'Yoga Kurniawan', time: '16:47' },
+      { bib: '1013', name: 'Aldo Firmansyah', time: '17:03' },
+      { bib: '1120', name: 'Gilang Ramadhan', time: '17:21' },
+      { bib: '1075', name: 'Hendra Wibowo', time: '17:44' },
+      { bib: '1039', name: 'Rizky Maulana', time: '18:02' }
+    ],
+    yogyakarta: [
+      { bib: '2031', name: 'Arif Setiawan', time: '15:26' },
+      { bib: '2008', name: 'Panji Nugraha', time: '15:49' },
+      { bib: '2094', name: 'Wahyu Hidayat', time: '16:05' },
+      { bib: '2017', name: 'Bagus Santoso', time: '16:22' },
+      { bib: '2063', name: 'Iqbal Ramadhan', time: '16:40' },
+      { bib: '2050', name: 'Tri Atmojo', time: '16:58' },
+      { bib: '2029', name: 'Dwi Cahyono', time: '17:15' },
+      { bib: '2081', name: 'Eko Prabowo', time: '17:33' },
+      { bib: '2046', name: 'Galih Pratama', time: '17:52' },
+      { bib: '2072', name: 'Surya Darma', time: '18:14' }
+    ],
+    bali: [
+      { bib: '3012', name: 'Komang Adi', time: '15:20' },
+      { bib: '3077', name: 'Made Surya', time: '15:44' },
+      { bib: '3005', name: 'Wayan Putra', time: '16:01' },
+      { bib: '3108', name: 'Kadek Arya', time: '16:18' },
+      { bib: '3061', name: 'Gede Bagus', time: '16:35' },
+      { bib: '3033', name: 'Putu Andika', time: '16:53' },
+      { bib: '3049', name: 'Nyoman Dharma', time: '17:11' },
+      { bib: '3090', name: 'Bagas Prakoso', time: '17:29' },
+      { bib: '3021', name: 'Ketut Wirawan', time: '17:48' },
+      { bib: '3066', name: 'Agus Setiawan', time: '18:07' }
+    ]
+  };
+
   // ---- Shared UI strings (header/footer/components) ----
   var UI = {
     id: {
@@ -134,7 +180,8 @@
         'Pilih tiket dan selesaikan pembayaran.'
       ],
       close: 'Tutup',
-      derivedPrizeNote: 'Total hadiah podium per kota (dihitung dari tabel).'
+      derivedPrizeNote: 'Total hadiah podium per kota (dihitung dari tabel).',
+      resultsEmpty: 'Hasil resmi akan tampil di sini setelah Race Day.'
     },
     en: {
       registerCta: 'Register Now',
@@ -161,7 +208,8 @@
         'Select your ticket and complete payment.'
       ],
       close: 'Close',
-      derivedPrizeNote: 'Total podium prize pool per city (calculated from the table).'
+      derivedPrizeNote: 'Total podium prize pool per city (calculated from the table).',
+      resultsEmpty: 'Official results will appear here after Race Day.'
     }
   };
 
@@ -210,6 +258,7 @@
     tickets: TICKETS,
     prizes: PRIZES,
     prizeTotalPerCity: PRIZE_TOTAL_PER_CITY,
+    results: RESULTS,
     timeline: TIMELINE,
     contextStats: CONTEXT_STATS,
     totalRunners: 10000,

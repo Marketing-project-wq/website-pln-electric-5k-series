@@ -23,6 +23,13 @@
 .gallery-item.is-hidden { display: none; }
 @media (max-width: 767px) { .gallery-grid { grid-template-columns: 1fr 1fr; } }
 
+/* Race results: reuse the gallery filter chips + the shared .data table.
+   The chips are built for dark surfaces, so on paper we flip text/border. */
+.surface-paper .gallery-filter,
+.surface-paper-dim .gallery-filter { color: var(--color-ink-on-paper); border-color: var(--color-line-ink); }
+.data--results .bib { font-family: var(--font-kicker); letter-spacing: 0.05em; }
+.data--results .results-empty { text-align: center; font-style: italic; padding: var(--space-6); color: var(--color-muted-on-paper); }
+
 /* News cards */
 .news-card { display: flex; flex-direction: column; gap: var(--space-2); }
 .news-card time { font-family: var(--font-kicker); letter-spacing: 0.08em; color: var(--color-teal); font-size: var(--fs-14); }
