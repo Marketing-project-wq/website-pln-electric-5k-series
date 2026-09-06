@@ -107,15 +107,29 @@
     for (var i = 0; i < runners.length; i++) if (runners[i].bib === selectedBib) return i;
     return -1;
   }
-  function styleSelection() {
+  // Dot styling. With nothing focused, every runner shows clearly. Once a
+  // runner is clicked (selectedBib) OR a search is active (query), the focused
+  // runner(s) stay bright and everyone else fades to a faint "shadow".
+  function applyDotStyles() {
     if (!map) return;
-    dots.forEach(function (d, i) {
-      var sel = runners[i].bib === selectedBib;
-      d.setStyle({ radius: sel ? 7 : 4, weight: sel ? 2 : 0, color: '#0A0A0A', fillColor: sel ? HL : tier(runners[i]), fillOpacity: sel ? 1 : 0.85 });
-      if (sel) d.bringToFront();
-    });
-    var idx = selectedIndex();
-    if (hlMarker) hlMarker.setOpacity(idx >= 0 ? 1 : 0);
+    var focus = !!query || selectedBib != null;
+    for (var i = 0; i < runners.length; i++) {
+      var r = runners[i], d = dots[i];
+      var sel = r.bib === selectedBib;
+      var match = query && (r.bib.indexOf(query) >= 0 || r.name.toLowerCase().indexOf(query) >= 0);
+      if (!focus) {
+        d.setStyle({ radius: 5, weight: 1, color: 'rgba(0,0,0,0.55)', fillColor: tier(r), fillOpacity: 0.95 });
+      } else if (sel) {
+        d.setStyle({ radius: 8, weight: 2, color: '#0A0A0A', fillColor: HL, fillOpacity: 1 });
+        d.bringToFront();
+      } else if (match) {
+        d.setStyle({ radius: 6, weight: 1, color: '#0A0A0A', fillColor: tier(r), fillOpacity: 1 });
+        d.bringToFront();
+      } else {
+        d.setStyle({ radius: 3, weight: 0, fillColor: '#8792A0', fillOpacity: 0.14 });   // bayangan
+      }
+    }
+    if (hlMarker) hlMarker.setOpacity(selectedIndex() >= 0 ? 1 : 0);
   }
 
   function positionMarkers(elapsed) {
@@ -144,7 +158,7 @@
     emptyEl = board.querySelector('[data-lt-empty]');
     searchEl = board.querySelector('[data-lt-search]');
     if (countEl) countEl.textContent = '· ' + runners.length + ' ' + (LANG === 'id' ? 'peserta' : 'participants');
-    if (searchEl) searchEl.addEventListener('input', function () { query = searchEl.value.trim().toLowerCase(); renderRows(lastElapsed); });
+    if (searchEl) searchEl.addEventListener('input', function () { query = searchEl.value.trim().toLowerCase(); renderRows(lastElapsed); applyDotStyles(); });
     if (rowsEl) rowsEl.addEventListener('click', function (e) {
       var tr = e.target.closest('tr[data-bib]'); if (!tr) return;
       var bib = tr.getAttribute('data-bib');
@@ -183,7 +197,7 @@
 
   function selectRunner(bib) {
     selectedBib = bib;
-    styleSelection();
+    applyDotStyles();
     var idx = selectedIndex();
     if (idx >= 0 && map) { var ll = latlngAt(progressFor(runners[idx], lastElapsed)); hlMarker.setLatLng(ll); map.panTo(ll, { animate: true }); }
     renderRows(lastElapsed);
@@ -217,7 +231,7 @@
   if (restartBtn) restartBtn.addEventListener('click', restart);
 
   buildBoard();
-  styleSelection();
+  applyDotStyles();
   if (reduce) { draw(animSeconds * 0.5); setToggle(false); }
   else {
     draw(0);
