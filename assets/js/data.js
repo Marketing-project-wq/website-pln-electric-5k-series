@@ -108,50 +108,48 @@
   ];
 
   // ---- Race results, per city ---------------------------------------------
-  // SAMPLE / PLACEHOLDER finisher data so the Race Results page (bib · name ·
-  // time) and its city filter are fully functional before race day. Each list
-  // is ordered fastest-first. Replace every array with the official chip-timed
-  // results after each Race Day — keep the { bib, name, time } shape.
-  // Column headers on the page are English in BOTH languages by request.
+  // SAMPLE / PLACEHOLDER finisher data for the Race Results page: a generated
+  // field per city (bib, name, gender, category, finish time). Deterministic
+  // (seeded) so ranks and split times stay stable across reloads. Powers the
+  // per-city boards, the combined Overall leaderboard, per-runner split times,
+  // and the certificate. Column headers on the page are English by request.
   // <!-- TODO: ganti dengan hasil timing resmi (export penyedia timing) tiap kota -->
-  var RESULTS = {
-    jakarta: [
-      { bib: '1024', name: 'Rangga Wijaya', time: '15:12' },
-      { bib: '1097', name: 'Bayu Saputra', time: '15:38' },
-      { bib: '1002', name: 'Dimas Prasetyo', time: '15:54' },
-      { bib: '1141', name: 'Fajar Nugroho', time: '16:10' },
-      { bib: '1056', name: 'Reza Aditya', time: '16:29' },
-      { bib: '1088', name: 'Yoga Kurniawan', time: '16:47' },
-      { bib: '1013', name: 'Aldo Firmansyah', time: '17:03' },
-      { bib: '1120', name: 'Gilang Ramadhan', time: '17:21' },
-      { bib: '1075', name: 'Hendra Wibowo', time: '17:44' },
-      { bib: '1039', name: 'Rizky Maulana', time: '18:02' }
-    ],
-    yogyakarta: [
-      { bib: '2031', name: 'Arif Setiawan', time: '15:26' },
-      { bib: '2008', name: 'Panji Nugraha', time: '15:49' },
-      { bib: '2094', name: 'Wahyu Hidayat', time: '16:05' },
-      { bib: '2017', name: 'Bagus Santoso', time: '16:22' },
-      { bib: '2063', name: 'Iqbal Ramadhan', time: '16:40' },
-      { bib: '2050', name: 'Tri Atmojo', time: '16:58' },
-      { bib: '2029', name: 'Dwi Cahyono', time: '17:15' },
-      { bib: '2081', name: 'Eko Prabowo', time: '17:33' },
-      { bib: '2046', name: 'Galih Pratama', time: '17:52' },
-      { bib: '2072', name: 'Surya Darma', time: '18:14' }
-    ],
-    bali: [
-      { bib: '3012', name: 'Komang Adi', time: '15:20' },
-      { bib: '3077', name: 'Made Surya', time: '15:44' },
-      { bib: '3005', name: 'Wayan Putra', time: '16:01' },
-      { bib: '3108', name: 'Kadek Arya', time: '16:18' },
-      { bib: '3061', name: 'Gede Bagus', time: '16:35' },
-      { bib: '3033', name: 'Putu Andika', time: '16:53' },
-      { bib: '3049', name: 'Nyoman Dharma', time: '17:11' },
-      { bib: '3090', name: 'Bagas Prakoso', time: '17:29' },
-      { bib: '3021', name: 'Ketut Wirawan', time: '17:48' },
-      { bib: '3066', name: 'Agus Setiawan', time: '18:07' }
-    ]
-  };
+  var RESULTS = (function () {
+    var MALE = ['Rangga', 'Bayu', 'Dimas', 'Fajar', 'Reza', 'Yoga', 'Aldo', 'Gilang', 'Hendra', 'Rizky', 'Arif', 'Panji', 'Wahyu', 'Bagus', 'Iqbal', 'Tri', 'Dwi', 'Eko', 'Galih', 'Surya', 'Komang', 'Made', 'Wayan', 'Kadek', 'Gede', 'Putu', 'Nyoman', 'Bagas', 'Ketut', 'Agus', 'Andi', 'Budi', 'Candra', 'Dedi', 'Ferry', 'Gunawan', 'Hadi', 'Indra', 'Joko', 'Krisna', 'Lukman', 'Miko', 'Nanda', 'Oka', 'Rama', 'Satya', 'Teguh', 'Umar', 'Vino', 'Wisnu', 'Yudha', 'Zaki', 'Farel', 'Rafi', 'Naufal', 'Alif'];
+    var FEMALE = ['Ayu', 'Dewi', 'Sari', 'Intan', 'Maya', 'Nadia', 'Putri', 'Rina', 'Sinta', 'Tari', 'Wulan', 'Kartika', 'Lestari', 'Anggun', 'Citra', 'Dinda', 'Fitri', 'Gita', 'Hesti', 'Indah', 'Kirana', 'Laras', 'Mega', 'Nia', 'Prita', 'Ratih', 'Sekar', 'Tiara', 'Vina', 'Winda', 'Yuni', 'Zahra', 'Alya', 'Bunga', 'Cahaya', 'Salsa'];
+    var LAST = ['Wijaya', 'Saputra', 'Prasetyo', 'Nugroho', 'Aditya', 'Kurniawan', 'Firmansyah', 'Ramadhan', 'Wibowo', 'Maulana', 'Setiawan', 'Nugraha', 'Hidayat', 'Santoso', 'Atmojo', 'Cahyono', 'Prabowo', 'Pratama', 'Darma', 'Putra', 'Arya', 'Andika', 'Dharma', 'Prakoso', 'Wirawan', 'Hakim', 'Halim', 'Susanto', 'Hartono', 'Permana', 'Utomo', 'Rahardjo', 'Simanjuntak', 'Sinaga', 'Tanjung', 'Siregar', 'Panjaitan', 'Lubis', 'Handoko', 'Wibisono'];
+    var seed = 424242 >>> 0;
+    function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+    function pick(a) { return a[Math.floor(rnd() * a.length)]; }
+    var CITY_KEYS = ['jakarta', 'yogyakarta', 'bali'];
+    // Known names per city (continuity with Live Tracking; easy to search).
+    var KNOWN = {
+      jakarta: [['1024', 'Rangga Wijaya', 'M', 912], ['1097', 'Bayu Saputra', 'M', 941]],
+      yogyakarta: [['2031', 'Arif Setiawan', 'M', 926], ['2008', 'Panji Nugraha', 'M', 968]],
+      bali: [['3012', 'Komang Adi', 'M', 933], ['3077', 'Made Surya', 'M', 979]]
+    };
+    var out = {}, usedBib = {};
+    CITY_KEYS.forEach(function (city, ci) {
+      var list = [];
+      (KNOWN[city] || []).forEach(function (k) {
+        list.push({ bib: k[0], name: k[1], gender: k[2], category: 'Open ' + (k[2] === 'M' ? 'Men' : 'Women'), finishSec: k[3] });
+        usedBib[k[0]] = 1;
+      });
+      var base = (ci + 1) * 1000;
+      while (list.length < 40) {
+        var bib; do { bib = String(base + Math.floor(rnd() * 999)); } while (usedBib[bib]);
+        usedBib[bib] = 1;
+        var g = rnd() < 0.55 ? 'M' : 'F';
+        var name = (g === 'M' ? pick(MALE) : pick(FEMALE)) + ' ' + pick(LAST);
+        var ar = rnd(), ag = ar < 0.6 ? 'Open' : ar < 0.85 ? 'Master' : 'Student';
+        var finishSec = Math.round(900 + Math.pow(rnd(), 1.4) * 1500); // 15:00 .. ~40:00
+        list.push({ bib: bib, name: name, gender: g, category: ag + ' ' + (g === 'M' ? 'Men' : 'Women'), finishSec: finishSec });
+      }
+      list.sort(function (a, b) { return a.finishSec - b.finishSec; });
+      out[city] = list;
+    });
+    return out;
+  })();
 
   // ---- Live Tracking ------------------------------------------------------
   // Course + runner positions for the Live Tracking page. The route, timing

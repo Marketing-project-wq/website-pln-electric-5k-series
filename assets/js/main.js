@@ -267,51 +267,215 @@
     });
   }
 
-  // Race results: city filter + finisher table (bib · name · time).
-  // Column headers are English in BOTH languages by request, so they are not
-  // pulled from the UI strings. Data is the per-city RESULTS in data.js.
-  function resultsTableHtml(cityKey) {
-    var head = ['Bib No.', 'Name', 'Time'];
-    var list = (D.results && D.results[cityKey]) || [];
-    var body;
-    if (!list.length) {
-      body = '<tr><td class="results-empty" colspan="3">' + D.ui[LANG].resultsEmpty + '</td></tr>';
-    } else {
-      body = list.map(function (r) {
-        return '<tr>' +
-          '<td data-label="' + head[0] + '"><span class="bib">' + r.bib + '</span></td>' +
-          '<td data-label="' + head[1] + '">' + r.name + '</td>' +
-          '<td data-label="' + head[2] + '" class="num">' + r.time + '</td>' +
-        '</tr>';
-      }).join('');
+  // ---- Race results: Overall + per-city leaderboards, search, split-time
+  //      detail, and certificate download. Column headers are English in BOTH
+  //      languages by request. Runner ranks/splits are derived from data.js.
+  function fmtMS(sec) { var m = Math.floor(sec / 60), s = Math.floor(sec % 60); return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s; }
+  function fmtHMS(sec, cs) {
+    sec = Math.max(0, sec);
+    var h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = Math.floor(sec % 60);
+    var out = (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+    if (cs) { var c = Math.floor((sec - Math.floor(sec)) * 100); out += '.' + (c < 10 ? '0' : '') + c; }
+    return out;
+  }
+  function cityNameOf(key) { for (var i = 0; i < D.cities.length; i++) if (D.cities[i].key === key) return D.cities[i].name; return key; }
+  function cityObj(key) { for (var i = 0; i < D.cities.length; i++) if (D.cities[i].key === key) return D.cities[i]; return null; }
+  function bibSeed(bib) { var h = 2166136261; for (var i = 0; i < bib.length; i++) { h ^= bib.charCodeAt(i); h = (h * 16777619) >>> 0; } return h; }
+
+  // Deterministic demo split times for a 5K: Start, CP1, CP2, CP3, Finish.
+  // (Checkpoint count is illustrative; the real count is provided later.)
+  function splitsFor(r) {
+    var labels = ['Start', 'CP1', 'CP2', 'CP3', 'Finish'];
+    var frac = [null, 0.33, 0.56, 0.80, 1.0];
+    var s = bibSeed(r.bib);
+    function nr() { s = (s * 1103515245 + 12345) >>> 0; return s / 4294967296; }
+    var startDelay = 2 + nr() * 6;                 // chip-start delay (s)
+    var times = [startDelay];
+    for (var i = 1; i < labels.length; i++) {
+      if (i === labels.length - 1) { times.push(r.finishSec); continue; }
+      var f = frac[i] + (nr() - 0.5) * 0.06;
+      f = Math.max((frac[i - 1] || 0.05) + 0.04, Math.min(0.96, f));
+      times.push(startDelay + f * (r.finishSec - startDelay));
     }
-    return '<div class="table-wrap"><table class="data data--results"><thead><tr><th>' + head.join('</th><th>') + '</th></tr></thead><tbody>' + body + '</tbody></table></div>';
+    var rows = [];
+    for (var j = 0; j < labels.length; j++) rows.push({ name: labels[j], time: times[j], leg: j === 0 ? times[0] : times[j] - times[j - 1] });
+    return rows;
+  }
+
+  // Flatten every city into one field and compute overall/city/gender/category ranks.
+  function buildResults() {
+    var all = [];
+    D.cities.slice().sort(function (a, b) { return a.order - b.order; }).forEach(function (c) {
+      (D.results[c.key] || []).forEach(function (r) {
+        all.push({ bib: r.bib, name: r.name, gender: r.gender, category: r.category, finishSec: r.finishSec, city: c.key });
+      });
+    });
+    all.sort(function (a, b) { return a.finishSec - b.finishSec; });
+    var oc = 0, cc = {}, gc = {}, tc = {};
+    all.forEach(function (r) {
+      r.overallRank = (oc += 1);
+      r.cityRank = (cc[r.city] = (cc[r.city] || 0) + 1);
+      r.genderRank = (gc[r.gender] = (gc[r.gender] || 0) + 1);
+      r.categoryRank = (tc[r.category] = (tc[r.category] || 0) + 1);
+    });
+    return { all: all, totals: { overall: all.length, city: cc, gender: gc, category: tc } };
+  }
+
+  // ---- Result detail modal (reuses the .modal component) ------------------
+  var rModal, rBody, rLastFocus;
+  function buildResultModal() {
+    if (rModal) return;
+    var closeLabel = LANG === 'id' ? 'Tutup' : 'Close';
+    rModal = el(
+      '<div class="modal" id="result-modal" role="dialog" aria-modal="true" aria-labelledby="result-modal-title">' +
+        '<div class="modal__overlay" data-close></div>' +
+        '<div class="modal__dialog modal__dialog--wide">' +
+          '<button class="modal__close" data-close aria-label="' + closeLabel + '">' + icon('i-arrow-right') + '</button>' +
+          '<div data-result-body></div>' +
+        '</div>' +
+      '</div>'
+    );
+    document.body.appendChild(rModal);
+    rBody = rModal.querySelector('[data-result-body]');
+    rModal.addEventListener('click', function (e) { if (e.target.closest('[data-close]')) closeResult(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && rModal.classList.contains('is-open')) closeResult(); });
+  }
+  function openResult(r, totals) {
+    if (!r) return;
+    buildResultModal();
+    var isID = LANG === 'id';
+    var L = isID
+      ? { ft: 'Waktu Finis', overall: 'Keseluruhan', cat: 'Kategori', gen: 'Gender', gender: 'Gender', category: 'Kategori', status: 'Status', finished: 'Finished', splits: 'Split Time', name: 'Name', time: 'Time', leg: 'Leg Time', dl: 'Unduh Sertifikat', male: 'Laki-laki', female: 'Perempuan' }
+      : { ft: 'Finish Time', overall: 'Overall', cat: 'Category', gen: 'Gender', gender: 'Gender', category: 'Category', status: 'Status', finished: 'Finished', splits: 'Split Time', name: 'Name', time: 'Time', leg: 'Leg Time', dl: 'Download Certificate', male: 'Male', female: 'Female' };
+    var splitRows = splitsFor(r).map(function (s) {
+      return '<tr><td>' + s.name + '</td><td class="num">' + fmtHMS(s.time, true) + '</td><td class="num">' + fmtHMS(s.leg, true) + '</td></tr>';
+    }).join('');
+    rBody.innerHTML =
+      '<span class="kicker">' + cityNameOf(r.city) + ' · 5K</span>' +
+      '<h2 id="result-modal-title" class="rd-name">' + r.name + '</h2>' +
+      '<div class="rd-top">' +
+        '<div class="rd-id">' +
+          '<span class="rd-bib">' + r.bib + '</span>' +
+          '<dl class="rd-meta">' +
+            '<div><dt>' + L.gender + '</dt><dd>' + (r.gender === 'M' ? L.male : L.female) + '</dd></div>' +
+            '<div><dt>' + L.category + '</dt><dd>' + r.category + '</dd></div>' +
+            '<div><dt>' + L.status + '</dt><dd>' + L.finished + '</dd></div>' +
+          '</dl>' +
+        '</div>' +
+        '<div class="rd-finish">' +
+          '<span class="rd-finish__label">' + L.ft + '</span>' +
+          '<span class="rd-finish__time">' + fmtHMS(r.finishSec, true) + '</span>' +
+          '<div class="rd-ranks">' +
+            '<div><span>' + L.overall + '</span><b>' + r.overallRank + '/' + totals.overall + '</b></div>' +
+            '<div><span>' + L.cat + '</span><b>' + r.categoryRank + '/' + totals.category[r.category] + '</b></div>' +
+            '<div><span>' + L.gen + '</span><b>' + r.genderRank + '/' + totals.gender[r.gender] + '</b></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="rd-splits"><h3>' + L.splits + '</h3><div class="table-wrap"><table class="rd-table"><thead><tr><th>' + L.name + '</th><th class="num">' + L.time + '</th><th class="num">' + L.leg + '</th></tr></thead><tbody>' + splitRows + '</tbody></table></div></div>' +
+      '<div class="rd-actions"><button class="btn btn--sm" type="button" data-cert>' + icon('i-download') + ' ' + L.dl + '</button></div>';
+    rBody.querySelector('[data-cert]').addEventListener('click', function () { downloadCertificate(r); });
+    rLastFocus = document.activeElement;
+    rModal.classList.add('is-open');
+    lockScroll(true);
+    rModal.querySelector('.modal__close').focus();
+  }
+  function closeResult() {
+    if (!rModal || !rModal.classList.contains('is-open')) return;
+    rModal.classList.remove('is-open');
+    lockScroll(false);
+    if (rLastFocus) rLastFocus.focus();
+  }
+
+  // Placeholder certificate (PNG). The official template is provided later;
+  // only the drawing below changes when it arrives.
+  function downloadCertificate(r) {
+    var isID = LANG === 'id';
+    var c = cityObj(r.city), date = c ? D.loc(c.raceDay) : '';
+    var W = 1600, H = 1130, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+    var g = cv.getContext('2d');
+    g.fillStyle = '#0A0A0A'; g.fillRect(0, 0, W, H);
+    g.fillStyle = '#101418'; g.fillRect(46, 46, W - 92, H - 92);
+    g.strokeStyle = '#1C99B1'; g.lineWidth = 5; g.strokeRect(72, 72, W - 144, H - 144);
+    g.textAlign = 'center';
+    g.fillStyle = '#1C99B1'; g.font = '700 34px Montserrat, Arial, sans-serif';
+    g.fillText('PLN MOBILE ELECTRIC 5K SERIES 2026', W / 2, 200);
+    g.fillStyle = '#FFFFFF'; g.font = '64px Anton, "Arial Narrow", sans-serif';
+    g.fillText(isID ? 'SERTIFIKAT PENYELESAIAN' : 'CERTIFICATE OF COMPLETION', W / 2, 292);
+    g.fillStyle = '#A7ADB4'; g.font = '400 28px Montserrat, Arial, sans-serif';
+    g.fillText(isID ? 'Diberikan kepada' : 'This certifies that', W / 2, 400);
+    g.fillStyle = '#FFFFFF'; g.font = '78px Anton, "Arial Narrow", sans-serif';
+    g.fillText(r.name.toUpperCase(), W / 2, 492);
+    g.strokeStyle = '#8CD867'; g.lineWidth = 4; g.beginPath(); g.moveTo(W / 2 - 220, 524); g.lineTo(W / 2 + 220, 524); g.stroke();
+    g.fillStyle = '#A7ADB4'; g.font = '400 30px Montserrat, Arial, sans-serif';
+    g.fillText((isID ? 'telah menyelesaikan 5K — ' : 'completed the 5K — ') + cityNameOf(r.city) + (date ? ', ' + date : ''), W / 2, 596);
+    // Stats row
+    var cols = [[isID ? 'Waktu' : 'Finish Time', fmtHMS(r.finishSec, true)], ['BIB', r.bib], [isID ? 'Peringkat' : 'Overall', '#' + r.overallRank]];
+    var cw = (W - 300) / 3;
+    cols.forEach(function (col, i) {
+      var cx = 150 + cw * i + cw / 2;
+      g.fillStyle = '#1C99B1'; g.font = '700 22px Montserrat, Arial, sans-serif'; g.fillText(col[0].toUpperCase(), cx, 712);
+      g.fillStyle = '#FFFFFF'; g.font = '48px Anton, "Arial Narrow", sans-serif'; g.fillText(col[1], cx, 772);
+    });
+    g.fillStyle = '#1C99B1'; g.font = '700 30px Montserrat, Arial, sans-serif'; g.fillText('POWER YOUR SPEED', W / 2, 940);
+    g.fillStyle = '#55606A'; g.font = '400 20px Montserrat, Arial, sans-serif';
+    g.fillText(isID ? 'Layout sementara — template sertifikat resmi menyusul.' : 'Provisional layout — official certificate template to follow.', W / 2, 1010);
+    var a = document.createElement('a');
+    a.href = cv.toDataURL('image/png');
+    a.download = 'E5K-certificate-' + r.bib + '.png';
+    document.body.appendChild(a); a.click(); a.remove();
   }
 
   function renderResults() {
     var table = document.querySelector('[data-results]');
     if (!table) return;
     var filters = document.querySelector('[data-results-filters]');
-    var cities = D.cities.slice().sort(function (a, b) { return a.order - b.order; });
+    var searchMount = document.querySelector('[data-results-search]');
+    var isID = LANG === 'id';
+    var R = buildResults();
+    var byKey = {}; R.all.forEach(function (r) { byKey[r.city + '|' + r.bib] = r; });
+    var current = 'overall', query = '';
+    var COL = { rank: 'Rank', bib: 'Bib No.', name: 'Name', city: 'City', time: 'Time' };
 
-    function paint(key) {
-      table.innerHTML = resultsTableHtml(key);
-      if (filters) filters.querySelectorAll('[data-city-filter]').forEach(function (b) {
-        b.setAttribute('aria-pressed', String(b.getAttribute('data-city-filter') === key));
-      });
+    if (searchMount) {
+      searchMount.innerHTML = '<input type="search" class="results-search__input" placeholder="' +
+        (isID ? 'Cari No. BIB atau nama…' : 'Search bib or name…') + '" aria-label="' +
+        (isID ? 'Cari peserta' : 'Search participants') + '" autocomplete="off">';
+      searchMount.querySelector('input').addEventListener('input', function () { query = this.value.trim().toLowerCase(); paint(); });
+    }
+
+    function paint() {
+      var overall = current === 'overall';
+      var list = overall ? R.all : R.all.filter(function (r) { return r.city === current; });
+      if (query) list = list.filter(function (r) { return r.bib.indexOf(query) >= 0 || r.name.toLowerCase().indexOf(query) >= 0; });
+      var head = overall ? [COL.rank, COL.bib, COL.name, COL.city, COL.time] : [COL.rank, COL.bib, COL.name, COL.time];
+      var body = list.map(function (r) {
+        return '<tr class="results-row" data-key="' + r.city + '|' + r.bib + '" tabindex="0">' +
+          '<td data-label="' + COL.rank + '" class="rank">' + (overall ? r.overallRank : r.cityRank) + '</td>' +
+          '<td data-label="' + COL.bib + '"><span class="bib">' + r.bib + '</span></td>' +
+          '<td data-label="' + COL.name + '">' + r.name + '</td>' +
+          (overall ? '<td data-label="' + COL.city + '">' + cityNameOf(r.city) + '</td>' : '') +
+          '<td data-label="' + COL.time + '" class="num">' + fmtMS(r.finishSec) + '</td>' +
+        '</tr>';
+      }).join('');
+      if (!list.length) body = '<tr><td class="results-empty" colspan="' + head.length + '">' + (isID ? 'Peserta tidak ditemukan.' : 'No participant found.') + '</td></tr>';
+      table.innerHTML = '<div class="table-wrap results-scroll"><table class="data data--results"><thead><tr><th>' + head.join('</th><th>') + '</th></tr></thead><tbody>' + body + '</tbody></table></div>';
+      if (filters) filters.querySelectorAll('[data-results-view]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-results-view') === current)); });
     }
 
     if (filters) {
       filters.classList.add('gallery-filters');
-      filters.innerHTML = cities.map(function (c, i) {
-        return '<button class="gallery-filter" type="button" data-city-filter="' + c.key + '" aria-pressed="' + (i === 0 ? 'true' : 'false') + '">' + c.name + '</button>';
+      var chips = [{ k: 'overall', label: isID ? 'Keseluruhan' : 'Overall' }].concat(
+        D.cities.slice().sort(function (a, b) { return a.order - b.order; }).map(function (c) { return { k: c.key, label: c.name }; }));
+      filters.innerHTML = chips.map(function (c, i) {
+        return '<button class="gallery-filter" type="button" data-results-view="' + c.k + '" aria-pressed="' + (i === 0 ? 'true' : 'false') + '">' + c.label + '</button>';
       }).join('');
-      filters.addEventListener('click', function (e) {
-        var b = e.target.closest('[data-city-filter]');
-        if (b) paint(b.getAttribute('data-city-filter'));
-      });
+      filters.addEventListener('click', function (e) { var b = e.target.closest('[data-results-view]'); if (b) { current = b.getAttribute('data-results-view'); paint(); } });
     }
-    paint(cities[0].key);
+    function openFromRow(tr) { var r = byKey[tr.getAttribute('data-key')]; if (r) openResult(r, R.totals); }
+    table.addEventListener('click', function (e) { var tr = e.target.closest('.results-row'); if (tr) openFromRow(tr); });
+    table.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { var tr = e.target.closest('.results-row'); if (tr) { e.preventDefault(); openFromRow(tr); } } });
+    paint();
   }
 
   function renderTimeline() {

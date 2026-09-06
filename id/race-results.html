@@ -44,18 +44,21 @@
       <div class="container container--wide">
         <div class="section-head">
           <span class="kicker">Waktu Finis</span>
-          <h2>Hasil 5K per Kota</h2>
-          <p>Satu perjalanan 5K melintasi tiga kota. Pilih kota di bawah untuk melihat papan hasilnya — nomor BIB, nama, dan total waktu untuk lintasan 5 kilometer.</p>
+          <h2>Hasil &amp; Klasemen Keseluruhan</h2>
+          <p>Pindah antara klasemen <strong>Keseluruhan</strong> (gabungan tiga kota) dan papan tiap kota. Cari pelari lewat No. BIB atau nama, dan ketuk baris mana pun untuk melihat split time-nya serta mengunduh sertifikat.</p>
         </div>
 
-        <!-- Filter kota (tombol dirender dari data.js) -->
-        <div class="gallery-filters" data-results-filters aria-label="Saring hasil per kota"></div>
+        <!-- Filter tampilan: Keseluruhan + tiap kota (dirender dari data.js) -->
+        <div class="gallery-filters" data-results-filters aria-label="Saring hasil"></div>
+
+        <!-- Pencarian (dirender dari data.js) -->
+        <div class="results-search" data-results-search></div>
 
         <!-- Tabel hasil (dirender dari data.js) -->
         <div data-results></div>
 
-        <!-- Baris contoh untuk tata letak; ganti dengan hasil timing resmi setelah tiap race. -->
-        <p class="note">Papan hasil contoh ditampilkan sebagai tata letak. Hasil resmi (chip time) akan dipublikasikan di sini setelah tiap Race Day.</p>
+        <!-- Data contoh untuk tata letak; ganti dengan hasil timing resmi setelah tiap race. -->
+        <p class="note">Data contoh untuk tata letak — ketuk baris untuk melihat detail split time. Hasil resmi (chip time) dan template sertifikat akan dipublikasikan di sini setelah tiap Race Day.</p>
       </div>
     </section>
   </main>
