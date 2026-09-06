@@ -29,6 +29,41 @@
 .surface-paper-dim .gallery-filter { color: var(--color-ink-on-paper); border-color: var(--color-line-ink); }
 .data--results .bib { font-family: var(--font-kicker); letter-spacing: 0.05em; }
 .data--results .results-empty { text-align: center; font-style: italic; padding: var(--space-6); color: var(--color-muted-on-paper); }
+.data--results .rank { font-family: var(--font-kicker); letter-spacing: 0.03em; color: var(--color-teal); font-weight: 700; width: 3em; }
+/* Search box on the paper surface */
+.results-search { margin-bottom: var(--space-4); max-width: 420px; }
+.results-search__input { width: 100%; box-sizing: border-box; padding: 9px 12px; background: var(--color-paper); border: 1px solid var(--color-line-ink); border-radius: 8px; color: var(--color-ink-on-paper); font-family: var(--font-body); font-size: var(--fs-14); }
+.results-search__input::placeholder { color: var(--color-muted-on-paper); }
+.results-search__input:focus { outline: none; border-color: var(--color-teal); }
+.results-scroll { max-height: 560px; overflow-y: auto; }
+/* Clickable result rows */
+.data--results tr.results-row { cursor: pointer; }
+.data--results tr.results-row:hover td, .data--results tr.results-row:focus-visible td { background: var(--color-teal-tint); }
+.data--results tr.results-row:focus-visible { outline: 2px solid var(--color-teal); outline-offset: -2px; }
+
+/* Result detail modal content (on the dark .modal dialog) */
+.modal__dialog--wide { max-width: 720px; }
+.modal .rd-name { font-family: var(--font-body); text-transform: none; font-weight: 700; font-size: var(--fs-32); margin-bottom: var(--space-4); }
+.rd-top { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); margin-bottom: var(--space-5); }
+@media (max-width: 600px) { .rd-top { grid-template-columns: 1fr; } }
+.rd-bib { display: inline-block; font-family: var(--font-kicker); letter-spacing: 0.05em; font-size: var(--fs-32); line-height: 1; background: var(--color-teal); color: #fff; padding: 6px 16px; border-radius: 6px; margin-bottom: var(--space-3); }
+.rd-meta { display: grid; gap: 6px; }
+.rd-meta div { display: flex; justify-content: space-between; gap: var(--space-3); border-bottom: 1px solid var(--color-line); padding-bottom: 5px; }
+.rd-meta dt { color: var(--color-muted-on-ink); font-size: var(--fs-14); }
+.rd-meta dd { color: var(--color-paper); font-weight: 600; font-size: var(--fs-14); }
+.rd-finish { text-align: center; background: var(--color-ink); border: 1px solid var(--color-line); border-radius: 12px; padding: var(--space-4); }
+.rd-finish__label { display: block; font-family: var(--font-kicker); letter-spacing: 0.08em; color: var(--color-muted-on-ink); font-size: var(--fs-14); }
+.rd-finish__time { display: block; font-family: var(--font-display); font-size: 2.4rem; color: var(--color-teal); font-variant-numeric: tabular-nums; margin: 4px 0 var(--space-3); }
+.rd-ranks { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); }
+.rd-ranks span { display: block; font-family: var(--font-kicker); letter-spacing: 0.06em; font-size: 11px; color: var(--color-muted-on-ink); }
+.rd-ranks b { color: var(--color-paper); font-size: var(--fs-18); font-variant-numeric: tabular-nums; }
+.rd-splits h3 { font-family: var(--font-kicker); letter-spacing: 0.06em; color: var(--color-paper); margin-bottom: var(--space-2); }
+.rd-table { width: 100%; border-collapse: collapse; font-size: var(--fs-14); }
+.rd-table th { text-align: left; font-family: var(--font-kicker); letter-spacing: 0.06em; font-weight: 400; color: var(--color-muted-on-ink); padding: 6px 8px; border-bottom: 1px solid var(--color-line); }
+.rd-table th.num, .rd-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.rd-table td { padding: 8px; border-bottom: 1px solid var(--color-line); color: var(--color-paper); }
+.rd-table tbody tr:last-child td { border-bottom: 0; font-weight: 700; }
+.rd-actions { margin-top: var(--space-5); }
 
 /* ==========================================================================
    Live Tracking — animated course map (demo). Built for a dark (ink) surface.

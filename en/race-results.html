@@ -44,18 +44,21 @@
       <div class="container container--wide">
         <div class="section-head">
           <span class="kicker">Finisher Times</span>
-          <h2>5K Results by City</h2>
-          <p>One 5K journey across three cities. Choose a city below to view its finisher board — bib number, name, and total time for the 5-kilometre course.</p>
+          <h2>Results &amp; Overall Leaderboard</h2>
+          <p>Switch between the <strong>Overall</strong> leaderboard across all three cities and each city's board. Search a runner by bib or name, and tap any row to see their split times and download a certificate.</p>
         </div>
 
-        <!-- City filter (buttons rendered from data.js) -->
-        <div class="gallery-filters" data-results-filters aria-label="Filter results by city"></div>
+        <!-- View filter: Overall + each city (rendered from data.js) -->
+        <div class="gallery-filters" data-results-filters aria-label="Filter results"></div>
+
+        <!-- Search (rendered from data.js) -->
+        <div class="results-search" data-results-search></div>
 
         <!-- Results table (rendered from data.js) -->
         <div data-results></div>
 
-        <!-- Sample rows are shown for layout; swap in official timing after each race. -->
-        <p class="note">Sample finisher board shown for layout. Official chip-timed results are published here after each Race Day.</p>
+        <!-- Sample data for layout; swap in official timing after each race. -->
+        <p class="note">Sample results shown for layout — tap a row for the split-time detail. Official chip-timed results and the certificate template are published here after each Race Day.</p>
       </div>
     </section>
   </main>
