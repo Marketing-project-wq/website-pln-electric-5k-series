@@ -237,6 +237,55 @@
     }
   };
 
+  // ---- Speedland (200 m speed test — the "road to" trial) -----------------
+  // Speedland is the warm-up activation on the road to race day: a single 200 m
+  // all-out sprint staged in each host city, each with its own live leaderboard.
+  // Timing comes from the SAME vendor as the main event (feibot). The endpoint
+  // currently returns an empty envelope — { code:"ok", msg:"ok", teams:[],
+  // team_scores:[] } — and fills in once the trial is actually timed. Until
+  // then the board shows the SAMPLE field below (deterministic, seeded) so the
+  // layout is stable. speedland.js fetches the endpoint, logs the raw payload
+  // to the console, and swaps in live rows automatically the moment
+  // teams[] / team_scores[] populate.
+  // <!-- TODO: begitu feibot terisi, konfirmasi nama field di dalam teams[] &
+  //      team_scores[] lalu sesuaikan normalize() di speedland.js (satu tempat). -->
+  var SPEEDLAND = (function () {
+    var CITY_KEYS = ['jakarta', 'yogyakarta', 'bali'];
+    var PREFIX = ['Volt', 'Kilat', 'Turbo', 'Surge', 'Bolt', 'Dynamo', 'Ampere', 'Watt', 'Nitro', 'Blaze', 'Pulse', 'Ignite', 'Thunder', 'Sprint', 'Fusion', 'Arc', 'Spark', 'Rush', 'Vortex', 'Comet'];
+    var SUFFIX = ['Squad', 'Runners', 'Crew', 'Pack', 'Force', 'Sprinters', 'Chargers', 'Movement'];
+    var seed = 200200 >>> 0;
+    function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+    function pick(a) { return a[Math.floor(rnd() * a.length)]; }
+    var demo = [], usedName = {}, n = 1;
+    CITY_KEYS.forEach(function (city) {
+      for (var i = 0; i < 8; i++) {
+        var name; do { name = pick(PREFIX) + ' ' + pick(SUFFIX); } while (usedName[name]);
+        usedName[name] = 1;
+        // 200 m sprint: quick field ~24 s, tail to ~46 s (two decimals).
+        var timeSec = Math.round((24 + Math.pow(rnd(), 1.5) * 22) * 100) / 100;
+        demo.push({ id: 'S' + (100 + n++), name: name, city: city, timeSec: timeSec });
+      }
+    });
+    demo.sort(function (a, b) { return a.timeSec - b.timeSec; });
+    return {
+      distanceM: 200,
+      api: {
+        // Single feibot "teams-data" endpoint (access token in the path). If the
+        // organiser issues a separate token per city, list them here as
+        // { jakarta: '…', yogyakarta: '…', bali: '…' } and extend speedland.js.
+        url: 'https://time.feibot.com/api/teams-data/l3koeQ6Afi',
+        // Auto-refresh while the page is open (ms); 0 disables polling.
+        pollMs: 20000
+      },
+      // SAMPLE / PLACEHOLDER field (generated above) — swapped for live rows.
+      demo: demo,
+      ui: {
+        id: { overall: 'Keseluruhan', rank: 'Peringkat', team: 'Tim / Peserta', city: 'Kota', time: '200 m', search: 'Cari tim atau peserta…', empty: 'Belum ada catatan waktu.', live: 'DATA LANGSUNG', sample: 'DATA CONTOH', loading: 'Memuat…' },
+        en: { overall: 'Overall', rank: 'Rank', team: 'Team / Runner', city: 'City', time: '200 m', search: 'Search team or runner…', empty: 'No times recorded yet.', live: 'LIVE DATA', sample: 'SAMPLE DATA', loading: 'Loading…' }
+      }
+    };
+  })();
+
   // ---- Shared UI strings (header/footer/components) ----
   var UI = {
     id: {
@@ -344,6 +393,7 @@
     prizeTotalPerCity: PRIZE_TOTAL_PER_CITY,
     results: RESULTS,
     liveTracking: LIVE_TRACKING,
+    speedland: SPEEDLAND,
     timeline: TIMELINE,
     contextStats: CONTEXT_STATS,
     totalRunners: 10000,

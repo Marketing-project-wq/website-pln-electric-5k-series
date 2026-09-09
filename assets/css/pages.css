@@ -41,6 +41,21 @@
 .data--results tr.results-row:hover td, .data--results tr.results-row:focus-visible td { background: var(--color-teal-tint); }
 .data--results tr.results-row:focus-visible { outline: 2px solid var(--color-teal); outline-offset: -2px; }
 
+/* Speedland — 200 m speed-test leaderboard -------------------------------- */
+.sl-status { display: inline-flex; align-items: center; gap: 0.5em; font-family: var(--font-kicker); letter-spacing: 0.06em; font-size: var(--fs-14); font-weight: 700; vertical-align: middle; }
+.sl-status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--color-muted-on-paper); }
+.sl-status--sample { color: var(--color-muted-on-paper); }
+.sl-status--live { color: var(--color-teal); }
+.sl-status--live::before { background: var(--color-teal); animation: sl-pulse 1.6s ease-out infinite; }
+@keyframes sl-pulse { 0% { box-shadow: 0 0 0 0 rgba(34, 195, 214, 0.45); } 70% { box-shadow: 0 0 0 8px rgba(34, 195, 214, 0); } 100% { box-shadow: 0 0 0 0 rgba(34, 195, 214, 0); } }
+@media (prefers-reduced-motion: reduce) { .sl-status--live::before { animation: none; } }
+.data--speedland .rank { font-family: var(--font-kicker); letter-spacing: 0.03em; color: var(--color-teal); font-weight: 700; width: 3em; }
+.data--speedland .sl-time { font-family: var(--font-kicker); letter-spacing: 0.03em; font-weight: 700; }
+.data--speedland tr.sl-podium-1 .rank { color: #E8B923; }
+.data--speedland tr.sl-podium-2 .rank { color: #9AA6B2; }
+.data--speedland tr.sl-podium-3 .rank { color: #C77B3B; }
+.data--speedland .sl-empty { text-align: center; font-style: italic; padding: var(--space-6); color: var(--color-muted-on-paper); }
+
 /* Result detail modal content (on the dark .modal dialog) */
 .modal__dialog--wide { max-width: 720px; }
 .modal .rd-name { font-family: var(--font-body); text-transform: none; font-weight: 700; font-size: var(--fs-32); margin-bottom: var(--space-4); }

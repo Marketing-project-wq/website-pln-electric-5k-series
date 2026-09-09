@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link rel="icon" type="image/png" href="/assets/img/graphics/shard-runner-mark.png">
+  <link rel="apple-touch-icon" href="/assets/img/graphics/shard-runner-mark.png">
+  <title>Speedland — PLN Mobile Electric 5K Series 2026</title>
+  <meta name="description" content="Speedland adalah tes kecepatan 200 m menuju PLN Mobile Electric 5K Series 2026 — sprint habis-habisan di tiap kota dengan leaderboard langsung sendiri.">
+  <link rel="canonical" href="https://electric5k.example/id/speedland.html">
+  <link rel="alternate" hreflang="id" href="https://electric5k.example/id/speedland.html">
+  <link rel="alternate" hreflang="en" href="https://electric5k.example/en/speedland.html">
+  <link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/speedland.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Speedland — PLN Mobile Electric 5K Series 2026">
+  <meta property="og:description" content="Tes kecepatan 200 m menuju race day — sprint habis-habisan di tiap kota, dengan leaderboard langsung sendiri. Power Your Speed.">
+  <meta property="og:locale" content="id_ID">
+  <meta property="og:locale:alternate" content="en_US">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/tokens.css">
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="/assets/css/pages.css">
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main id="main">
+    <!-- 1 — HERO -->
+    <section class="hero hero--compact">
+      <div class="hero__media hero__media--deco hero__media--deco--v3" aria-hidden="true"><img class="deco-shard deco-shard--tr" src="/assets/img/graphics/shard-fragment-01.png" alt=""><img class="deco-shard deco-shard--bl" src="/assets/img/graphics/shard-fragment-02.png" alt=""></div>
+      <div class="hero__inner container container--wide">
+        <span class="kicker">Speedland</span>
+        <h1 class="hero__title">200 Meter. Adu Cepat.</h1>
+        <p class="hero__sub">Perjalanan menuju race day dimulai di sini. Speedland adalah tes kecepatan 200 m dari series ini — satu sprint habis-habisan di tiap kota, dengan leaderboard langsung sendiri yang ditenagai sistem timing yang sama dengan 5K utama.</p>
+      </div>
+    </section>
+    <div class="shard-divider" aria-hidden="true"></div>
+
+    <!-- 2 — APA ITU SPEEDLAND -->
+    <section class="section surface-ink">
+      <div class="container container--wide">
+        <div class="section-head">
+          <span class="kicker">Pemanasan</span>
+          <h2>Sprint Menuju 5K</h2>
+          <p>Sebelum 5K penuh tiba di tiap kota, Speedland mengumpulkan pelari untuk satu tes singkat yang eksplosif: <strong>200 meter, tanpa atur tempo, murni kecepatan puncak</strong>. Cara pas untuk mencoba teknologi timing, merasakan garis start, dan naik ke leaderboard sebelum event utama.</p>
+        </div>
+        <div class="fact-strip">
+          <div class="fact"><div class="fact__num">200 m</div><div class="fact__label">Jarak sprint penuh — kecepatan puncak dari start sampai finish.</div></div>
+          <div class="fact"><div class="fact__num">1</div><div class="fact__label">Satu usaha habis-habisan — murni kecepatan, tanpa atur tempo.</div></div>
+          <div class="fact"><div class="fact__num">3</div><div class="fact__label">Kota — Jakarta, Yogyakarta &amp; Bali, menuju tiap 5K.</div></div>
+          <div class="fact"><div class="fact__num">Live</div><div class="fact__label">Dicatat chip timing di sistem yang sama dengan 5K utama.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 — LEADERBOARD -->
+    <section class="section surface-paper">
+      <div class="container container--wide">
+        <div class="section-head">
+          <span class="kicker">Leaderboard Langsung</span>
+          <h2>Tes Kecepatan 200 m — Tercepat di Atas</h2>
+          <p>Pindah antara papan <strong>Keseluruhan</strong> dan tiap kota, serta cari tim atau peserta. Waktu diperbarui langsung dari feed timing begitu trial berjalan. <span class="sl-status sl-status--sample" data-speedland-status aria-live="polite">DATA CONTOH</span></p>
+        </div>
+
+        <!-- Filter tampilan: Keseluruhan + tiap kota (dirender oleh speedland.js) -->
+        <div class="gallery-filters" data-speedland-filters aria-label="Saring leaderboard"></div>
+
+        <!-- Pencarian (dirender oleh speedland.js) -->
+        <div class="results-search" data-speedland-search></div>
+
+        <!-- Tabel leaderboard (dirender oleh speedland.js) -->
+        <div data-speedland-board></div>
+
+        <!-- Data contoh sampai feed terisi; disembunyikan speedland.js begitu live. -->
+        <p class="note" data-speedland-note>Data contoh untuk tata letak — waktu 200 m langsung akan muncul di sini otomatis begitu trial Speedland dicatat waktunya. Data timing: mitra timing PLN Mobile Electric 5K (feibot).</p>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="/assets/js/data.js"></script>
+  <script src="/assets/js/main.js" defer></script>
+  <script src="/assets/js/countdown.js" defer></script>
+  <script src="/assets/js/accordion.js" defer></script>
+  <script src="/assets/js/speedland.js" defer></script>
+</body>
+</html>
