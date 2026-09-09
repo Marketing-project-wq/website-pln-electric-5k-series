@@ -79,6 +79,13 @@
     <changefreq>weekly</changefreq>
   </url>
   <url>
+    <loc>https://electric5k.example/id/speedland.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/speedland.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/speedland.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/speedland.html"/>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
     <loc>https://electric5k.example/id/race-results.html</loc>
     <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/race-results.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/race-results.html"/>
@@ -202,6 +209,13 @@
     <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/road-to-event.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/road-to-event.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/road-to-event.html"/>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://electric5k.example/en/speedland.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/speedland.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/speedland.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/speedland.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>

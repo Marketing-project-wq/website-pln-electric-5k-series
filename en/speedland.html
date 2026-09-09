@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link rel="icon" type="image/png" href="/assets/img/graphics/shard-runner-mark.png">
+  <link rel="apple-touch-icon" href="/assets/img/graphics/shard-runner-mark.png">
+  <title>Speedland — PLN Mobile Electric 5K Series 2026</title>
+  <meta name="description" content="Speedland is the 200 m speed test on the road to the PLN Mobile Electric 5K Series 2026 — a flat-out sprint in each host city with its own live leaderboard.">
+  <link rel="canonical" href="https://electric5k.example/en/speedland.html">
+  <link rel="alternate" hreflang="id" href="https://electric5k.example/id/speedland.html">
+  <link rel="alternate" hreflang="en" href="https://electric5k.example/en/speedland.html">
+  <link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/speedland.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Speedland — PLN Mobile Electric 5K Series 2026">
+  <meta property="og:description" content="The 200 m speed test on the road to race day — a flat-out sprint in each city, with its own live leaderboard. Power Your Speed.">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="id_ID">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/tokens.css">
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="/assets/css/pages.css">
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main id="main">
+    <!-- 1 — HERO -->
+    <section class="hero hero--compact">
+      <div class="hero__media hero__media--deco hero__media--deco--v3" aria-hidden="true"><img class="deco-shard deco-shard--tr" src="/assets/img/graphics/shard-fragment-01.png" alt=""><img class="deco-shard deco-shard--bl" src="/assets/img/graphics/shard-fragment-02.png" alt=""></div>
+      <div class="hero__inner container container--wide">
+        <span class="kicker">Speedland</span>
+        <h1 class="hero__title">200 Meters. Pure Speed.</h1>
+        <p class="hero__sub">The road to race day starts here. Speedland is the series' 200 m speed test — one flat-out sprint in each host city, with its own live leaderboard powered by the same timing system as the main 5K.</p>
+      </div>
+    </section>
+    <div class="shard-divider" aria-hidden="true"></div>
+
+    <!-- 2 — WHAT IS SPEEDLAND -->
+    <section class="section surface-ink">
+      <div class="container container--wide">
+        <div class="section-head">
+          <span class="kicker">The Warm-Up</span>
+          <h2>A Sprint on the Road to 5K</h2>
+          <p>Before the full 5K arrives in each city, Speedland brings runners together for a short, explosive test: <strong>200 metres, no pacing, just top speed</strong>. It's the perfect way to try the timing tech, feel the start line, and land on the leaderboard ahead of the main event.</p>
+        </div>
+        <div class="fact-strip">
+          <div class="fact"><div class="fact__num">200 m</div><div class="fact__label">The full sprint distance — top speed, start to finish.</div></div>
+          <div class="fact"><div class="fact__num">1</div><div class="fact__label">One all-out effort — pure speed, no pacing.</div></div>
+          <div class="fact"><div class="fact__num">3</div><div class="fact__label">Cities — Jakarta, Yogyakarta &amp; Bali, on the road to each 5K.</div></div>
+          <div class="fact"><div class="fact__num">Live</div><div class="fact__label">Chip-timed on the same system as the main 5K.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 — LEADERBOARD -->
+    <section class="section surface-paper">
+      <div class="container container--wide">
+        <div class="section-head">
+          <span class="kicker">Live Leaderboard</span>
+          <h2>200 m Speed Test — Fastest First</h2>
+          <p>Switch between the <strong>Overall</strong> board and each city, and search for a team or runner. Times update live from the timing feed once the trial is running. <span class="sl-status sl-status--sample" data-speedland-status aria-live="polite">SAMPLE DATA</span></p>
+        </div>
+
+        <!-- View filter: Overall + each city (rendered by speedland.js) -->
+        <div class="gallery-filters" data-speedland-filters aria-label="Filter leaderboard"></div>
+
+        <!-- Search (rendered by speedland.js) -->
+        <div class="results-search" data-speedland-search></div>
+
+        <!-- Leaderboard table (rendered by speedland.js) -->
+        <div data-speedland-board></div>
+
+        <!-- Sample field shown until the feed populates; hidden by speedland.js once live. -->
+        <p class="note" data-speedland-note>Sample field shown for layout — live 200 m times appear here automatically once the Speedland trial is timed. Timing data: PLN Mobile Electric 5K timing partner (feibot).</p>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="/assets/js/data.js"></script>
+  <script src="/assets/js/main.js" defer></script>
+  <script src="/assets/js/countdown.js" defer></script>
+  <script src="/assets/js/accordion.js" defer></script>
+  <script src="/assets/js/speedland.js" defer></script>
+</body>
+</html>

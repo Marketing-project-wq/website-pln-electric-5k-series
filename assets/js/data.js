@@ -237,6 +237,68 @@
     }
   };
 
+  // ---- Speedland (200 m speed test — the "road to" trial) -----------------
+  // Speedland is the warm-up activation on the road to race day: a single 200 m
+  // all-out sprint staged in each host city, each with its own live leaderboard.
+  // Timing comes from the SAME vendor as the main event (feibot).
+  //
+  // The live results come from feibot's "scores-data" endpoint, whose envelope
+  // is { code, msg, race, item_check_points, scores }. The per-runner rows live
+  // in scores[]; the fields Speedland reads are: bib, name, sex, city,
+  // item_name, total_score (gun time "HH:MM:SS"), net_score (chip time),
+  // finisher (status flag), finish_time. See normalize() in speedland.js — the
+  // one place that maps this shape to leaderboard rows.
+  //
+  // api.url is EMPTY on the public site, so the branded SAMPLE field below is
+  // shown until the organiser provides the real PLN Speedland race token(s).
+  // api.sampleUrl points at the vendor's own demo race (KTD HYROX) purely so the
+  // live pipeline can be exercised on staging via ?speedland=sample.
+  // <!-- TODO: isi api.url (atau api.byCity) dengan token race Speedland dari
+  //      penyelenggara. Tiap kota kemungkinan punya token/endpoint sendiri. -->
+  var SPEEDLAND = (function () {
+    var CITY_KEYS = ['jakarta', 'yogyakarta', 'bali'];
+    var FIRST = ['Rangga', 'Bayu', 'Dimas', 'Fajar', 'Reza', 'Yoga', 'Aldo', 'Gilang', 'Arif', 'Panji', 'Komang', 'Made', 'Ayu', 'Dewi', 'Sari', 'Intan', 'Nadia', 'Putri', 'Rina', 'Sinta', 'Farel', 'Rafi', 'Naufal', 'Alif'];
+    var LAST = ['Wijaya', 'Saputra', 'Prasetyo', 'Nugroho', 'Kurniawan', 'Firmansyah', 'Ramadhan', 'Setiawan', 'Nugraha', 'Hidayat', 'Santoso', 'Pratama', 'Putra', 'Andika', 'Wirawan', 'Permana'];
+    var seed = 200200 >>> 0;
+    function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+    function pick(a) { return a[Math.floor(rnd() * a.length)]; }
+    var demo = [], usedBib = {};
+    CITY_KEYS.forEach(function (city, ci) {
+      var base = (ci + 1) * 1000;
+      for (var i = 0; i < 8; i++) {
+        var bib; do { bib = String(base + Math.floor(rnd() * 900)); } while (usedBib[bib]);
+        usedBib[bib] = 1;
+        var g = rnd() < 0.55 ? 'M' : 'F';
+        // 200 m sprint: quick field ~24 s, tail to ~46 s (two decimals).
+        var timeSec = Math.round((24 + Math.pow(rnd(), 1.5) * 22) * 100) / 100;
+        var at100 = Math.round(timeSec * (0.47 + rnd() * 0.06) * 100) / 100; // ~halfway 100 m split
+        demo.push({ id: bib, name: pick(FIRST) + ' ' + pick(LAST), city: city, gender: g, timeSec: timeSec, pace: null, splits: [{ label: '100 m', totalSec: at100 }, { label: '200 m', totalSec: timeSec }] });
+      }
+    });
+    demo.sort(function (a, b) { return a.timeSec - b.timeSec; });
+    return {
+      distanceM: 200,
+      api: {
+        // Real PLN Speedland race token(s) go here. Leave '' to show the demo
+        // field. If each city has its own token, use byCity instead of url and
+        // extend speedland.js to merge them (city is tagged onto every row).
+        url: '',
+        byCity: { jakarta: '', yogyakarta: '', bali: '' },
+        // Vendor DEMO race (KTD HYROX) — NOT our event. Used only when the page
+        // is opened with ?speedland=sample, to exercise the live pipeline.
+        sampleUrl: 'https://time.feibot.com/api/scores-data/wATwB5p8MY',
+        // Auto-refresh while the page is open (ms); 0 disables polling.
+        pollMs: 20000
+      },
+      // SAMPLE / PLACEHOLDER field (generated above) — swapped for live rows.
+      demo: demo,
+      ui: {
+        id: { overall: 'Keseluruhan', rank: 'Peringkat', team: 'Peserta', city: 'Kota', time: '200 m', search: 'Cari peserta atau No. BIB…', empty: 'Belum ada catatan waktu.', live: 'DATA LANGSUNG', sample: 'DATA CONTOH', loading: 'Memuat…', splits: 'Split Time', point: 'Titik', split: 'Segmen', total: 'Total', gender: 'Gender', male: 'Laki-laki', female: 'Perempuan', status: 'Status', finished: 'Finish', pace: 'Pace', category: 'Kategori', close: 'Tutup' },
+        en: { overall: 'Overall', rank: 'Rank', team: 'Participant', city: 'City', time: '200 m', search: 'Search participant or bib…', empty: 'No times recorded yet.', live: 'LIVE DATA', sample: 'SAMPLE DATA', loading: 'Loading…', splits: 'Split Time', point: 'Point', split: 'Split', total: 'Total', gender: 'Gender', male: 'Male', female: 'Female', status: 'Status', finished: 'Finished', pace: 'Pace', category: 'Category', close: 'Close' }
+      }
+    };
+  })();
+
   // ---- Shared UI strings (header/footer/components) ----
   var UI = {
     id: {
@@ -344,6 +406,7 @@
     prizeTotalPerCity: PRIZE_TOTAL_PER_CITY,
     results: RESULTS,
     liveTracking: LIVE_TRACKING,
+    speedland: SPEEDLAND,
     timeline: TIMELINE,
     contextStats: CONTEXT_STATS,
     totalRunners: 10000,
