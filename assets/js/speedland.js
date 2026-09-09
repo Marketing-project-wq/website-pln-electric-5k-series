@@ -1,18 +1,22 @@
 /* ==========================================================================
    speedland.js — 200 m speed-test leaderboard (the "road to" trial).
    Self-initialising. Reads window.EVENT_DATA.speedland, fetches the feibot
-   "teams-data" endpoint, and renders a searchable, city-filterable board.
+   timing feed, and renders a searchable, city-filterable board.
 
-   The vendor envelope is confirmed as:
-     { code: "ok", msg: "ok", teams: [], team_scores: [] }
-   The arrays are empty until the trial is timed, and the SHAPE OF EACH ROW
-   inside teams[] / team_scores[] is not yet known. normalize() below is the
-   single place that maps those rows into leaderboard entries — it tries the
-   most likely field names and is safe to adjust once real data appears (open
-   the browser console: the raw payload is logged on every fetch).
+   LIVE FEED — feibot "scores-data" endpoint. Confirmed envelope:
+     { code, msg, race:{…}, item_check_points:[…], scores:[…] }
+   Each scores[] row is one participant. The fields used here:
+     bib, name, sex, city, item_name,
+     total_score (gun time, "HH:MM:SS"), net_score (chip time, "HH:MM:SS"),
+     finisher (status flag), finish_time.
+   normalize() below is the single place that maps a payload to leaderboard
+   rows. It also still understands the older "teams-data" envelope
+   ({ teams, team_scores }) as a fallback. The raw payload is logged to the
+   console on every fetch.
 
-   While the feed is empty / unreachable, the board falls back to the seeded
-   SAMPLE field in data.js so the layout is always populated.
+   The board falls back to the seeded SAMPLE field in data.js whenever no feed
+   is configured, the feed is empty, or it is unreachable — so the layout is
+   always populated.
    ========================================================================== */
 (function () {
   'use strict';
@@ -36,42 +40,41 @@
   // ---- Small helpers ------------------------------------------------------
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function cityLabel(key) { return key && CITY_NAME[key] ? CITY_NAME[key] : '—'; }
+  function notEmpty(v) { return v != null && v !== ''; }
 
-  // Format a 200 m time (seconds) as "SS.hh" or, if over a minute, "M:SS.hh".
-  function fmt200(sec) {
-    if (sec == null || isNaN(sec)) return '—';
-    sec = Math.max(0, Number(sec));
-    var m = Math.floor(sec / 60);
-    var s = sec - m * 60;
-    if (m > 0) return m + ':' + (s < 10 ? '0' : '') + s.toFixed(2);
-    return s.toFixed(2);
-  }
-
-  // ---- feibot payload -> leaderboard entries ------------------------------
-  // ONE place to maintain. Each entry: { id, name, city, timeSec }.
-  function pickField(obj, names) {
-    if (!obj) return undefined;
-    for (var i = 0; i < names.length; i++) if (obj[names[i]] != null) return obj[names[i]];
-    return undefined;
-  }
-
-  // Parse a time value into seconds. Accepts a number (seconds; large values
-  // are treated as milliseconds) or a string ("mm:ss.hh", "ss.hh", "ss,hh").
-  // NOTE: confirm the vendor's unit once real rows arrive.
+  // Parse a clock string / number into seconds.
+  //   "HH:MM:SS(.hh)" -> h*3600 + m*60 + s   ·   "MM:SS(.hh)" -> m*60 + s
+  //   "SS(.hh)" or a number -> as-is (seconds). Comma decimals accepted.
   function toSeconds(v) {
-    if (v == null) return null;
-    if (typeof v === 'number') {
-      if (!isFinite(v)) return null;
-      return v > 300 ? v / 1000 : v; // a 200 m split is never > 300 s -> ms
-    }
+    if (v == null || v === '') return null;
+    if (typeof v === 'number') return isFinite(v) ? v : null;
     var str = String(v).trim();
     if (!str) return null;
     if (str.indexOf(':') >= 0) {
-      var p = str.split(':');
-      return (parseFloat(p[0]) || 0) * 60 + (parseFloat(p[1].replace(',', '.')) || 0);
+      var parts = str.split(':');
+      var sec = 0;
+      for (var i = 0; i < parts.length; i++) sec = sec * 60 + (parseFloat(parts[i].replace(',', '.')) || 0);
+      return sec;
     }
     var n = parseFloat(str.replace(',', '.'));
-    return isNaN(n) ? null : (n > 300 ? n / 1000 : n);
+    return isNaN(n) ? null : n;
+  }
+
+  // Seconds -> clean display: "27", "27.48", "5:45", "1:02.10", "1:56:21".
+  function fmtTime(sec) {
+    if (sec == null || isNaN(sec)) return '—';
+    sec = Math.max(0, Number(sec));
+    var totalHund = Math.round(sec * 100);
+    var hund = totalHund % 100;
+    var totalSec = (totalHund - hund) / 100;
+    var h = Math.floor(totalSec / 3600);
+    var m = Math.floor((totalSec % 3600) / 60);
+    var s = totalSec % 60;
+    function p2(n) { return (n < 10 ? '0' : '') + n; }
+    var frac = hund > 0 ? '.' + p2(hund) : '';
+    if (h > 0) return h + ':' + p2(m) + ':' + p2(s) + frac;
+    if (m > 0) return m + ':' + p2(s) + frac;
+    return s + frac;
   }
 
   function normalizeCity(v) {
@@ -83,34 +86,64 @@
     return null; // unknown -> still counts in Overall, just no city filter
   }
 
+  // ---- feibot payload -> leaderboard entries ------------------------------
+  // ONE place to maintain. Each entry: { id, name, city, gender, timeSec, … }.
   function normalize(payload) {
     if (!payload) return [];
-    var teams = payload.teams || payload.data && payload.data.teams || [];
-    var scores = payload.team_scores || payload.data && payload.data.team_scores || [];
+    var scores = payload.scores || (payload.data && payload.data.scores);
+    if (Array.isArray(scores)) return normalizeScores(scores);
+    return normalizeTeams(payload); // legacy "teams-data" fallback
+  }
+
+  // scores-data: individual results. Rank by chip (net) time, else gun time.
+  function normalizeScores(scores) {
+    var out = [];
+    scores.forEach(function (s) {
+      if (!s) return;
+      var raw = notEmpty(s.net_score) ? s.net_score : (notEmpty(s.total_score) ? s.total_score : null);
+      var timeSec = toSeconds(raw);
+      if (timeSec == null || timeSec <= 0) return; // no time yet (DNS / not finished) -> skip
+      var bib = notEmpty(s.bib) ? String(s.bib) : (s.id != null ? String(s.id) : '');
+      var nm = s.name != null ? String(s.name).trim() : '';
+      out.push({
+        id: bib,
+        name: nm || bib || ('#' + (s.id || '')),
+        city: normalizeCity(s.city),
+        gender: s.sex || s.gender || null,
+        timeSec: timeSec,
+        status: s.finisher,
+        item: s.item_name || null
+      });
+    });
+    return out;
+  }
+
+  // teams-data: { teams:[], team_scores:[] } — kept for compatibility.
+  function pickField(obj, names) {
+    if (!obj) return undefined;
+    for (var i = 0; i < names.length; i++) if (obj[names[i]] != null) return obj[names[i]];
+    return undefined;
+  }
+  function normalizeTeams(payload) {
+    var teams = payload.teams || (payload.data && payload.data.teams) || [];
+    var scores = payload.team_scores || (payload.data && payload.data.team_scores) || [];
     if (!Array.isArray(teams)) teams = [];
     if (!Array.isArray(scores)) scores = [];
-
-    // Index teams by id so score rows can borrow their name/city.
     var teamById = {};
-    teams.forEach(function (t) {
-      var id = pickField(t, ['id', 'team_id', 'teamId', 'uid', 'no']);
-      if (id != null) teamById[String(id)] = t;
-    });
-
+    teams.forEach(function (t) { var id = pickField(t, ['id', 'team_id', 'teamId', 'uid', 'no']); if (id != null) teamById[String(id)] = t; });
     var source = scores.length ? scores : teams;
     var out = [];
     source.forEach(function (row) {
       var ref = pickField(row, ['team_id', 'teamId', 'id', 'team', 'tid']);
       var team = (ref != null && teamById[String(ref)]) ? teamById[String(ref)] : (scores.length ? null : row);
       function F(names) { var a = pickField(row, names); return a != null ? a : (team ? pickField(team, names) : undefined); }
-
-      var name = F(['name', 'team_name', 'teamName', 'title', 'team', 'group', 'nama']);
-      var city = normalizeCity(F(['city', 'location', 'region', 'venue', 'kota']));
-      var timeSec = toSeconds(F(['time', 'duration', 'result', 'best', 'best_time', 'bestTime', 'seconds', 'sec', 'elapsed', 'score', 'ms', 'millis']));
-      var id = pickField(row, ['bib', 'no', 'number']);
-      if (id == null) id = ref;
-      if (timeSec == null) return; // no usable time -> skip
-      out.push({ id: id, name: name || ('#' + (id != null ? id : out.length + 1)), city: city, timeSec: timeSec });
+      var timeSec = toSeconds(F(['net_score', 'total_score', 'time', 'duration', 'result', 'best', 'best_time', 'score', 'seconds', 'elapsed']));
+      if (timeSec == null || timeSec <= 0) return;
+      var id = pickField(row, ['bib', 'no', 'number']); if (id == null) id = ref;
+      out.push({
+        id: id, name: F(['name', 'team_name', 'teamName', 'title', 'team', 'group', 'nama']) || ('#' + (id != null ? id : out.length + 1)),
+        city: normalizeCity(F(['city', 'location', 'region', 'venue', 'kota'])), gender: F(['sex', 'gender']) || null, timeSec: timeSec
+      });
     });
     return out;
   }
@@ -145,7 +178,7 @@
         '<td data-label="' + esc(T.rank) + '" class="rank">' + rank + '</td>' +
         '<td data-label="' + esc(T.team) + '">' + esc(e.name) + '</td>' +
         cityCell +
-        '<td data-label="' + esc(T.time) + '" class="num sl-time">' + fmt200(e.timeSec) + '</td>' +
+        '<td data-label="' + esc(T.time) + '" class="num sl-time">' + fmtTime(e.timeSec) + '</td>' +
       '</tr>';
     }).join('');
     if (!list.length) body = '<tr><td class="sl-empty" colspan="' + head.length + '">' + esc(T.empty) + '</td></tr>';
@@ -194,25 +227,47 @@
   }
 
   // ---- Live feed ----------------------------------------------------------
+  // Which endpoint(s) to fetch: per-city tokens if set, else a single url,
+  // else the vendor sample feed when opted in with ?speedland=sample.
+  function feedTargets() {
+    var api = CFG.api || {};
+    var targets = [];
+    if (api.byCity) Object.keys(api.byCity).forEach(function (k) { if (api.byCity[k]) targets.push({ url: api.byCity[k], city: k }); });
+    if (!targets.length && api.url) targets.push({ url: api.url });
+    if (!targets.length && api.sampleUrl) {
+      try {
+        var qs = new URLSearchParams(location.search);
+        if ((qs.get('speedland') || qs.get('feed')) === 'sample') targets.push({ url: api.sampleUrl });
+      } catch (e) {}
+    }
+    return targets;
+  }
+
   function fetchLive() {
-    if (!CFG.api || !CFG.api.url) return;
+    var targets = feedTargets();
+    if (!targets.length) return; // no feed configured -> stay on demo
     setStatus('loading');
-    fetch(CFG.api.url, { headers: { 'Accept': 'application/json' } })
-      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-      .then(function (payload) {
-        try { console.info('[Speedland] feibot raw payload:', payload); } catch (e) {}
-        var live = normalize(payload);
-        if (live.length) { entries = live; setStatus('live'); }
-        else { useDemo(); setStatus('sample'); }
-        paint();
-        if (CFG.api.pollMs > 0) setTimeout(fetchLive, CFG.api.pollMs);
-      })
-      .catch(function (err) {
-        try { console.warn('[Speedland] feibot fetch failed — showing sample field.', err); } catch (e) {}
-        if (!entries.length) useDemo();
-        setStatus('sample');
-        paint();
-      });
+    Promise.all(targets.map(function (t) {
+      return fetch(t.url, { headers: { 'Accept': 'application/json' } })
+        .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(function (payload) {
+          try { console.info('[Speedland] feibot payload (' + (t.city || 'all') + '):', payload); } catch (e) {}
+          var rows = normalize(payload);
+          if (t.city) rows.forEach(function (row) { if (!row.city) row.city = t.city; });
+          return rows;
+        });
+    })).then(function (lists) {
+      var live = [].concat.apply([], lists);
+      if (live.length) { entries = live; setStatus('live'); }
+      else { useDemo(); setStatus('sample'); }
+      paint();
+      if (CFG.api && CFG.api.pollMs > 0) setTimeout(fetchLive, CFG.api.pollMs);
+    })['catch'](function (err) {
+      try { console.warn('[Speedland] feibot fetch failed — showing sample field.', err); } catch (e) {}
+      if (!entries.length) useDemo();
+      setStatus('sample');
+      paint();
+    });
   }
 
   // ---- Boot ---------------------------------------------------------------
