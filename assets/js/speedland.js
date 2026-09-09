@@ -105,14 +105,26 @@
       if (timeSec == null || timeSec <= 0) return; // no time yet (DNS / not finished) -> skip
       var bib = notEmpty(s.bib) ? String(s.bib) : (s.id != null ? String(s.id) : '');
       var nm = s.name != null ? String(s.name).trim() : '';
+      // Per-checkpoint splits: prefer loop_a_format ({lap_number,total_time}),
+      // else the raw loop_a array of cumulative times. Labelled by lap for now;
+      // map to Km / checkpoint names once the race's score_configs are known.
+      var splits = [];
+      if (Array.isArray(s.loop_a_format)) {
+        splits = s.loop_a_format.map(function (l) { return { label: 'Lap ' + l.lap_number, totalSec: toSeconds(l.total_time) }; });
+      } else if (Array.isArray(s.loop_a)) {
+        splits = s.loop_a.map(function (t, i) { return { label: 'Lap ' + (i + 1), totalSec: toSeconds(t) }; });
+      }
+      splits = splits.filter(function (x) { return x.totalSec != null; });
       out.push({
         id: bib,
         name: nm || bib || ('#' + (s.id || '')),
         city: normalizeCity(s.city),
         gender: s.sex || s.gender || null,
         timeSec: timeSec,
+        pace: notEmpty(s.pace) ? s.pace : null,
         status: s.finisher,
-        item: s.item_name || null
+        item: s.item_name || null,
+        splits: splits
       });
     });
     return out;
@@ -150,10 +162,16 @@
 
   // ---- State & rendering --------------------------------------------------
   var entries = [];
+  var lastList = [];   // rows currently painted (index -> entry), for row clicks
   var current = 'overall';
   var query = '';
 
-  function useDemo() { entries = (CFG.demo || []).slice(); }
+  // Stamp an overall rank (position in the whole field by time) on every entry.
+  function reindex() {
+    entries.slice().sort(function (a, b) { return a.timeSec - b.timeSec; })
+      .forEach(function (e, i) { e._overallRank = i + 1; });
+  }
+  function useDemo() { entries = (CFG.demo || []).slice(); reindex(); }
 
   function ranked() {
     var list = entries.slice();
@@ -169,12 +187,13 @@
   function paint() {
     var isOverall = current === 'overall';
     var list = ranked();
+    lastList = list;
     var head = isOverall ? [T.rank, T.team, T.city, T.time] : [T.rank, T.team, T.time];
     var body = list.map(function (e, idx) {
       var rank = idx + 1;
       var podium = (!query && rank <= 3) ? ' sl-podium-' + rank : '';
       var cityCell = isOverall ? '<td data-label="' + esc(T.city) + '">' + esc(cityLabel(e.city)) + '</td>' : '';
-      return '<tr class="sl-row' + podium + '">' +
+      return '<tr class="sl-row' + podium + '" tabindex="0" role="button" data-idx="' + idx + '" aria-label="' + esc(e.name) + '">' +
         '<td data-label="' + esc(T.rank) + '" class="rank">' + rank + '</td>' +
         '<td data-label="' + esc(T.team) + '">' + esc(e.name) + '</td>' +
         cityCell +
@@ -226,6 +245,81 @@
     if (noteEl) noteEl.hidden = (kind === 'live');
   }
 
+  // ---- Participant detail modal (reuses the .modal / .rd-* component) ------
+  var slModal, slBody, slLastFocus;
+  function genderLabel(g) { if (!g) return '—'; g = String(g).toUpperCase(); return g === 'M' ? T.male : g === 'F' ? T.female : g; }
+
+  function splitTable(splits) {
+    if (!splits || !splits.length) return '';
+    var prev = 0, rows = '';
+    for (var i = 0; i < splits.length; i++) {
+      var sp = splits[i];
+      if (sp.totalSec == null) continue;
+      var delta = sp.totalSec - prev; prev = sp.totalSec;
+      rows += '<tr><td>' + esc(sp.label) + '</td><td class="num">' + fmtTime(delta) + '</td><td class="num">' + fmtTime(sp.totalSec) + '</td></tr>';
+    }
+    if (!rows) return '';
+    return '<div class="rd-splits"><h3>' + esc(T.splits) + '</h3><div class="table-wrap"><table class="rd-table"><thead><tr><th>' + esc(T.point) + '</th><th class="num">' + esc(T.split) + '</th><th class="num">' + esc(T.total) + '</th></tr></thead><tbody>' + rows + '</tbody></table></div></div>';
+  }
+
+  function buildModal() {
+    if (slModal) return;
+    slModal = document.createElement('div');
+    slModal.className = 'modal'; slModal.id = 'sl-modal';
+    slModal.setAttribute('role', 'dialog'); slModal.setAttribute('aria-modal', 'true'); slModal.setAttribute('aria-labelledby', 'sl-modal-name');
+    slModal.innerHTML = '<div class="modal__overlay" data-close></div><div class="modal__dialog modal__dialog--wide"><button class="modal__close" type="button" data-close aria-label="' + esc(T.close) + '">✕</button><div data-sl-detail></div></div>';
+    document.body.appendChild(slModal);
+    slBody = slModal.querySelector('[data-sl-detail]');
+    slModal.addEventListener('click', function (e) { if (e.target.closest('[data-close]')) closeDetail(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && slModal.classList.contains('is-open')) closeDetail(); });
+  }
+
+  function openDetail(e) {
+    if (!e) return;
+    buildModal();
+    var cat = e.item || (CFG.distanceM ? CFG.distanceM + ' m' : '—');
+    var rank = e._overallRank ? '#' + e._overallRank : '—';
+    slBody.innerHTML =
+      '<span class="rd-bib">' + esc(e.id || '—') + '</span>' +
+      '<h2 class="rd-name" id="sl-modal-name">' + esc(e.name || '') + '</h2>' +
+      '<div class="rd-top">' +
+        '<div class="rd-finish">' +
+          '<span class="rd-finish__label">' + esc(cat) + '</span>' +
+          '<span class="rd-finish__time">' + fmtTime(e.timeSec) + '</span>' +
+          '<div class="rd-ranks">' +
+            '<span>' + esc(T.rank) + '<b>' + rank + '</b></span>' +
+            '<span>' + esc(T.city) + '<b>' + esc(cityLabel(e.city)) + '</b></span>' +
+            '<span>' + esc(T.pace) + '<b>' + esc(e.pace || '—') + '</b></span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="rd-meta">' +
+          '<div><dt>' + esc(T.city) + '</dt><dd>' + esc(cityLabel(e.city)) + '</dd></div>' +
+          '<div><dt>' + esc(T.gender) + '</dt><dd>' + esc(genderLabel(e.gender)) + '</dd></div>' +
+          '<div><dt>' + esc(T.category) + '</dt><dd>' + esc(cat) + '</dd></div>' +
+          '<div><dt>' + esc(T.status) + '</dt><dd>' + esc(T.finished) + '</dd></div>' +
+        '</div>' +
+      '</div>' +
+      splitTable(e.splits);
+    slLastFocus = document.activeElement;
+    slModal.classList.add('is-open');
+    document.documentElement.style.overflow = 'hidden'; document.body.style.overflow = 'hidden';
+    var c = slModal.querySelector('.modal__close'); if (c) c.focus();
+  }
+
+  function closeDetail() {
+    if (!slModal) return;
+    slModal.classList.remove('is-open');
+    document.documentElement.style.overflow = ''; document.body.style.overflow = '';
+    if (slLastFocus && slLastFocus.focus) slLastFocus.focus();
+  }
+
+  function wireDetail() {
+    mount.addEventListener('click', function (e) { var tr = e.target.closest('.sl-row[data-idx]'); if (tr) openDetail(lastList[+tr.getAttribute('data-idx')]); });
+    mount.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { var tr = e.target.closest('.sl-row[data-idx]'); if (tr) { e.preventDefault(); openDetail(lastList[+tr.getAttribute('data-idx')]); } }
+    });
+  }
+
   // ---- Live feed ----------------------------------------------------------
   // Which endpoint(s) to fetch: per-city tokens if set, else a single url,
   // else the vendor sample feed when opted in with ?speedland=sample.
@@ -258,7 +352,7 @@
         });
     })).then(function (lists) {
       var live = [].concat.apply([], lists);
-      if (live.length) { entries = live; setStatus('live'); }
+      if (live.length) { entries = live; reindex(); setStatus('live'); }
       else { useDemo(); setStatus('sample'); }
       paint();
       if (CFG.api && CFG.api.pollMs > 0) setTimeout(fetchLive, CFG.api.pollMs);
@@ -274,6 +368,7 @@
   useDemo();
   renderFilters();
   renderSearch();
+  wireDetail();
   paint();
   setStatus('sample');
   fetchLive();

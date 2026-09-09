@@ -55,6 +55,9 @@
 .data--speedland tr.sl-podium-2 .rank { color: #9AA6B2; }
 .data--speedland tr.sl-podium-3 .rank { color: #C77B3B; }
 .data--speedland .sl-empty { text-align: center; font-style: italic; padding: var(--space-6); color: var(--color-muted-on-paper); }
+.data--speedland tbody tr.sl-row { cursor: pointer; }
+.data--speedland tbody tr.sl-row:hover td, .data--speedland tbody tr.sl-row:focus-visible td { background: var(--color-teal-tint); }
+.data--speedland tbody tr.sl-row:focus-visible { outline: 2px solid var(--color-teal); outline-offset: -2px; }
 
 /* Result detail modal content (on the dark .modal dialog) */
 .modal__dialog--wide { max-width: 720px; }

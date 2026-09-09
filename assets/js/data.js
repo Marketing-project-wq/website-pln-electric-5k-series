@@ -271,7 +271,8 @@
         var g = rnd() < 0.55 ? 'M' : 'F';
         // 200 m sprint: quick field ~24 s, tail to ~46 s (two decimals).
         var timeSec = Math.round((24 + Math.pow(rnd(), 1.5) * 22) * 100) / 100;
-        demo.push({ id: bib, name: pick(FIRST) + ' ' + pick(LAST), city: city, gender: g, timeSec: timeSec });
+        var at100 = Math.round(timeSec * (0.47 + rnd() * 0.06) * 100) / 100; // ~halfway 100 m split
+        demo.push({ id: bib, name: pick(FIRST) + ' ' + pick(LAST), city: city, gender: g, timeSec: timeSec, pace: null, splits: [{ label: '100 m', totalSec: at100 }, { label: '200 m', totalSec: timeSec }] });
       }
     });
     demo.sort(function (a, b) { return a.timeSec - b.timeSec; });
@@ -292,8 +293,8 @@
       // SAMPLE / PLACEHOLDER field (generated above) — swapped for live rows.
       demo: demo,
       ui: {
-        id: { overall: 'Keseluruhan', rank: 'Peringkat', team: 'Peserta', city: 'Kota', time: '200 m', search: 'Cari peserta atau No. BIB…', empty: 'Belum ada catatan waktu.', live: 'DATA LANGSUNG', sample: 'DATA CONTOH', loading: 'Memuat…' },
-        en: { overall: 'Overall', rank: 'Rank', team: 'Participant', city: 'City', time: '200 m', search: 'Search participant or bib…', empty: 'No times recorded yet.', live: 'LIVE DATA', sample: 'SAMPLE DATA', loading: 'Loading…' }
+        id: { overall: 'Keseluruhan', rank: 'Peringkat', team: 'Peserta', city: 'Kota', time: '200 m', search: 'Cari peserta atau No. BIB…', empty: 'Belum ada catatan waktu.', live: 'DATA LANGSUNG', sample: 'DATA CONTOH', loading: 'Memuat…', splits: 'Split Time', point: 'Titik', split: 'Segmen', total: 'Total', gender: 'Gender', male: 'Laki-laki', female: 'Perempuan', status: 'Status', finished: 'Finish', pace: 'Pace', category: 'Kategori', close: 'Tutup' },
+        en: { overall: 'Overall', rank: 'Rank', team: 'Participant', city: 'City', time: '200 m', search: 'Search participant or bib…', empty: 'No times recorded yet.', live: 'LIVE DATA', sample: 'SAMPLE DATA', loading: 'Loading…', splits: 'Split Time', point: 'Point', split: 'Split', total: 'Total', gender: 'Gender', male: 'Male', female: 'Female', status: 'Status', finished: 'Finished', pace: 'Pace', category: 'Category', close: 'Close' }
       }
     };
   })();
