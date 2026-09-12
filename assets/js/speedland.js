@@ -5,18 +5,16 @@
 
    LIVE FEED — feibot "scores-data" endpoint. Confirmed envelope:
      { code, msg, race:{…}, item_check_points:[…], scores:[…] }
-   Each scores[] row is one participant. The fields used here:
-     bib, name, sex, city, item_name,
-     total_score (gun time, "HH:MM:SS"), net_score (chip time, "HH:MM:SS"),
-     finisher (status flag), finish_time.
-   normalize() below is the single place that maps a payload to leaderboard
-   rows. It also still understands the older "teams-data" envelope
-   ({ teams, team_scores }) as a fallback. The raw payload is logged to the
-   console on every fetch.
+   Each scores[] row is one participant: bib, name, sex, city, item_name,
+   total_score (gun time "HH:MM:SS"), net_score (chip time), finisher, plus
+   per-lap splits (loop_a_format). normalize() maps a payload to rows; it also
+   understands the older "teams-data" envelope as a fallback.
 
-   The board falls back to the seeded SAMPLE field in data.js whenever no feed
-   is configured, the feed is empty, or it is unreachable — so the layout is
-   always populated.
+   THREE display modes, chosen automatically from the data each fetch:
+     • leaderboard — any row has a time -> ranked by time (LIVE)
+     • roster      — real names but no times yet -> start list by bib
+     • sample      — only placeholder names / no data -> seeded demo field
+   The raw payload is logged to the console on every fetch.
    ========================================================================== */
 (function () {
   'use strict';
@@ -41,6 +39,11 @@
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function cityLabel(key) { return key && CITY_NAME[key] ? CITY_NAME[key] : '—'; }
   function notEmpty(v) { return v != null && v !== ''; }
+  // A "real" name is present and not just the bib repeated (feibot seeds
+  // placeholder rows where name === bib, e.g. "001").
+  function isRealName(e) { return e.name && String(e.name).trim() !== '' && String(e.name).trim() !== String(e.id); }
+  function byBib(a, b) { var na = parseInt(a.id, 10), nb = parseInt(b.id, 10); if (!isNaN(na) && !isNaN(nb)) return na - nb; return String(a.id).localeCompare(String(b.id)); }
+  function byTime(a, b) { return (a.timeSec == null ? 1e12 : a.timeSec) - (b.timeSec == null ? 1e12 : b.timeSec); }
 
   // Parse a clock string / number into seconds.
   //   "HH:MM:SS(.hh)" -> h*3600 + m*60 + s   ·   "MM:SS(.hh)" -> m*60 + s
@@ -95,7 +98,8 @@
     return normalizeTeams(payload); // legacy "teams-data" fallback
   }
 
-  // scores-data: individual results. Rank by chip (net) time, else gun time.
+  // scores-data: individual rows. Keep every row (timed or not); the display
+  // mode decides what to show. Rank by chip (net) time, else gun time.
   function normalizeScores(scores) {
     var out = [];
     var itemFilter = (CFG.api && CFG.api.itemFilter) ? String(CFG.api.itemFilter).toLowerCase() : null;
@@ -107,12 +111,9 @@
       }
       var raw = notEmpty(s.net_score) ? s.net_score : (notEmpty(s.total_score) ? s.total_score : null);
       var timeSec = toSeconds(raw);
-      if (timeSec == null || timeSec <= 0) return; // no time yet (DNS / not finished) -> skip
+      if (timeSec != null && timeSec <= 0) timeSec = null; // treat 0 as "no time yet"
       var bib = notEmpty(s.bib) ? String(s.bib) : (s.id != null ? String(s.id) : '');
       var nm = s.name != null ? String(s.name).trim() : '';
-      // Per-checkpoint splits: prefer loop_a_format ({lap_number,total_time}),
-      // else the raw loop_a array of cumulative times. Labelled by lap for now;
-      // map to Km / checkpoint names once the race's score_configs are known.
       var splits = [];
       if (Array.isArray(s.loop_a_format)) {
         splits = s.loop_a_format.map(function (l) { return { label: 'Lap ' + l.lap_number, totalSec: toSeconds(l.total_time) }; });
@@ -155,11 +156,11 @@
       var team = (ref != null && teamById[String(ref)]) ? teamById[String(ref)] : (scores.length ? null : row);
       function F(names) { var a = pickField(row, names); return a != null ? a : (team ? pickField(team, names) : undefined); }
       var timeSec = toSeconds(F(['net_score', 'total_score', 'time', 'duration', 'result', 'best', 'best_time', 'score', 'seconds', 'elapsed']));
-      if (timeSec == null || timeSec <= 0) return;
+      if (timeSec != null && timeSec <= 0) timeSec = null;
       var id = pickField(row, ['bib', 'no', 'number']); if (id == null) id = ref;
       out.push({
         id: id, name: F(['name', 'team_name', 'teamName', 'title', 'team', 'group', 'nama']) || ('#' + (id != null ? id : out.length + 1)),
-        city: normalizeCity(F(['city', 'location', 'region', 'venue', 'kota'])), gender: F(['sex', 'gender']) || null, timeSec: timeSec
+        city: normalizeCity(F(['city', 'location', 'region', 'venue', 'kota'])), gender: F(['sex', 'gender']) || null, timeSec: timeSec, splits: []
       });
     });
     return out;
@@ -168,20 +169,29 @@
   // ---- State & rendering --------------------------------------------------
   var entries = [];
   var lastList = [];   // rows currently painted (index -> entry), for row clicks
+  var mode = 'sample'; // 'live' | 'roster' | 'sample'
   var current = 'overall';
   var query = '';
 
-  // Stamp an overall rank (position in the whole field by time) on every entry.
+  // Stamp an overall rank (position by time) on every entry — for the modal.
   function reindex() {
-    entries.slice().sort(function (a, b) { return a.timeSec - b.timeSec; })
-      .forEach(function (e, i) { e._overallRank = i + 1; });
+    entries.slice().sort(byTime).forEach(function (e, i) { e._overallRank = i + 1; });
   }
-  function useDemo() { entries = (CFG.demo || []).slice(); reindex(); }
+  function useDemo() { entries = (CFG.demo || []).slice(); mode = 'sample'; reindex(); }
+
+  // Cities actually present in the current data (so single-city / no-city
+  // feeds don't show empty city tabs).
+  function citiesPresent() {
+    var seen = {};
+    entries.forEach(function (e) { if (e.city) seen[e.city] = 1; });
+    return (D.cities || []).slice().sort(function (a, b) { return a.order - b.order; })
+      .filter(function (c) { return seen[c.key]; });
+  }
 
   function ranked() {
     var list = entries.slice();
     if (current !== 'overall') list = list.filter(function (e) { return e.city === current; });
-    list.sort(function (a, b) { return a.timeSec - b.timeSec; });
+    list.sort(mode === 'roster' ? byBib : byTime);
     if (query) {
       var q = query.toLowerCase();
       list = list.filter(function (e) { return String(e.name || '').toLowerCase().indexOf(q) >= 0 || String(e.id || '').toLowerCase().indexOf(q) >= 0; });
@@ -191,19 +201,24 @@
 
   function paint() {
     var isOverall = current === 'overall';
+    var roster = mode === 'roster';
     var list = ranked();
     lastList = list;
-    var head = isOverall ? [T.rank, T.team, T.city, T.time] : [T.rank, T.team, T.time];
+    var firstCol = roster ? T.bib : T.rank;
+    var head = isOverall ? [firstCol, T.team, T.city, T.time] : [firstCol, T.team, T.time];
     var body = list.map(function (e, idx) {
-      var rank = idx + 1;
-      var podium = (!query && rank <= 3) ? ' sl-podium-' + rank : '';
+      var rowClass = 'sl-row', firstCell;
+      if (roster) {
+        firstCell = '<td data-label="' + esc(T.bib) + '" class="rank">' + esc(e.id) + '</td>';
+      } else {
+        var rank = idx + 1;
+        if (!query && rank <= 3) rowClass += ' sl-podium-' + rank;
+        firstCell = '<td data-label="' + esc(T.rank) + '" class="rank">' + rank + '</td>';
+      }
       var cityCell = isOverall ? '<td data-label="' + esc(T.city) + '">' + esc(cityLabel(e.city)) + '</td>' : '';
-      return '<tr class="sl-row' + podium + '" tabindex="0" role="button" data-idx="' + idx + '" aria-label="' + esc(e.name) + '">' +
-        '<td data-label="' + esc(T.rank) + '" class="rank">' + rank + '</td>' +
-        '<td data-label="' + esc(T.team) + '">' + esc(e.name) + '</td>' +
-        cityCell +
-        '<td data-label="' + esc(T.time) + '" class="num sl-time">' + fmtTime(e.timeSec) + '</td>' +
-      '</tr>';
+      var timeCell = '<td data-label="' + esc(T.time) + '" class="num sl-time">' + (e.timeSec != null ? fmtTime(e.timeSec) : '—') + '</td>';
+      return '<tr class="' + rowClass + '" tabindex="0" role="button" data-idx="' + idx + '" aria-label="' + esc(e.name) + '">' +
+        firstCell + '<td data-label="' + esc(T.team) + '">' + esc(e.name) + '</td>' + cityCell + timeCell + '</tr>';
     }).join('');
     if (!list.length) body = '<tr><td class="sl-empty" colspan="' + head.length + '">' + esc(T.empty) + '</td></tr>';
     mount.innerHTML = '<div class="table-wrap results-scroll"><table class="data data--speedland"><thead><tr><th>' + head.join('</th><th>') + '</th></tr></thead><tbody>' + body + '</tbody></table></div>';
@@ -218,13 +233,15 @@
 
   function renderFilters() {
     if (!filtersEl) return;
-    var views = [{ k: 'overall', label: T.overall }].concat(
-      (D.cities || []).slice().sort(function (a, b) { return a.order - b.order; })
-        .map(function (c) { return { k: c.key, label: c.name }; })
-    );
+    var cities = citiesPresent();
+    if (current !== 'overall' && cities.map(function (c) { return c.key; }).indexOf(current) < 0) current = 'overall';
+    var views = [{ k: 'overall', label: T.overall }].concat(cities.map(function (c) { return { k: c.key, label: c.name }; }));
     filtersEl.innerHTML = views.map(function (v) {
       return '<button class="gallery-filter" type="button" data-sl-view="' + esc(v.k) + '" aria-pressed="' + (v.k === current) + '">' + esc(v.label) + '</button>';
     }).join('');
+  }
+  function wireFilters() {
+    if (!filtersEl) return;
     filtersEl.addEventListener('click', function (e) {
       var b = e.target.closest('[data-sl-view]');
       if (!b) return;
@@ -243,11 +260,12 @@
 
   function setStatus(kind) {
     if (!statusEl) return;
-    var label = kind === 'live' ? T.live : kind === 'loading' ? T.loading : T.sample;
-    statusEl.className = 'sl-status ' + (kind === 'live' ? 'sl-status--live' : 'sl-status--sample');
+    var label = kind === 'live' ? T.live : kind === 'roster' ? T.roster : kind === 'loading' ? T.loading : T.sample;
+    var cls = kind === 'live' ? 'sl-status--live' : kind === 'roster' ? 'sl-status--roster' : 'sl-status--sample';
+    statusEl.className = 'sl-status ' + cls;
     statusEl.textContent = label;
-    // The "sample field" note only applies while the board is not live.
-    if (noteEl) noteEl.hidden = (kind === 'live');
+    // The "sample field" note only applies while the board shows the demo.
+    if (noteEl) noteEl.hidden = (kind !== 'sample');
   }
 
   // ---- Participant detail modal (reuses the .modal / .rd-* component) ------
@@ -283,14 +301,14 @@
     if (!e) return;
     buildModal();
     var cat = e.item || (CFG.distanceM ? CFG.distanceM + ' m' : '—');
-    var rank = e._overallRank ? '#' + e._overallRank : '—';
+    var rank = e._overallRank && e.timeSec != null ? '#' + e._overallRank : '—';
     slBody.innerHTML =
       '<span class="rd-bib">' + esc(e.id || '—') + '</span>' +
       '<h2 class="rd-name" id="sl-modal-name">' + esc(e.name || '') + '</h2>' +
       '<div class="rd-top">' +
         '<div class="rd-finish">' +
           '<span class="rd-finish__label">' + esc(cat) + '</span>' +
-          '<span class="rd-finish__time">' + fmtTime(e.timeSec) + '</span>' +
+          '<span class="rd-finish__time">' + (e.timeSec != null ? fmtTime(e.timeSec) : '—') + '</span>' +
           '<div class="rd-ranks">' +
             '<span>' + esc(T.rank) + '<b>' + rank + '</b></span>' +
             '<span>' + esc(T.city) + '<b>' + esc(cityLabel(e.city)) + '</b></span>' +
@@ -301,7 +319,7 @@
           '<div><dt>' + esc(T.city) + '</dt><dd>' + esc(cityLabel(e.city)) + '</dd></div>' +
           '<div><dt>' + esc(T.gender) + '</dt><dd>' + esc(genderLabel(e.gender)) + '</dd></div>' +
           '<div><dt>' + esc(T.category) + '</dt><dd>' + esc(cat) + '</dd></div>' +
-          '<div><dt>' + esc(T.status) + '</dt><dd>' + esc(T.finished) + '</dd></div>' +
+          '<div><dt>' + esc(T.status) + '</dt><dd>' + esc(e.timeSec != null ? T.finished : T.registered) + '</dd></div>' +
         '</div>' +
       '</div>' +
       splitTable(e.splits);
@@ -326,8 +344,6 @@
   }
 
   // ---- Live feed ----------------------------------------------------------
-  // Which endpoint(s) to fetch: per-city tokens if set, else a single url,
-  // else the vendor sample feed when opted in with ?speedland=sample.
   function feedTargets() {
     var api = CFG.api || {};
     var targets = [];
@@ -340,6 +356,16 @@
       } catch (e) {}
     }
     return targets;
+  }
+
+  function apply(live) {
+    var timed = live.filter(function (e) { return e.timeSec != null; });
+    var named = live.filter(isRealName);
+    if (timed.length) { entries = timed; mode = 'live'; reindex(); setStatus('live'); }
+    else if (named.length) { entries = named; mode = 'roster'; setStatus('roster'); }
+    else { useDemo(); setStatus('sample'); }
+    renderFilters();
+    paint();
   }
 
   function fetchLive() {
@@ -356,21 +382,17 @@
           return rows;
         });
     })).then(function (lists) {
-      var live = [].concat.apply([], lists);
-      if (live.length) { entries = live; reindex(); setStatus('live'); }
-      else { useDemo(); setStatus('sample'); }
-      paint();
+      apply([].concat.apply([], lists));
       if (CFG.api && CFG.api.pollMs > 0) setTimeout(fetchLive, CFG.api.pollMs);
     })['catch'](function (err) {
       try { console.warn('[Speedland] feibot fetch failed — showing sample field.', err); } catch (e) {}
-      if (!entries.length) useDemo();
-      setStatus('sample');
-      paint();
+      if (!entries.length || mode === 'sample') { useDemo(); setStatus('sample'); renderFilters(); paint(); }
     });
   }
 
   // ---- Boot ---------------------------------------------------------------
   useDemo();
+  wireFilters();
   renderFilters();
   renderSearch();
   wireDetail();

@@ -295,8 +295,8 @@
       // SAMPLE / PLACEHOLDER field (generated above) — swapped for live rows.
       demo: demo,
       ui: {
-        id: { overall: 'Keseluruhan', rank: 'Peringkat', team: 'Peserta', city: 'Kota', time: '200 m', search: 'Cari peserta atau No. BIB…', empty: 'Belum ada catatan waktu.', live: 'DATA LANGSUNG', sample: 'DATA CONTOH', loading: 'Memuat…', splits: 'Split Time', point: 'Titik', split: 'Segmen', total: 'Total', gender: 'Gender', male: 'Laki-laki', female: 'Perempuan', status: 'Status', finished: 'Finish', pace: 'Pace', category: 'Kategori', close: 'Tutup' },
-        en: { overall: 'Overall', rank: 'Rank', team: 'Participant', city: 'City', time: '200 m', search: 'Search participant or bib…', empty: 'No times recorded yet.', live: 'LIVE DATA', sample: 'SAMPLE DATA', loading: 'Loading…', splits: 'Split Time', point: 'Point', split: 'Split', total: 'Total', gender: 'Gender', male: 'Male', female: 'Female', status: 'Status', finished: 'Finished', pace: 'Pace', category: 'Category', close: 'Close' }
+        id: { overall: 'Keseluruhan', rank: 'Peringkat', bib: 'No. BIB', team: 'Peserta', city: 'Kota', time: '200 m', search: 'Cari peserta atau No. BIB…', empty: 'Belum ada catatan waktu.', live: 'DATA LANGSUNG', roster: 'DAFTAR PESERTA', sample: 'DATA CONTOH', loading: 'Memuat…', splits: 'Split Time', point: 'Titik', split: 'Segmen', total: 'Total', gender: 'Gender', male: 'Laki-laki', female: 'Perempuan', status: 'Status', finished: 'Finish', registered: 'Terdaftar', pace: 'Pace', category: 'Kategori', close: 'Tutup' },
+        en: { overall: 'Overall', rank: 'Rank', bib: 'Bib', team: 'Participant', city: 'City', time: '200 m', search: 'Search participant or bib…', empty: 'No times recorded yet.', live: 'LIVE DATA', roster: 'START LIST', sample: 'SAMPLE DATA', loading: 'Loading…', splits: 'Split Time', point: 'Point', split: 'Split', total: 'Total', gender: 'Gender', male: 'Male', female: 'Female', status: 'Status', finished: 'Finished', registered: 'Registered', pace: 'Pace', category: 'Category', close: 'Close' }
       }
     };
   })();
