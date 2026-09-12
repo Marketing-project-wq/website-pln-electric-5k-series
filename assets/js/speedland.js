@@ -98,8 +98,13 @@
   // scores-data: individual results. Rank by chip (net) time, else gun time.
   function normalizeScores(scores) {
     var out = [];
+    var itemFilter = (CFG.api && CFG.api.itemFilter) ? String(CFG.api.itemFilter).toLowerCase() : null;
     scores.forEach(function (s) {
       if (!s) return;
+      if (itemFilter) {
+        var it = String(s.item_name || s.item || '').toLowerCase();
+        if (it.indexOf(itemFilter) < 0) return; // keep only the configured item (e.g. the 200 m sprint)
+      }
       var raw = notEmpty(s.net_score) ? s.net_score : (notEmpty(s.total_score) ? s.total_score : null);
       var timeSec = toSeconds(raw);
       if (timeSec == null || timeSec <= 0) return; // no time yet (DNS / not finished) -> skip
