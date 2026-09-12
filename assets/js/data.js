@@ -279,13 +279,15 @@
     return {
       distanceM: 200,
       api: {
-        // Real PLN Speedland race token(s) go here. Leave '' to show the demo
-        // field. If each city has its own token, use byCity instead of url and
-        // extend speedland.js to merge them (city is tagged onto every row).
-        url: '',
+        // PLN Speedland race feed (feibot scores-data). One token for the race;
+        // per-city tokens can go in byCity instead if the organiser issues them.
+        url: 'https://time.feibot.com/api/scores-data/EE3hsOGHW8',
         byCity: { jakarta: '', yogyakarta: '', bali: '' },
-        // Vendor DEMO race (KTD HYROX) — NOT our event. Used only when the page
-        // is opened with ?speedland=sample, to exercise the live pipeline.
+        // If this token is the FULL event (5K + 200 m sprint as separate items),
+        // set itemFilter to keep only the sprint rows — matched as a case-
+        // insensitive substring of item_name (e.g. '200'). null = show all rows.
+        itemFilter: null,
+        // Vendor demo race (KTD HYROX) — reachable via ?speedland=sample only.
         sampleUrl: 'https://time.feibot.com/api/scores-data/wATwB5p8MY',
         // Auto-refresh while the page is open (ms); 0 disables polling.
         pollMs: 20000
