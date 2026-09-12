@@ -45,6 +45,8 @@
 .sl-status { display: inline-flex; align-items: center; gap: 0.5em; font-family: var(--font-kicker); letter-spacing: 0.06em; font-size: var(--fs-14); font-weight: 700; vertical-align: middle; }
 .sl-status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--color-muted-on-paper); }
 .sl-status--sample { color: var(--color-muted-on-paper); }
+.sl-status--roster { color: var(--color-teal); }
+.sl-status--roster::before { background: var(--color-teal); }
 .sl-status--live { color: var(--color-teal); }
 .sl-status--live::before { background: var(--color-teal); animation: sl-pulse 1.6s ease-out infinite; }
 @keyframes sl-pulse { 0% { box-shadow: 0 0 0 0 rgba(34, 195, 214, 0.45); } 70% { box-shadow: 0 0 0 8px rgba(34, 195, 214, 0); } 100% { box-shadow: 0 0 0 0 rgba(34, 195, 214, 0); } }
