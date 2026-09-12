@@ -279,10 +279,17 @@
     return {
       distanceM: 200,
       api: {
-        // PLN Speedland race feed (feibot scores-data). One token for the race;
-        // per-city tokens can go in byCity instead if the organiser issues them.
-        url: 'https://time.feibot.com/api/scores-data/EE3hsOGHW8',
-        byCity: { jakarta: '', yogyakarta: '', bali: '' },
+        // Per-city Speedland race feeds (feibot scores-data). Each city is its
+        // own race/token; rows from a city's feed are tagged with that city so
+        // they land under the right tab. Only JAKARTA runs first (PLN SPEED
+        // RACE, id 3567) — add the Yogyakarta / Bali tokens here when the
+        // organiser issues them and the board handles all three automatically.
+        url: '',
+        byCity: {
+          jakarta: 'https://time.feibot.com/api/scores-data/EE3hsOGHW8',
+          yogyakarta: '',
+          bali: ''
+        },
         // If this token is the FULL event (5K + 200 m sprint as separate items),
         // set itemFilter to keep only the sprint rows — matched as a case-
         // insensitive substring of item_name (e.g. '200'). null = show all rows.
