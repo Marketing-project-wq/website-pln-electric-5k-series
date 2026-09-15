@@ -210,15 +210,20 @@
 
   function renderTicketTiers() {
     var activeWeek = activeTicketWeek();
+    var soldOutLabel = LANG === 'id' ? 'SOLD OUT' : 'SOLD OUT';
     document.querySelectorAll('[data-ticket-tiers]').forEach(function (mount) {
       mount.classList.add('card-grid', 'card-grid--4');
       mount.innerHTML = D.tickets.map(function (tk) {
         var cls = 'tier';
-        if (tk.week) {
+        if (tk.soldOut) {
+          cls += ' is-sold-out';
+        } else if (tk.week) {
           if (activeWeek === tk.week) cls += ' is-active';
           else if (activeWeek > tk.week) cls += ' is-past';
         }
-        var flag = (tk.week && activeWeek === tk.week) ? '<span class="tier__flag">Aktif</span>' : '';
+        var flag = tk.soldOut
+          ? '<span class="tier__flag tier__flag--sold-out">' + soldOutLabel + '</span>'
+          : (tk.week && activeWeek === tk.week) ? '<span class="tier__flag">Aktif</span>' : '';
         return (
           '<div class="' + cls + '" data-reveal>' + flag +
             '<span class="tier__name">' + D.loc(tk.name) + '</span>' +
@@ -232,12 +237,15 @@
   }
 
   function renderTicketTable() {
+    var soldOutLabel = 'SOLD OUT';
     document.querySelectorAll('[data-ticket-table]').forEach(function (mount) {
       var head = LANG === 'id'
-        ? ['Tier', 'Diskon', 'Harga', 'Periode (indikatif)']
-        : ['Tier', 'Discount', 'Price', 'Period (indicative)'];
+        ? ['Tier', 'Diskon', 'Harga', 'Periode (indikatif)', 'Status']
+        : ['Tier', 'Discount', 'Price', 'Period (indicative)', 'Status'];
       var rows = D.tickets.map(function (tk) {
-        return '<tr><td data-label="' + head[0] + '">' + D.loc(tk.name) + '</td><td data-label="' + head[1] + '">' + (tk.discount ? '-' + tk.discount + '%' : '—') + '</td><td data-label="' + head[2] + '" class="num">' + D.formatIDR(tk.price) + '</td><td data-label="' + head[3] + '">' + D.loc(tk.period) + '</td></tr>';
+        var trCls = tk.soldOut ? ' class="is-sold-out"' : '';
+        var status = tk.soldOut ? '<span class="badge badge--sold-out">' + soldOutLabel + '</span>' : (LANG === 'id' ? 'Tersedia' : 'Available');
+        return '<tr' + trCls + '><td data-label="' + head[0] + '">' + D.loc(tk.name) + '</td><td data-label="' + head[1] + '">' + (tk.discount ? '-' + tk.discount + '%' : '—') + '</td><td data-label="' + head[2] + '" class="num">' + D.formatIDR(tk.price) + '</td><td data-label="' + head[3] + '">' + D.loc(tk.period) + '</td><td data-label="' + head[4] + '">' + status + '</td></tr>';
       }).join('');
       mount.innerHTML = '<div class="table-wrap"><table class="data"><thead><tr><th>' + head.join('</th><th>') + '</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
     });
