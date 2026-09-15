@@ -574,14 +574,12 @@ tr.is-sold-out td:last-child { text-decoration: none; }
   .hero__media--deco::before { animation: shard-settle 900ms var(--ease) both; }
   @keyframes shard-settle { from { opacity: 0; } }
 }
-.hero__media::after {
-  content: ""; position: absolute; inset: 0;
-  background: linear-gradient(to right, rgba(10,10,10,0.72) 0%, rgba(10,10,10,0.4) 50%, rgba(10,10,10,0.12) 100%);
-}
+.hero__media::after { content: none; }
 .hero__inner { position: relative; z-index: 1; padding-block: clamp(var(--space-8), 12vw, var(--space-10)); }
 .hero__title { font-family: var(--font-display); text-transform: uppercase; font-size: clamp(2.75rem, 9vw, var(--fs-96)); line-height: 0.95; letter-spacing: 0.01em; }
 .hero__title .volt { color: var(--color-teal); }
 .hero__sub { margin-top: var(--space-4); max-width: 52ch; font-size: var(--fs-18); color: #D8DDE2; }
+.hero__title, .hero__sub, .hero .kicker { text-shadow: 0 2px 8px rgba(0,0,0,0.5); }
 .hero__cta { margin-top: var(--space-6); display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); }
 .hero--compact .hero__inner { padding-block: var(--space-8); }
 
@@ -589,6 +587,7 @@ tr.is-sold-out td:last-child { text-decoration: none; }
 /* Photo has a dark right side by design; keep the whole frame readable while
    still letting the runner read through the middle. */
 .hero--city .hero__media::after {
+  content: ""; position: absolute; inset: 0;
   background: linear-gradient(100deg, rgba(10,10,10,0.90) 24%, rgba(10,10,10,0.5) 54%, rgba(10,10,10,0.72) 100%);
 }
 .hero--city .hero__inner {
