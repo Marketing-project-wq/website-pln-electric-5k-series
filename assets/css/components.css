@@ -575,8 +575,11 @@ tr.is-sold-out td:last-child { text-decoration: none; }
 }
 .hero__media::after { content: none; }
 
-/* Homepage hero: no overlay, text over the left teal area of the banner */
-.hero:not(.hero--compact):not(.hero--city) .hero__img { object-position: top center; }
+/* Homepage hero: no overlay, text over the left teal area of the banner.
+   object-position shifted right so the Bali column stays visible even when
+   longer text (ID locale) makes the hero taller and cover crops harder. */
+.hero:not(.hero--compact):not(.hero--city) .hero__img { object-position: top 58%; }
+.hero:not(.hero--compact):not(.hero--city) .hero__media { min-height: 540px; }
 .hero:not(.hero--compact):not(.hero--city) > .deco-shard { display: none; }
 .hero:not(.hero--compact):not(.hero--city) .hero__inner > * { max-width: min(500px, 45%); }
 .hero:not(.hero--compact):not(.hero--city) .kicker { color: #0A2A3A; }
