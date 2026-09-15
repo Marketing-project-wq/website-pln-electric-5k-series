@@ -65,8 +65,8 @@
   ];
 
   var TICKETS = [
-    { key: 'super-early', name: { id: 'Super Early Bird', en: 'Super Early Bird' }, discount: 40, price: 166000, week: 1, period: { id: 'Mulai 18 Agustus', en: 'From 18 August' } },
-    { key: 'early', name: { id: 'Early Bird', en: 'Early Bird' }, discount: 30, price: 192500, week: 2, period: { id: 'Mulai 21 Agustus', en: 'From 21 August' } },
+    { key: 'super-early', name: { id: 'Super Early Bird', en: 'Super Early Bird' }, discount: 40, price: 166000, week: 1, period: { id: 'Mulai 18 Agustus', en: 'From 18 August' }, soldOut: true },
+    { key: 'early', name: { id: 'Early Bird', en: 'Early Bird' }, discount: 30, price: 192500, week: 2, period: { id: 'Mulai 21 Agustus', en: 'From 21 August' }, soldOut: true },
     { key: 'general', name: { id: 'General Sales', en: 'General Sales' }, discount: 0, price: 275000, week: 3, period: { id: 'Mulai 28 Agustus', en: 'From 28 August' } },
     // Community Price period NOT specified in deck — shown as a separate track.
     // <!-- periode Community Price tidak disebutkan di deck, konfirmasi ke klien -->

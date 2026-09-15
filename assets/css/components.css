@@ -352,10 +352,18 @@ table.data tr.is-past td { opacity: 0.5; text-decoration: line-through; text-dec
 .tier.is-active .tier__price { color: var(--color-signal); }
 .tier.is-past { opacity: 0.5; }
 .tier.is-past .tier__price { text-decoration: line-through; }
+.tier.is-sold-out { opacity: 0.45; pointer-events: none; }
+.tier.is-sold-out .tier__price { text-decoration: line-through; color: var(--color-muted-on-ink); }
 .tier__flag { position: absolute; top: 0; right: 0; background: var(--color-signal); color: var(--color-ink); font-family: var(--font-kicker); letter-spacing: 0.08em; font-size: var(--fs-12); padding: 0.3em 0.7em; }
+.tier__flag--sold-out { background: var(--color-danger, #e53935); color: #fff; }
+.badge--sold-out { background: var(--color-danger, #e53935); color: #fff; }
+tr.is-sold-out { opacity: 0.5; }
+tr.is-sold-out td { text-decoration: line-through; }
+tr.is-sold-out td:last-child { text-decoration: none; }
+.ticket-tax-note { font-size: var(--fs-14); color: var(--color-muted-on-ink); margin-top: var(--space-4); font-style: italic; }
 
 /* ---------- Stat / fact strip -------------------------------------------- */
-.fact-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); }
+.fact-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--space-4); }
 .fact { border-left: 3px solid var(--color-teal); padding-left: var(--space-4); }
 .fact__num { font-family: var(--font-display); font-size: var(--fs-48); line-height: 1; color: var(--color-teal); }
 .fact__label { color: var(--color-muted-on-ink); font-size: var(--fs-14); margin-top: var(--space-1); }
