@@ -2,10 +2,10 @@
 <!-- TODO: ganti domain https://electric5k.example dengan domain final klien -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://electric5k.example/id/index.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/index.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/index.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/index.html"/>
+    <loc>https://electric5k.example/id/</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
@@ -135,10 +135,10 @@
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://electric5k.example/en/index.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/index.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/index.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/index.html"/>
+    <loc>https://electric5k.example/en/</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>

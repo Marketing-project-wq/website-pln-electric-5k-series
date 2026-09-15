@@ -504,15 +504,7 @@ tr.is-sold-out td:last-child { text-decoration: none; }
 .hero { position: relative; overflow: hidden; background: var(--color-ink); }
 .hero__media { position: absolute; inset: 0; z-index: 0; }
 .hero__media .ph { width: 100%; height: 100%; border: none; }
-.hero__img { width: 100%; height: 100%; object-fit: cover; object-position: 70% center; }
-@media (max-width: 768px) {
-  .hero:not(.hero--compact):not(.hero--city) { display: flex; flex-direction: column; overflow: visible; }
-  .hero:not(.hero--compact):not(.hero--city) .hero__media { position: relative; inset: auto; }
-  .hero:not(.hero--compact):not(.hero--city) .hero__media::after { background: linear-gradient(to bottom, transparent 60%, var(--color-ink) 100%); }
-  .hero:not(.hero--compact):not(.hero--city) .hero__img { object-fit: contain; object-position: center; height: auto; background: var(--color-ink); }
-  .hero:not(.hero--compact):not(.hero--city) > .deco-shard { display: none; }
-  .hero:not(.hero--compact):not(.hero--city) .hero__inner { min-height: auto; margin-top: -2rem; }
-}
+.hero__img { width: 100%; height: 100%; object-fit: cover; object-position: center center; }
 
 /* Decorative official shard graphic (assets/img/graphics/*) */
 .deco-shard { position: absolute; pointer-events: none; z-index: 0; opacity: 0.5; user-select: none; }
@@ -584,7 +576,7 @@ tr.is-sold-out td:last-child { text-decoration: none; }
 }
 .hero__media::after {
   content: ""; position: absolute; inset: 0;
-  background: linear-gradient(120deg, rgba(10,10,10,0.94) 30%, rgba(10,10,10,0.6) 65%, rgba(12,110,158,0.35) 100%);
+  background: linear-gradient(to right, rgba(10,10,10,0.72) 0%, rgba(10,10,10,0.4) 50%, rgba(10,10,10,0.12) 100%);
 }
 .hero__inner { position: relative; z-index: 1; padding-block: clamp(var(--space-8), 12vw, var(--space-10)); }
 .hero__title { font-family: var(--font-display); text-transform: uppercase; font-size: clamp(2.75rem, 9vw, var(--fs-96)); line-height: 0.95; letter-spacing: 0.01em; }
