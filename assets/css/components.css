@@ -584,6 +584,9 @@ tr.is-sold-out td:last-child { text-decoration: none; }
 @media (min-width: 769px) {
   .hero:not(.hero--compact):not(.hero--city) .hero__media { bottom: 170px; }
 }
+@media (min-width: 1280px) {
+  .hero:not(.hero--compact):not(.hero--city) .hero__title { white-space: nowrap; max-width: none; }
+}
 .hero:not(.hero--compact):not(.hero--city) > .deco-shard { display: none; }
 .hero:not(.hero--compact):not(.hero--city) .hero__inner > * { max-width: min(580px, 48%); }
 .hero:not(.hero--compact):not(.hero--city) .kicker { color: #0A2A3A; }
