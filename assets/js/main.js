@@ -93,7 +93,7 @@
   // Point ID<->EN switch at the equivalent page (same slug, swapped folder).
   function setLangSwitch() {
     var target = location.pathname.replace('/' + LANG + '/', '/' + OTHER + '/');
-    if (target === location.pathname) target = '/' + OTHER + '/index.html';
+    if (target === location.pathname) target = '/' + OTHER + '/';
     document.querySelectorAll('[data-lang-target]').forEach(function (a) {
       var to = a.getAttribute('data-lang-target');
       a.setAttribute('href', to === OTHER ? target + location.hash : location.pathname + location.hash);
