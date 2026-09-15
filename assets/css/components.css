@@ -593,6 +593,8 @@ tr.is-sold-out td:last-child { text-decoration: none; }
 .hero__title .volt { color: var(--color-teal); }
 .hero__sub { margin-top: var(--space-4); max-width: 52ch; font-size: var(--fs-18); color: #D8DDE2; }
 .hero__cta { margin-top: var(--space-6); display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); }
+.hero__bottom { position: relative; z-index: 1; background: rgba(10,10,10,0.92); padding: var(--space-4) 0 var(--space-5); }
+.hero__bottom .cta-countdown { margin-bottom: var(--space-4); }
 .hero--compact .hero__inner { padding-block: var(--space-8); }
 
 /* ---------- City KV hero (photo bg → text left, countdown right) --------- */
