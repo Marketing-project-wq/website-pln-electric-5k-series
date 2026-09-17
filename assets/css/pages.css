@@ -44,13 +44,10 @@
 /* ==========================================================================
    Race Results — category podium (top finishers). Dark (ink) surface; the
    top 3 sit on a visual podium (2–1–3) with runner-up rows for Top-5 blocks.
+   No decorative shard graphic: the shard art is bold/solid and reads as a giant
+   disruptive watermark if this deco CSS is ever missed (stale/cached build), so
+   the section stays plain --color-ink and the podium cards carry the visuals.
    ========================================================================== */
-.podium-section { position: relative; overflow: hidden; }
-.podium-section__deco { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
-.podium-section__deco .deco-shard { position: absolute; opacity: 0.1; }
-.podium-section__deco .deco-shard--tr { top: -3%; right: -3%; width: 22%; min-width: 150px; }
-.podium-section__deco .deco-shard--bl { bottom: -5%; left: -4%; width: 18%; min-width: 120px; }
-.podium-section .container { position: relative; z-index: 1; }
 /* Intro copy sits on ink: near-white (not muted grey) so it stays fully legible.
    Eyebrow stays teal (.kicker) and the H2 stays paper-white (surface default). */
 .podium-section .section-head p { color: var(--color-paper); opacity: 0.9; }

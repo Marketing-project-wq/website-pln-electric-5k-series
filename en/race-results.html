@@ -41,13 +41,10 @@
 
     <!-- 2 — PODIUM (category champions) -->
     <section class="section surface-ink podium-section">
-      <!-- Decoration: abstract shards ONLY (flat, text-free). Do NOT use a logo file
-           (shard-piece-accent-* / -sliver-* = the event logo) as a watermark — its
-           text becomes unreadable. See assets/img/logo/README.txt. -->
-      <div class="podium-section__deco" aria-hidden="true">
-        <img class="deco-shard deco-shard--tr" src="/assets/img/graphics/shard-fragment-01.png" alt="">
-        <img class="deco-shard deco-shard--bl" src="/assets/img/graphics/shard-fragment-02.png" alt="">
-      </div>
+      <!-- No decorative shard graphic here on purpose. The shard-fragment/piece art
+           is bold and solid; as a section watermark it renders as a giant disruptive
+           image whenever its deco CSS is missed (e.g. a stale/cached build). Keep this
+           section plain --color-ink so the podium cards carry the visual weight. -->
       <div class="container container--wide">
         <div class="section-head">
           <span class="kicker">Podium</span>
