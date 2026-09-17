@@ -51,6 +51,9 @@
 .podium-section__deco .deco-shard--tr { top: -3%; right: -3%; width: 22%; min-width: 150px; }
 .podium-section__deco .deco-shard--bl { bottom: -5%; left: -4%; width: 18%; min-width: 120px; }
 .podium-section .container { position: relative; z-index: 1; }
+/* Intro copy sits on ink: near-white (not muted grey) so it stays fully legible.
+   Eyebrow stays teal (.kicker) and the H2 stays paper-white (surface default). */
+.podium-section .section-head p { color: var(--color-paper); opacity: 0.9; }
 
 /* Two-up on desktop: Open pair (men | women), then the Master pair below. */
 .podium-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); }
