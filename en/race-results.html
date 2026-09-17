@@ -39,7 +39,35 @@
     </section>
     <div class="shard-divider" aria-hidden="true"></div>
 
-    <!-- 2 — RESULTS -->
+    <!-- 2 — PODIUM (category champions) -->
+    <section class="section surface-ink podium-section">
+      <div class="podium-section__deco" aria-hidden="true">
+        <img class="deco-shard deco-shard--tr" src="/assets/img/graphics/pieces/shard-piece-teal-01.png" alt="">
+        <img class="deco-shard deco-shard--bl" src="/assets/img/graphics/pieces/shard-piece-accent-01.png" alt="">
+      </div>
+      <div class="container container--wide">
+        <div class="section-head">
+          <span class="kicker">Podium</span>
+          <h2>Category Champions</h2>
+          <p>Top 5 for the Open categories (Men &amp; Women) and top 3 for the Master categories (ages 40+). The top three take the podium; ranks 4–5 follow as a slim list below.</p>
+        </div>
+
+        <!-- TODO: connect to the timing-system API, replace the dummy data.
+             The podium blocks are rendered from EVENT_DATA.podium (see assets/js/data.js). -->
+        <!-- TO CONFIRM WITH CLIENT (do not guess):
+             1) Master-category prizes — the prize table currently covers Open 5K only
+                (men & women). Do not add a Master prize column/amount here without
+                confirmation.
+             2) Master = Top 3 (per the brief). If it should be Top 5, change `top: 3`
+                -> `top: 5` for the Master categories in EVENT_DATA.podium (data.js). -->
+        <div class="podium-grid" data-podium></div>
+
+        <p class="note">Sample layout with placeholder data — winner names, times, and photos populate automatically from the official timing results after each Race Day.</p>
+      </div>
+    </section>
+    <div class="shard-divider shard-divider--sage" aria-hidden="true"></div>
+
+    <!-- 3 — RESULTS -->
     <section class="section surface-paper">
       <div class="container container--wide">
         <div class="section-head">
