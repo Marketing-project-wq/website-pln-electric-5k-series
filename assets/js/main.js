@@ -434,6 +434,93 @@
     document.body.appendChild(a); a.click(); a.remove();
   }
 
+  // ---- Race results: podium highlights (top finishers per category) -------
+  //      One block per category. The top 3 form a visual podium (order 2–1–3,
+  //      champion centred and tallest); for the Top-5 categories, ranks 4–5
+  //      follow as list rows. Everything is mapped from D.podium so the live
+  //      timing feed drops straight in — see data.js.
+  function podiumAvatar(name, photoUrl, size) {
+    var cls = 'podium-avatar' + (size ? ' podium-avatar--' + size : '');
+    if (photoUrl) return '<span class="' + cls + '"><img src="' + photoUrl + '" alt="" loading="lazy"></span>';
+    // No photo yet: initials when a real name is known, otherwise a runner icon.
+    var initials = '';
+    if (name) {
+      var parts = name.trim().split(/\s+/);
+      initials = (parts[0].charAt(0) + (parts.length > 1 ? parts[parts.length - 1].charAt(0) : '')).toUpperCase();
+    }
+    var inner = initials
+      ? '<span class="podium-avatar__initials">' + initials + '</span>'
+      : icon('i-run', 'podium-avatar__icon');
+    return '<span class="' + cls + ' podium-avatar--fallback">' + inner + '</span>';
+  }
+
+  function renderPodium() {
+    var mount = document.querySelector('[data-podium]');
+    if (!mount) return;
+    var P = D.podium;
+    if (!P || !P.categories) return;
+    var isID = LANG === 'id';
+    var phName = isID ? 'Peserta ' : 'Participant ';
+    var emptyMsg = isID ? 'Hasil akan tersedia setelah Race Day.' : 'Results will be available after Race Day.';
+
+    function nameOf(e) { return e && e.name ? e.name : phName + e.rank; }
+    function timeOf(e) { return e && e.time ? e.time : '00:00:00'; }
+    // Ordinal for the runner rows: ID "Juara 4", EN "4th".
+    function ordinal(rank) {
+      if (isID) return 'Juara ' + rank;
+      var s = ['th', 'st', 'nd', 'rd'], v = rank % 100;
+      return rank + (s[(v - 20) % 10] || s[v] || s[0]);
+    }
+
+    function person(e) {
+      return '<div class="podium-person">' +
+        podiumAvatar(e && e.name, e && e.photoUrl) +
+        '<span class="podium-name">' + nameOf(e) + '</span>' +
+        '<span class="podium-time">' + timeOf(e) + '</span>' +
+      '</div>';
+    }
+    // `place` is the visual rank (1/2/3) — drives the riser height + accent.
+    function column(e, place) {
+      if (!e) return '';
+      return '<div class="podium-col podium-col--' + place + '">' +
+        person(e) +
+        '<div class="podium-riser podium-riser--' + place + '"><span class="podium-rank">' + place + '</span></div>' +
+      '</div>';
+    }
+    function runnerRow(e) {
+      return '<li class="podium-runner">' +
+        '<span class="podium-runner__rank">' + ordinal(e.rank) + '</span>' +
+        podiumAvatar(e && e.name, e && e.photoUrl, 'sm') +
+        '<span class="podium-runner__name">' + nameOf(e) + '</span>' +
+        '<span class="podium-runner__time">' + timeOf(e) + '</span>' +
+      '</li>';
+    }
+
+    function block(cat) {
+      var head = '<div class="podium-block__head">' +
+        '<h3 class="podium-block__title">' + D.loc(cat.label) + '</h3>' +
+        (cat.sublabel ? '<span class="podium-block__sub">' + D.loc(cat.sublabel) + '</span>' : '') +
+      '</div>';
+      var entries = (cat.entries || []).slice().sort(function (a, b) { return a.rank - b.rank; });
+      // Empty state: whole board off, or this category has no rows yet.
+      if (!P.available || !entries.length) {
+        return '<article class="podium-block podium-block--empty">' + head +
+          '<p class="podium-empty">' + emptyMsg + '</p>' +
+        '</article>';
+      }
+      var byRank = {}; entries.forEach(function (e) { byRank[e.rank] = e; });
+      // Visual podium order: 2 – 1 – 3.
+      var stage = '<div class="podium-stage">' +
+        column(byRank[2], 2) + column(byRank[1], 1) + column(byRank[3], 3) +
+      '</div>';
+      var extras = entries.filter(function (e) { return e.rank >= 4 && e.rank <= cat.top; });
+      var runners = extras.length ? '<ul class="podium-runners">' + extras.map(runnerRow).join('') + '</ul>' : '';
+      return '<article class="podium-block">' + head + stage + runners + '</article>';
+    }
+
+    mount.innerHTML = P.categories.map(block).join('');
+  }
+
   function renderResults() {
     var table = document.querySelector('[data-results]');
     if (!table) return;
@@ -607,6 +694,7 @@
     renderTicketTable();
     renderPrizeTable();
     renderScheduleTable();
+    renderPodium();
     renderResults();
     renderTimeline();
     renderContextStats();

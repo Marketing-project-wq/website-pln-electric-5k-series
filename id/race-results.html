@@ -39,7 +39,35 @@
     </section>
     <div class="shard-divider" aria-hidden="true"></div>
 
-    <!-- 2 — HASIL -->
+    <!-- 2 — PODIUM (Juara tiap kategori) -->
+    <section class="section surface-ink podium-section">
+      <div class="podium-section__deco" aria-hidden="true">
+        <img class="deco-shard deco-shard--tr" src="/assets/img/graphics/pieces/shard-piece-teal-01.png" alt="">
+        <img class="deco-shard deco-shard--bl" src="/assets/img/graphics/pieces/shard-piece-accent-01.png" alt="">
+      </div>
+      <div class="container container--wide">
+        <div class="section-head">
+          <span class="kicker">Podium</span>
+          <h2>Juara Tiap Kategori</h2>
+          <p>Lima besar untuk kategori Open (Putra &amp; Putri) dan tiga besar untuk kategori Master (usia 40+). Tiga teratas naik podium; peringkat 4–5 tampil sebagai daftar ramping di bawahnya.</p>
+        </div>
+
+        <!-- TODO: sambungkan ke timing system API, ganti data dummy.
+             Blok podium dirender dari EVENT_DATA.podium (lihat assets/js/data.js). -->
+        <!-- KONFIRMASI KE KLIEN (jangan tebak sendiri):
+             1) Hadiah kategori Master — tabel hadiah saat ini HANYA untuk Open 5K
+                (putra & putri). Jangan tambahkan kolom/nominal hadiah Master di sini
+                tanpa konfirmasi.
+             2) Master = Top 3 (mengikuti brief). Kalau ternyata Top 5, ubah `top: 3`
+                -> `top: 5` untuk kategori Master di EVENT_DATA.podium (data.js). -->
+        <div class="podium-grid" data-podium></div>
+
+        <p class="note">Tampilan contoh dengan data placeholder — nama, waktu, dan foto pemenang otomatis terisi dari hasil timing resmi setelah tiap Race Day.</p>
+      </div>
+    </section>
+    <div class="shard-divider shard-divider--sage" aria-hidden="true"></div>
+
+    <!-- 3 — HASIL -->
     <section class="section surface-paper">
       <div class="container container--wide">
         <div class="section-head">

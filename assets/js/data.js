@@ -151,6 +151,42 @@
     return out;
   })();
 
+  // ---- Podium (Race Results highlights) -----------------------------------
+  // Top finishers rendered as a visual podium, driven by ONE structure so the
+  // live timing feed can be mapped straight in. Four category blocks:
+  //   Open Men / Open Women            -> Top 5 (podium for the top 3 + rows 4–5)
+  //   Master Men / Master Women (40+)  -> Top 3 (podium only)
+  // Each entry: { rank, name, time ("HH:MM:SS"), photoUrl, bib }.
+  // name / time / photoUrl are left EMPTY on purpose — the renderer fills a
+  // clearly-provisional placeholder ("Peserta 1" / "00:00:00" / avatar icon) so
+  // nothing here can be mistaken for an official result.
+  // Toggle `available: false` (whole board) or leave a category's `entries` empty
+  // to show the per-category "results after Race Day" empty state instead.
+  // <!-- TODO: sambungkan ke timing system API, ganti data dummy -->
+  // <!-- KONFIRMASI: kategori Master = Top 3 (mengikuti brief). Kalau ternyata
+  //      Top 5, ubah `top: 3` -> `top: 5` dan tambah 2 entri per kategori Master. -->
+  // <!-- KONFIRMASI: hadiah kategori Master. Tabel hadiah (PRIZES di atas) saat ini
+  //      HANYA untuk Open 5K putra & putri. Jangan tambahkan nominal hadiah Master
+  //      di sini tanpa konfirmasi klien. -->
+  var PODIUM = (function () {
+    // Placeholder rows: rank filled, everything else blank (the renderer supplies
+    // the visible dummy text). Swap blanks(n) for the mapped timing rows later.
+    function blanks(n) {
+      var a = [];
+      for (var i = 1; i <= n; i++) a.push({ rank: i, name: '', time: '', photoUrl: '', bib: '' });
+      return a;
+    }
+    return {
+      available: true, // false => every category shows the empty state
+      categories: [
+        { key: 'open-men',     group: 'open',   top: 5, label: { id: '5K Putra', en: '5K Men' },   entries: blanks(5) },
+        { key: 'open-women',   group: 'open',   top: 5, label: { id: '5K Putri', en: '5K Women' }, entries: blanks(5) },
+        { key: 'master-men',   group: 'master', top: 3, label: { id: '5K Master Putra', en: '5K Master Men' },   sublabel: { id: 'Usia 40+', en: 'Ages 40+' }, entries: blanks(3) },
+        { key: 'master-women', group: 'master', top: 3, label: { id: '5K Master Putri', en: '5K Master Women' }, sublabel: { id: 'Usia 40+', en: 'Ages 40+' }, entries: blanks(3) }
+      ]
+    };
+  })();
+
   // ---- Live Tracking ------------------------------------------------------
   // Course + runner positions for the Live Tracking page. The route, timing
   // points and POIs below are the REAL surveyed TMII course (exported from the
@@ -414,6 +450,7 @@
     prizes: PRIZES,
     prizeTotalPerCity: PRIZE_TOTAL_PER_CITY,
     results: RESULTS,
+    podium: PODIUM,
     liveTracking: LIVE_TRACKING,
     speedland: SPEEDLAND,
     timeline: TIMELINE,
