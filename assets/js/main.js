@@ -157,7 +157,7 @@
   });
 
   // ---- Renderers ----------------------------------------------------------
-  function cityHref(c) { return '/' + LANG + '/city/' + c.key + '.html'; }
+  function cityHref(c) { return '/' + LANG + '/city/' + c.key; }
 
   function cityCard(c) {
     var ui = D.ui[LANG];
@@ -640,7 +640,7 @@
         row('i-calendar', ui.rpcLabel, D.loc(c.rpc)) +
         row('i-flag', ui.raceDayLabel, D.loc(c.raceDay) + ' · ' + D.loc(c.startTime)) +
         row('i-users', ui.quotaLabel, D.formatNum(c.quota) + ' ' + runnersWord) +
-        row('i-location', venueLabel, D.loc(c.venue) + ' 🟡');
+        row('i-location', venueLabel, D.loc(c.venue));
     });
   }
 
