@@ -302,3 +302,34 @@
   .rules-layout { grid-template-columns: 1fr; gap: var(--space-6); }
   .rules-toc { position: static; padding: var(--space-4); background: var(--color-paper-dim); border: 1px solid var(--color-line-ink); }
 }
+
+/* ==========================================================================
+   Race Pack Collection — dedicated page & homepage announcement
+   ========================================================================== */
+
+/* RPC map embed */
+.rpc-map iframe { width: 100%; border-radius: 12px; }
+
+/* Download buttons inside accordion panels */
+.rpc-downloads { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-4); }
+
+/* Homepage RPC announcement section */
+.rpc-announce { position: relative; overflow: hidden; }
+.rpc-announce__grid { align-items: center; }
+.rpc-announce__aside { display: flex; justify-content: center; }
+.rpc-announce__card {
+  background: var(--color-ink-soft);
+  border: 1px solid var(--color-line);
+  padding: var(--space-5);
+  display: grid; gap: var(--space-3);
+  max-width: 380px;
+  clip-path: var(--shard);
+}
+.rpc-announce__card h3 {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-size: var(--fs-24);
+}
+@media (max-width: 767px) {
+  .rpc-announce__card { max-width: none; }
+}
