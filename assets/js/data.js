@@ -31,7 +31,8 @@
       rpc: { id: 'Jumat–Sabtu, 25–26 September 2026 · 10.00–20.00 WIB', en: 'Friday–Saturday, 25–26 September 2026 · 10:00–20:00 WIB' },
       raceDay: { id: 'Minggu, 27 September 2026', en: 'Sunday, 27 September 2026' },
       startTime: { id: 'Start 06.00 WIB', en: 'Start 06:00 WIB' },
-      venue: { id: 'Segera diumumkan', en: 'To be announced' },
+      venue: { id: 'TMII, Jakarta', en: 'TMII, Jakarta' },
+      rpcVenue: { id: 'Senayan Park Mall — Lower Ground Hall', en: 'Senayan Park Mall — Lower Ground Hall' },
       note: { id: 'Kota pembuka series — ibu kota, energi metropolitan.', en: 'The opening city of the series — the capital, metropolitan energy.' }
     },
     {
