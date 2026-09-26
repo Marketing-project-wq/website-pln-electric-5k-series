@@ -27,10 +27,10 @@
       quota: 4000,
       tz: 'WIB',
       rpcStartISO: '2026-09-25T10:00:00+07:00',
-      raceDayISO: '2026-09-27T06:00:00+07:00',
+      raceDayISO: '2026-09-27T04:30:00+07:00',
       rpc: { id: 'Jumat–Sabtu, 25–26 September 2026 · 10.00–20.00 WIB', en: 'Friday–Saturday, 25–26 September 2026 · 10:00–20:00 WIB' },
       raceDay: { id: 'Sabtu, 27 September 2026', en: 'Saturday, 27 September 2026' },
-      startTime: { id: 'Start 06.00 WIB', en: 'Start 06:00 WIB' },
+      startTime: { id: 'Start 04.30 WIB', en: 'Start 04:30 WIB' },
       venue: { id: 'Taman Mini Indonesia Indah, Jakarta', en: 'Taman Mini Indonesia Indah, Jakarta' },
       venueMapUrl: 'https://maps.app.goo.gl/cMJJ2fXpQcWUMNi48',
       rpcVenue: { id: 'Senayan Park Mall — Lower Ground Hall', en: 'Senayan Park Mall — Lower Ground Hall' },
@@ -76,16 +76,16 @@
   ];
 
   var PRIZES = [
-    { pos: 1, label: { id: 'Juara 1', en: '1st Place' }, men: 10000000, women: 10000000 },
-    { pos: 2, label: { id: 'Juara 2', en: '2nd Place' }, men: 8000000, women: 8000000 },
-    { pos: 3, label: { id: 'Juara 3', en: '3rd Place' }, men: 6000000, women: 6000000 },
-    { pos: 4, label: { id: 'Juara 4', en: '4th Place' }, men: 5000000, women: 5000000 },
-    { pos: 5, label: { id: 'Juara 5', en: '5th Place' }, men: 4000000, women: 4000000 }
+    { pos: 1, label: { id: 'Juara 1', en: '1st Place' }, male: 10000000, female: 10000000 },
+    { pos: 2, label: { id: 'Juara 2', en: '2nd Place' }, male: 8000000, female: 8000000 },
+    { pos: 3, label: { id: 'Juara 3', en: '3rd Place' }, male: 6000000, female: 6000000 },
+    { pos: 4, label: { id: 'Juara 4', en: '4th Place' }, male: 5000000, female: 5000000 },
+    { pos: 5, label: { id: 'Juara 5', en: '5th Place' }, male: 4000000, female: 4000000 }
   ];
 
   // Derived, per city: total podium prize pool.
   // <!-- angka total hadiah dihitung dari tabel podium, bukan disebut eksplisit di deck sumber -->
-  var PRIZE_TOTAL_PER_CITY = PRIZES.reduce(function (s, p) { return s + p.men + p.women; }, 0); // 66,000,000
+  var PRIZE_TOTAL_PER_CITY = PRIZES.reduce(function (s, p) { return s + p.male + p.female; }, 0); // 66,000,000
 
   // The schedule timeline is one card per city (Race Pack Collection + Race Day).
   // Ticket/launch/after-event info lives on the Tickets and News pages instead.
@@ -134,7 +134,7 @@
     CITY_KEYS.forEach(function (city, ci) {
       var list = [];
       (KNOWN[city] || []).forEach(function (k) {
-        list.push({ bib: k[0], name: k[1], gender: k[2], category: 'Open ' + (k[2] === 'M' ? 'Men' : 'Women'), finishSec: k[3] });
+        list.push({ bib: k[0], name: k[1], gender: k[2], category: 'Open ' + (k[2] === 'M' ? 'Male' : 'Female'), finishSec: k[3] });
         usedBib[k[0]] = 1;
       });
       var base = (ci + 1) * 1000;
@@ -145,7 +145,7 @@
         var name = (g === 'M' ? pick(MALE) : pick(FEMALE)) + ' ' + pick(LAST);
         var ar = rnd(), ag = ar < 0.6 ? 'Open' : ar < 0.85 ? 'Master' : 'Student';
         var finishSec = Math.round(900 + Math.pow(rnd(), 1.4) * 1500); // 15:00 .. ~40:00
-        list.push({ bib: bib, name: name, gender: g, category: ag + ' ' + (g === 'M' ? 'Men' : 'Women'), finishSec: finishSec });
+        list.push({ bib: bib, name: name, gender: g, category: ag + ' ' + (g === 'M' ? 'Male' : 'Female'), finishSec: finishSec });
       }
       list.sort(function (a, b) { return a.finishSec - b.finishSec; });
       out[city] = list;
@@ -156,8 +156,8 @@
   // ---- Podium (Race Results highlights) -----------------------------------
   // Top finishers rendered as a visual podium, driven by ONE structure so the
   // live timing feed can be mapped straight in. Four category blocks:
-  //   Open Men / Open Women            -> Top 5 (podium for the top 3 + rows 4–5)
-  //   Master Men / Master Women (40+)  -> Top 3 (podium only)
+  //   Open Male / Open Female            -> Top 5 (podium for the top 3 + rows 4–5)
+  //   Master Male / Master Female (40+)  -> Top 3 (podium only)
   // Each entry: { rank, name, time ("HH:MM:SS"), photoUrl, bib }.
   // name / time / photoUrl are left EMPTY on purpose — the renderer fills a
   // clearly-provisional placeholder ("Peserta 1" / "00:00:00" / avatar icon) so
@@ -181,10 +181,10 @@
     return {
       available: true, // false => every category shows the empty state
       categories: [
-        { key: 'open-men',     group: 'open',   top: 5, label: { id: '5K Putra', en: '5K Men' },   entries: blanks(5) },
-        { key: 'open-women',   group: 'open',   top: 5, label: { id: '5K Putri', en: '5K Women' }, entries: blanks(5) },
-        { key: 'master-men',   group: 'master', top: 3, label: { id: '5K Master Putra', en: '5K Master Men' },   sublabel: { id: 'Usia 40+', en: 'Ages 40+' }, entries: blanks(3) },
-        { key: 'master-women', group: 'master', top: 3, label: { id: '5K Master Putri', en: '5K Master Women' }, sublabel: { id: 'Usia 40+', en: 'Ages 40+' }, entries: blanks(3) }
+        { key: 'open-male',    group: 'open',   top: 5, label: { id: '5K Male', en: '5K Male' },   entries: blanks(5) },
+        { key: 'open-female',  group: 'open',   top: 5, label: { id: '5K Female', en: '5K Female' }, entries: blanks(5) },
+        { key: 'master-male',  group: 'master', top: 3, label: { id: '5K Master Male', en: '5K Master Male' },   sublabel: { id: 'Usia 40+', en: 'Ages 40+' }, entries: blanks(3) },
+        { key: 'master-female',group: 'master', top: 3, label: { id: '5K Master Female', en: '5K Master Female' }, sublabel: { id: 'Usia 40+', en: 'Ages 40+' }, entries: blanks(3) }
       ]
     };
   })();
