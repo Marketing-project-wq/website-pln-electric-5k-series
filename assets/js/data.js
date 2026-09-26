@@ -110,84 +110,6 @@
     { num: { id: '280 juta', en: '280 million' }, label: { id: 'Orang yang perlu sadar transisi energi', en: 'People who must embrace the energy transition' }, src: 'Garmin Report; Good Stats' }
   ];
 
-  // ---- Race results, per city ---------------------------------------------
-  // SAMPLE / PLACEHOLDER finisher data for the Race Results page: a generated
-  // field per city (bib, name, gender, category, finish time). Deterministic
-  // (seeded) so ranks and split times stay stable across reloads. Powers the
-  // per-city boards, the combined Overall leaderboard, per-runner split times,
-  // and the certificate. Column headers on the page are English by request.
-  // <!-- TODO: ganti dengan hasil timing resmi (export penyedia timing) tiap kota -->
-  var RESULTS = (function () {
-    var MALE = ['Rangga', 'Bayu', 'Dimas', 'Fajar', 'Reza', 'Yoga', 'Aldo', 'Gilang', 'Hendra', 'Rizky', 'Arif', 'Panji', 'Wahyu', 'Bagus', 'Iqbal', 'Tri', 'Dwi', 'Eko', 'Galih', 'Surya', 'Komang', 'Made', 'Wayan', 'Kadek', 'Gede', 'Putu', 'Nyoman', 'Bagas', 'Ketut', 'Agus', 'Andi', 'Budi', 'Candra', 'Dedi', 'Ferry', 'Gunawan', 'Hadi', 'Indra', 'Joko', 'Krisna', 'Lukman', 'Miko', 'Nanda', 'Oka', 'Rama', 'Satya', 'Teguh', 'Umar', 'Vino', 'Wisnu', 'Yudha', 'Zaki', 'Farel', 'Rafi', 'Naufal', 'Alif'];
-    var FEMALE = ['Ayu', 'Dewi', 'Sari', 'Intan', 'Maya', 'Nadia', 'Putri', 'Rina', 'Sinta', 'Tari', 'Wulan', 'Kartika', 'Lestari', 'Anggun', 'Citra', 'Dinda', 'Fitri', 'Gita', 'Hesti', 'Indah', 'Kirana', 'Laras', 'Mega', 'Nia', 'Prita', 'Ratih', 'Sekar', 'Tiara', 'Vina', 'Winda', 'Yuni', 'Zahra', 'Alya', 'Bunga', 'Cahaya', 'Salsa'];
-    var LAST = ['Wijaya', 'Saputra', 'Prasetyo', 'Nugroho', 'Aditya', 'Kurniawan', 'Firmansyah', 'Ramadhan', 'Wibowo', 'Maulana', 'Setiawan', 'Nugraha', 'Hidayat', 'Santoso', 'Atmojo', 'Cahyono', 'Prabowo', 'Pratama', 'Darma', 'Putra', 'Arya', 'Andika', 'Dharma', 'Prakoso', 'Wirawan', 'Hakim', 'Halim', 'Susanto', 'Hartono', 'Permana', 'Utomo', 'Rahardjo', 'Simanjuntak', 'Sinaga', 'Tanjung', 'Siregar', 'Panjaitan', 'Lubis', 'Handoko', 'Wibisono'];
-    var seed = 424242 >>> 0;
-    function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
-    function pick(a) { return a[Math.floor(rnd() * a.length)]; }
-    var CITY_KEYS = ['jakarta'];
-    // Known names per city (continuity with Live Tracking; easy to search).
-    var KNOWN = {
-      jakarta: [['1024', 'Rangga Wijaya', 'M', 912], ['1097', 'Bayu Saputra', 'M', 941]]
-    };
-    var out = {}, usedBib = {};
-    CITY_KEYS.forEach(function (city, ci) {
-      var list = [];
-      (KNOWN[city] || []).forEach(function (k) {
-        list.push({ bib: k[0], name: k[1], gender: k[2], category: 'Open ' + (k[2] === 'M' ? 'Male' : 'Female'), finishSec: k[3] });
-        usedBib[k[0]] = 1;
-      });
-      var base = (ci + 1) * 1000;
-      while (list.length < 40) {
-        var bib; do { bib = String(base + Math.floor(rnd() * 999)); } while (usedBib[bib]);
-        usedBib[bib] = 1;
-        var g = rnd() < 0.55 ? 'M' : 'F';
-        var name = (g === 'M' ? pick(MALE) : pick(FEMALE)) + ' ' + pick(LAST);
-        var ar = rnd(), ag = ar < 0.6 ? 'Open' : ar < 0.85 ? 'Master' : 'Student';
-        var finishSec = Math.round(900 + Math.pow(rnd(), 1.4) * 1500); // 15:00 .. ~40:00
-        list.push({ bib: bib, name: name, gender: g, category: ag + ' ' + (g === 'M' ? 'Male' : 'Female'), finishSec: finishSec });
-      }
-      list.sort(function (a, b) { return a.finishSec - b.finishSec; });
-      out[city] = list;
-    });
-    return out;
-  })();
-
-  // ---- Podium (Race Results highlights) -----------------------------------
-  // Top finishers rendered as a visual podium, driven by ONE structure so the
-  // live timing feed can be mapped straight in. Four category blocks:
-  //   Open Male / Open Female            -> Top 5 (podium for the top 3 + rows 4–5)
-  //   Master Male / Master Female (40+)  -> Top 3 (podium only)
-  // Each entry: { rank, name, time ("HH:MM:SS"), photoUrl, bib }.
-  // name / time / photoUrl are left EMPTY on purpose — the renderer fills a
-  // clearly-provisional placeholder ("Peserta 1" / "00:00:00" / avatar icon) so
-  // nothing here can be mistaken for an official result.
-  // Toggle `available: false` (whole board) or leave a category's `entries` empty
-  // to show the per-category "results after Race Day" empty state instead.
-  // <!-- TODO: sambungkan ke timing system API, ganti data dummy -->
-  // <!-- KONFIRMASI: kategori Master = Top 3 (mengikuti brief). Kalau ternyata
-  //      Top 5, ubah `top: 3` -> `top: 5` dan tambah 2 entri per kategori Master. -->
-  // <!-- KONFIRMASI: hadiah kategori Master. Tabel hadiah (PRIZES di atas) saat ini
-  //      HANYA untuk Open 5K putra & putri. Jangan tambahkan nominal hadiah Master
-  //      di sini tanpa konfirmasi klien. -->
-  var PODIUM = (function () {
-    // Placeholder rows: rank filled, everything else blank (the renderer supplies
-    // the visible dummy text). Swap blanks(n) for the mapped timing rows later.
-    function blanks(n) {
-      var a = [];
-      for (var i = 1; i <= n; i++) a.push({ rank: i, name: '', time: '', photoUrl: '', bib: '' });
-      return a;
-    }
-    return {
-      available: true, // false => every category shows the empty state
-      categories: [
-        { key: 'open-male',    group: 'open',   top: 5, label: { id: '5K Male', en: '5K Male' },   entries: blanks(5) },
-        { key: 'open-female',  group: 'open',   top: 5, label: { id: '5K Female', en: '5K Female' }, entries: blanks(5) },
-        { key: 'master-male',  group: 'master', top: 3, label: { id: '5K Master Male', en: '5K Master Male' },   sublabel: { id: 'Usia 40+', en: 'Ages 40+' }, entries: blanks(3) },
-        { key: 'master-female',group: 'master', top: 3, label: { id: '5K Master Female', en: '5K Master Female' }, sublabel: { id: 'Usia 40+', en: 'Ages 40+' }, entries: blanks(3) }
-      ]
-    };
-  })();
-
   // ---- Live Tracking ------------------------------------------------------
   // Course + runner positions for the Live Tracking page. The route, timing
   // points and POIs below are the REAL surveyed TMII course (exported from the
@@ -450,8 +372,6 @@
     tickets: TICKETS,
     prizes: PRIZES,
     prizeTotalPerCity: PRIZE_TOTAL_PER_CITY,
-    results: RESULTS,
-    podium: PODIUM,
     liveTracking: LIVE_TRACKING,
     speedland: SPEEDLAND,
     timeline: TIMELINE,

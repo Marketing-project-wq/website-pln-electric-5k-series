@@ -35,11 +35,23 @@
 .results-search__input { width: 100%; box-sizing: border-box; padding: 9px 12px; background: var(--color-paper); border: 1px solid var(--color-line-ink); border-radius: 8px; color: var(--color-ink-on-paper); font-family: var(--font-body); font-size: var(--fs-14); }
 .results-search__input::placeholder { color: var(--color-muted-on-paper); }
 .results-search__input:focus { outline: none; border-color: var(--color-teal); }
-.results-scroll { max-height: 560px; overflow-y: auto; }
-/* Clickable result rows */
-.data--results tr.results-row { cursor: pointer; }
-.data--results tr.results-row:hover td, .data--results tr.results-row:focus-visible td { background: var(--color-teal-tint); }
-.data--results tr.results-row:focus-visible { outline: 2px solid var(--color-teal); outline-offset: -2px; }
+/* Live results: disabled city tabs, category chips, badges, certificate buttons */
+.gallery-filter:disabled { opacity: 0.4; cursor: not-allowed; }
+.results-cities-note { flex-basis: 100%; margin: var(--space-2) 0 0; font-size: var(--fs-14); color: var(--color-muted-on-paper); }
+.results-cats { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
+.results-cats .gallery-filter { font-size: var(--fs-12); }
+.results-search { max-width: none; }
+.results-search__input { max-width: 420px; }
+.data--results .cat-badge { display: inline-block; white-space: nowrap; font-family: var(--font-kicker); letter-spacing: 0.06em; font-size: var(--fs-12); padding: 0.2em 0.6em; background: var(--color-teal-tint); color: var(--color-ink-on-paper); border: 1px solid var(--color-teal); }
+.data--results .cell-cert { white-space: nowrap; }
+.results-cert:disabled { opacity: 0.45; cursor: not-allowed; filter: grayscale(1); }
+.results-review { display: block; margin-top: 4px; font-size: var(--fs-12); font-style: italic; color: var(--color-muted-on-paper); white-space: normal; }
+.results-review-note { margin-bottom: var(--space-4); }
+.results-message { text-align: center; padding: var(--space-6) var(--space-4); border: 1px dashed var(--color-line-ink); color: var(--color-ink-on-paper); font-size: var(--fs-16); }
+.results-more { display: flex; justify-content: center; margin-top: var(--space-5); }
+.results-updated { font-size: var(--fs-12); color: var(--color-muted-on-paper); margin: 0 0 var(--space-3); min-height: 1em; }
+.podium-block.podium-block--live { grid-column: 1 / -1; min-height: 0; }
+.podium-block--live .podium-empty.podium-empty { margin: 0; color: var(--color-paper); font-style: normal; }
 
 /* ==========================================================================
    Race Results — category podium (top finishers). Dark (ink) surface; the

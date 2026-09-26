@@ -25,7 +25,7 @@
   <link rel="stylesheet" href="/assets/css/tokens.css?v=2">
   <link rel="stylesheet" href="/assets/css/base.css?v=2">
   <link rel="stylesheet" href="/assets/css/components.css?v=2">
-  <link rel="stylesheet" href="/assets/css/pages.css?v=2">
+  <link rel="stylesheet" href="/assets/css/pages.css?v=3">
 </head>
 <body>
   <div id="site-header"></div>
@@ -37,7 +37,7 @@
       <div class="hero__inner container container--wide">
         <span class="kicker">Race Results</span>
         <h1 class="hero__title">Every Second, Every Finisher</h1>
-        <p class="hero__sub">Total 5K finish times from the PLN Mobile Electric 5K Series 2026. Pick a city to see each runner's bib number, name, and time — ordered fastest first.</p>
+        <p class="hero__sub">Total 5K finish times from the PLN Mobile Electric 5K Series 2026. Pick a city to see each runner's bib number, name, category rank, and time — ordered fastest first.</p>
       </div>
     </section>
     <div class="shard-divider" aria-hidden="true"></div>
@@ -55,17 +55,9 @@
           <p>Top 5 for the Open categories (Male &amp; Female) and top 3 for the Master categories (ages 40+). The top three take the podium; ranks 4–5 follow as a slim list below.</p>
         </div>
 
-        <!-- TODO: connect to the timing-system API, replace the dummy data.
-             The podium blocks are rendered from EVENT_DATA.podium (see assets/js/data.js). -->
-        <!-- TO CONFIRM WITH CLIENT (do not guess):
-             1) Master-category prizes — the prize table currently covers Open 5K only
-                (male & female). Do not add a Master prize column/amount here without
-                confirmation.
-             2) Master = Top 3 (per the brief). If it should be Top 5, change `top: 3`
-                -> `top: 5` for the Master categories in EVENT_DATA.podium (data.js). -->
         <div class="podium-grid" data-podium></div>
 
-        <p class="note">Sample layout with placeholder data — winner names, times, and photos populate automatically from the official timing results after each Race Day.</p>
+        <p class="note">Live from the official chip timing — refreshes every 30 seconds while this page is open. Only results confirmed by the timing system are shown.</p>
       </div>
     </section>
     <div class="shard-divider shard-divider--sage" aria-hidden="true"></div>
@@ -75,8 +67,8 @@
       <div class="container container--wide">
         <div class="section-head">
           <span class="kicker">Finisher Times</span>
-          <h2>Results &amp; Overall Leaderboard</h2>
-          <p>Switch between the <strong>Overall</strong> leaderboard across all three cities and each city's board. Search a runner by bib or name, and tap any row to see their split times and download a certificate.</p>
+          <h2>Results</h2>
+          <p>Search a runner by bib number or name, or filter by category. <strong>Rank</strong> is the runner's position within their category. Every finisher can download a certificate.</p>
         </div>
 
         <!-- View filter: Overall + each city (rendered from data.js) -->
@@ -86,18 +78,19 @@
         <div class="results-search" data-results-search></div>
 
         <!-- Results table (rendered from data.js) -->
-        <div data-results></div>
+        <p class="results-updated" data-results-status aria-live="polite"></p>
+        <div data-results aria-live="polite"></div>
 
-        <!-- Sample data for layout; swap in official timing after each race. -->
-        <p class="note">Sample results shown for layout — tap a row for the split-time detail. Official chip-timed results and the certificate template are published here after each Race Day.</p>
+        <p class="note">Results are provisional until confirmed by the race committee. A result marked as under review can be downloaded as a certificate once the review is complete.</p>
       </div>
     </section>
   </main>
 
   <div id="site-footer"></div>
 
-  <script src="/assets/js/data.js?v=2"></script>
-  <script src="/assets/js/main.js?v=2" defer></script>
+  <script src="/assets/js/data.js?v=3"></script>
+  <script src="/assets/js/main.js?v=3" defer></script>
+  <script src="/assets/js/race-results.js?v=1" defer></script>
   <script src="/assets/js/countdown.js?v=2" defer></script>
   <script src="/assets/js/accordion.js?v=2" defer></script>
 </body>
