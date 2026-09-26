@@ -135,6 +135,13 @@
     .photo a:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; }
     .photo img { display: block; height: 26px; width: auto; }
     .photo + .stores { margin-top: 0; padding-top: 14px; }
+    /* Readable, retypeable address under the logo button + a small note. */
+    .app .photo-url { margin: 8px 0 0; font-size: 16px; font-weight: 600; line-height: 1.4; overflow-wrap: anywhere; }
+    .photo-url a { color: var(--paper); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+    .photo-url a:hover { text-decoration-thickness: 2px; }
+    .photo-url a:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; border-radius: 2px; }
+    .app .photo-note { margin: 6px 0 0; font-size: 13px; line-height: 1.4; color: rgba(255,255,255,0.6); }
+    .photo-note + .stores { margin-top: 0; padding-top: 16px; }
 
     .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
@@ -166,6 +173,8 @@
       <div class="photo">
         <a href="https://photo.20fit.id/plnjkt" target="_blank" rel="noopener noreferrer"><img src="/assets/img/logo/20fit-photo-white.png" width="600" height="79" alt="20FIT Photo"></a>
       </div>
+      <p class="photo-url"><a href="https://photo.20fit.id/plnjkt" target="_blank" rel="noopener noreferrer">photo.20fit.id/plnjkt</a></p>
+      <p class="photo-note">No app needed — open it on your phone or any desktop browser.</p>
       <div class="stores">
         <a href="https://apps.apple.com/id/app/20fit-indonesia/id1475504793" target="_blank" rel="noopener noreferrer">
           <img src="/assets/img/app-store-badge.svg" width="144" height="48" alt="Download on the App Store">
@@ -178,6 +187,6 @@
   </main>
 
   <script src="/assets/js/certificate.js?v=1" defer></script>
-  <script src="/assets/js/cek.js?v=4" defer></script>
+  <script src="/assets/js/cek.js?v=5" defer></script>
 </body>
 </html>
