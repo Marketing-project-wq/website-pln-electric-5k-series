@@ -3,7 +3,9 @@
    - Category Champions  : ?mode=podium&top=5
    - Results table       : ?mode=list (50 rows per page, server-side ?q= search)
    - Review lookup       : ?mode=one&bib= (list only returns status "ok" rows)
-   - Finisher certificate: drawn client-side on <canvas> over the city PNG.
+   - Runner detail modal : ?mode=one&bib= (click a name / row)
+   - Finisher certificate: drawn client-side on <canvas> over the city PNG,
+                           downloaded from the detail modal.
    The endpoint is intentionally public (no auth, open CORS). Never put timing
    provider tokens or Supabase keys in this repo, and never call the timing
    provider directly from the browser.
@@ -51,10 +53,8 @@
     error: 'Hasil gagal dimuat. Mencoba lagi otomatis…',
     more: 'Muat lebih banyak',
     updated: 'Diperbarui',
-    review: 'Hasil sedang ditinjau panitia',
-    reviewNote: 'Hasil peserta ini sedang ditinjau panitia. Sertifikat bisa diunduh setelah peninjauan selesai.',
-    certMissing: 'Template sertifikat belum tersedia. Silakan coba lagi nanti.',
-    certFail: 'Sertifikat gagal dibuat. Silakan coba lagi.',
+    review: 'Sedang ditinjau',
+    reviewNote: 'Hasil peserta ini sedang ditinjau panitia. Ketuk namanya untuk detail.',
     ages: 'Usia 40+'
   } : {
     allCats: 'All Categories',
@@ -70,15 +70,27 @@
     error: 'Could not load results. Retrying automatically…',
     more: 'Load more',
     updated: 'Updated',
-    review: 'Result under review by the race committee',
-    reviewNote: 'This runner\'s result is being reviewed by the race committee. The certificate can be downloaded once the review is complete.',
-    certMissing: 'The certificate template is not available yet. Please try again later.',
-    certFail: 'Could not create the certificate. Please try again.',
+    review: 'Under review',
+    reviewNote: 'This runner\'s result is being reviewed by the race committee. Tap the name for details.',
     ages: 'Ages 40+'
   };
-  // Column headers and the certificate button stay English on both pages.
-  var COL = { rank: 'Rank', bib: 'Bib No.', name: 'Name', cat: 'Category', time: 'Time', cert: 'Certificate' };
-  var DL = 'DOWNLOAD CERTIFICATE';
+  // Column headers, the runner modal and the certificate stay English on both pages.
+  var COL = { rank: 'Rank', bib: 'Bib No.', name: 'Name', cat: 'Category', time: 'Time' };
+  var M = {
+    loading: 'Loading runner…',
+    notFound: 'Runner not found.',
+    error: 'Could not load this runner. Please try again.',
+    retry: 'Try again',
+    close: 'Close',
+    bib: 'BIB',
+    finish: 'Finish Time', rank: 'Rank', pace: 'Pace', team: 'Team', splits: 'Split Times',
+    of: 'of',
+    review: 'This result is under review by the race committee. Time and rank will appear once the review is complete.',
+    download: 'DOWNLOAD CERTIFICATE',
+    reviewCert: 'The certificate is available once the review is complete.',
+    certMissing: 'The certificate template is not available yet. Please try again later.',
+    certFail: 'Could not create the certificate. Please try again.'
+  };
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -99,7 +111,6 @@
   // ---- State --------------------------------------------------------------
   var city = CITIES[0];
   var state = { q: '', cat: '', rows: [], hasMore: false, extra: null, hasAnyFinisher: null, error: false, loading: true };
-  var byBib = {};   // bib -> row, for the certificate buttons
   var seq = 0;      // guards against out-of-order responses
 
   // ---- Static chrome: city tabs, category chips, search -------------------
@@ -215,30 +226,27 @@
   }
 
   // ---- Results table ------------------------------------------------------
-  function certCell(r) {
-    if (r.status === 'ok') {
-      return '<button class="btn btn--sm results-cert" type="button" data-cert="' + esc(r.bib) + '">' + icon('i-download') + ' ' + DL + '</button>';
-    }
-    return '<button class="btn btn--sm results-cert" type="button" disabled aria-disabled="true" title="' + esc(T.review) + '">' + icon('i-download') + ' ' + DL + '</button>' +
-      '<span class="results-review">' + esc(T.review) + '</span>';
-  }
   function rowHtml(r) {
-    return '<tr>' +
-      '<td data-label="' + COL.rank + '" class="rank">' + (r.rank != null ? esc(r.rank) : '–') + '</td>' +
+    var ok = r.status === 'ok';
+    return '<tr class="results-row" data-bib="' + esc(r.bib) + '">' +
+      '<td data-label="' + COL.rank + '" class="rank">' + (ok && r.rank != null ? esc(r.rank) : '–') + '</td>' +
       '<td data-label="' + COL.bib + '"><span class="bib">' + esc(r.bib) + '</span></td>' +
-      '<td data-label="' + COL.name + '">' + esc(r.name) + '</td>' +
+      '<td data-label="' + COL.name + '"><button type="button" class="results-name" data-open="' + esc(r.bib) + '">' + esc(r.name) + '</button>' +
+        (ok ? '' : ' <span class="results-review">' + esc(T.review) + '</span>') + '</td>' +
       '<td data-label="' + COL.cat + '">' + (r.category ? '<span class="cat-badge">' + esc(r.category) + '</span>' : '–') + '</td>' +
-      '<td data-label="' + COL.time + '" class="num">' + (r.time ? esc(r.time) : '–') + '</td>' +
-      '<td data-label="' + COL.cert + '" class="cell-cert">' + certCell(r) + '</td>' +
+      '<td data-label="' + COL.time + '" class="num">' + (ok && r.time ? esc(r.time) : '–') + '</td>' +
     '</tr>';
   }
   function message(text) { return '<p class="results-message">' + esc(text) + '</p>'; }
 
+  var tableDirty = false;
   function renderTable() {
-    byBib = {};
+    // Never repaint the table under an open runner modal (polling keeps
+    // fetching; the latest state is painted when the modal closes).
+    if (modalOpen) { tableDirty = true; return; }
+    tableDirty = false;
     var list = state.rows.slice();
     if (state.extra && !list.some(function (r) { return r.bib === state.extra.bib; })) list.unshift(state.extra);
-    list.forEach(function (r) { byBib[r.bib] = r; });
 
     if (!list.length) {
       var msg;
@@ -250,7 +258,7 @@
       mount.innerHTML = message(msg);
       return;
     }
-    var head = [COL.rank, COL.bib, COL.name, COL.cat, COL.time, COL.cert];
+    var head = [COL.rank, COL.bib, COL.name, COL.cat, COL.time];
     mount.innerHTML =
       (state.extra && state.extra.status !== 'ok' ? '<p class="note results-review-note">' + esc(T.reviewNote) + '</p>' : '') +
       '<div class="table-wrap"><table class="data data--results"><thead><tr><th>' + head.join('</th><th>') + '</th></tr></thead><tbody>' +
@@ -316,11 +324,8 @@
   mount.addEventListener('click', function (e) {
     var more = e.target.closest('[data-more]');
     if (more) { loadMore(more); return; }
-    var b = e.target.closest('[data-cert]');
-    if (b && !b.disabled) {
-      var r = byBib[b.getAttribute('data-cert')];
-      if (r && r.status === 'ok') downloadCertificate(r, city, b);
-    }
+    var tr = e.target.closest('tr[data-bib]');
+    if (tr) openRunner(tr.getAttribute('data-bib'), tr.querySelector('[data-open]'));
   });
 
   function stamp(ev) {
@@ -329,6 +334,133 @@
     if (isNaN(d)) return;
     statusEl.textContent = T.updated + ' ' + d.toLocaleTimeString(isID ? 'id-ID' : 'en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   }
+
+  // ---- Runner detail modal ------------------------------------------------
+  var modalOpen = false, modalSeq = 0, lastTrigger = null, lastBib = null;
+  var modal = document.createElement('div');
+  modal.className = 'modal rr-modal';
+  modal.setAttribute('role', 'dialog');
+  modal.setAttribute('aria-modal', 'true');
+  modal.setAttribute('aria-labelledby', 'rr-title');
+  modal.setAttribute('lang', 'en');
+  modal.innerHTML =
+    '<div class="modal__overlay" data-close></div>' +
+    '<div class="modal__dialog rr-dialog">' +
+      '<button class="modal__close rr-close" type="button" data-close aria-label="' + M.close + '"><span aria-hidden="true">&times;</span></button>' +
+      '<div class="rr-body" data-rr-body></div>' +
+    '</div>';
+  document.body.appendChild(modal);
+  var mBody = modal.querySelector('[data-rr-body]');
+  var mDialog = modal.querySelector('.rr-dialog');
+
+  // Scroll lock: keep the page where it is while the modal is open.
+  var savedOverflow = null;
+  function lockPage(on) {
+    var h = document.documentElement, b = document.body;
+    if (on) {
+      savedOverflow = [h.style.overflow, b.style.overflow];
+      h.style.overflow = 'hidden'; b.style.overflow = 'hidden';
+    } else if (savedOverflow) {
+      h.style.overflow = savedOverflow[0]; b.style.overflow = savedOverflow[1];
+      savedOverflow = null;
+    }
+  }
+
+  function stat(label, value, extra) {
+    return '<div class="rr-stat"><dt>' + esc(label) + '</dt><dd>' + value + (extra ? '<span class="rr-stat__sub">' + extra + '</span>' : '') + '</dd></div>';
+  }
+  function renderRunner(r) {
+    var ok = r.status === 'ok';
+    var html =
+      '<h2 id="rr-title" class="rr-name">' + esc(r.name || '') + '</h2>' +
+      '<p class="rr-bib"><span>' + M.bib + '</span> ' + esc(r.bib) + '</p>' +
+      (r.category ? '<span class="rr-cat">' + esc(r.category) + '</span>' : '');
+    if (ok) {
+      var stats = stat(M.finish, '<span class="rr-time">' + esc(r.time || '–') + '</span>');
+      if (r.rank != null) {
+        stats += stat(M.rank, esc(r.rank) + (r.category_size != null ? ' <small>' + M.of + ' ' + esc(r.category_size) + '</small>' : ''), r.category ? esc(r.category) : '');
+      }
+      if (r.pace) stats += stat(M.pace, esc(r.pace) + (r.pace_unit ? ' <small>' + esc(r.pace_unit) + '</small>' : ''));
+      if (r.team) stats += stat(M.team, esc(r.team));
+      html += '<dl class="rr-stats">' + stats + '</dl>';
+      var cps = Array.isArray(r.checkpoints) ? r.checkpoints.filter(function (c) { return c && c.label && c.time; }) : [];
+      if (cps.length) {
+        html += '<section class="rr-splits"><h3>' + M.splits + '</h3><ol class="rr-split-list">' +
+          cps.map(function (c) { return '<li><span>' + esc(c.label) + '</span><b>' + esc(c.time) + '</b></li>'; }).join('') +
+        '</ol></section>';
+      }
+    } else {
+      if (r.team) html += '<dl class="rr-stats">' + stat(M.team, esc(r.team)) + '</dl>';
+      html += '<p class="rr-review" role="status">' + M.review + '</p>';
+    }
+    html += '<div class="rr-actions">' +
+      '<button class="btn rr-cert" type="button" data-cert' + (ok ? '' : ' disabled aria-disabled="true"') + '>' + icon('i-download') + ' ' + M.download + '</button>' +
+      (ok ? '' : '<p class="rr-hint">' + M.reviewCert + '</p>') +
+      '<p class="rr-hint rr-cert-msg" data-cert-msg role="alert" hidden></p>' +
+    '</div>';
+    mBody.innerHTML = html;
+    var btn = mBody.querySelector('[data-cert]');
+    if (ok) btn.addEventListener('click', function () {
+      var msg = mBody.querySelector('[data-cert-msg]');
+      msg.hidden = true;
+      btn.disabled = true;
+      downloadCertificate(r, city).catch(function (e) { msg.textContent = e.message; msg.hidden = false; })
+        .then(function () { btn.disabled = false; });
+    });
+  }
+  function fetchRunner(bib) {
+    var my = ++modalSeq;
+    mBody.innerHTML = '<h2 id="rr-title" class="rr-name rr-name--muted">' + M.bib + ' ' + esc(bib) + '</h2>' +
+      '<p class="rr-loading" role="status"><span class="rr-spinner" aria-hidden="true"></span>' + M.loading + '</p>';
+    api({ mode: 'one', slug: city.slug, bib: bib }).then(function (j) {
+      if (my !== modalSeq || !modalOpen) return;
+      if (!j || !j.runner) { mBody.innerHTML = '<h2 id="rr-title" class="rr-name">' + M.notFound + '</h2>'; return; }
+      renderRunner(j.runner);
+    }, function () {
+      if (my !== modalSeq || !modalOpen) return;
+      mBody.innerHTML = '<h2 id="rr-title" class="rr-name rr-name--muted">' + M.bib + ' ' + esc(bib) + '</h2>' +
+        '<p class="rr-review" role="alert">' + M.error + '</p>' +
+        '<div class="rr-actions"><button class="btn btn--ghost" type="button" data-retry>' + M.retry + '</button></div>';
+      mBody.querySelector('[data-retry]').addEventListener('click', function () { fetchRunner(bib); });
+    });
+  }
+  function openRunner(bib, trigger) {
+    if (!bib) return;
+    lastTrigger = trigger || document.activeElement;
+    lastBib = bib;
+    if (!modalOpen) { modalOpen = true; lockPage(true); modal.classList.add('is-open'); }
+    mDialog.scrollTop = 0;
+    fetchRunner(bib);
+    modal.querySelector('.rr-close').focus();
+  }
+  function closeRunner() {
+    if (!modalOpen) return;
+    modalOpen = false; modalSeq++;
+    modal.classList.remove('is-open');
+    lockPage(false);
+    if (tableDirty) renderTable();
+    // The row may have been repainted while the modal was open: focus the
+    // current button for the same bib, falling back to the original trigger.
+    var target = null;
+    if (lastBib != null) {
+      mount.querySelectorAll('[data-open]').forEach(function (b) { if (!target && b.getAttribute('data-open') === lastBib) target = b; });
+    }
+    if (!target && lastTrigger && document.contains(lastTrigger)) target = lastTrigger;
+    if (target && target.focus) target.focus();
+  }
+  modal.addEventListener('click', function (e) { if (e.target.closest('[data-close]')) closeRunner(); });
+  document.addEventListener('keydown', function (e) {
+    if (!modalOpen) return;
+    if (e.key === 'Escape') { e.preventDefault(); closeRunner(); return; }
+    if (e.key === 'Tab') {
+      // Keep keyboard focus inside the dialog.
+      var f = Array.prototype.filter.call(mDialog.querySelectorAll('button, a[href], [tabindex]:not([tabindex="-1"])'), function (x) { return !x.disabled && x.offsetParent !== null; });
+      if (!f.length) return;
+      var first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  });
 
   // ---- Polling (paused while the tab is hidden) ---------------------------
   var timer = null;
@@ -390,12 +522,13 @@
   }
   function fileSafe(s) { return String(s || '').replace(/\s+/g, '').replace(/[\\/:*?"<>|]/g, ''); }
 
-  function downloadCertificate(r, c, btn) {
-    if (btn) btn.disabled = true;
+  // Resolves once the PNG download has been triggered; rejects with a
+  // user-facing (English) message.
+  function downloadCertificate(r, c) {
     var fontsReady = document.fonts && document.fonts.load
       ? Promise.all([document.fonts.load('64px Anton'), document.fonts.load('700 20px Montserrat')]).catch(function () {})
       : Promise.resolve();
-    Promise.all([loadImage(certSrc(c)), fontsReady]).then(function (res) {
+    return Promise.all([loadImage(certSrc(c)), fontsReady]).then(function (res) {
       var img = res[0], W = img.naturalWidth, H = img.naturalHeight;
       var cv = document.createElement('canvas');
       cv.width = W; cv.height = H;
@@ -432,16 +565,19 @@
       });
 
       var filename = 'PLN-5K-' + c.name + '-' + fileSafe(r.bib) + '-' + fileSafe(r.name) + '.png';
-      cv.toBlob(function (blob) {
-        if (!blob) { alert(T.certFail); return; }
-        var url = URL.createObjectURL(blob);
-        var a = document.createElement('a');
-        a.href = url; a.download = filename;
-        document.body.appendChild(a); a.click(); a.remove();
-        setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
-      }, 'image/png');
+      return new Promise(function (res, rej) {
+        cv.toBlob(function (blob) {
+          if (!blob) { rej(new Error('fail')); return; }
+          var url = URL.createObjectURL(blob);
+          var a = document.createElement('a');
+          a.href = url; a.download = filename;
+          document.body.appendChild(a); a.click(); a.remove();
+          setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+          res();
+        }, 'image/png');
+      });
     }).catch(function (e) {
-      alert(e && e.message === 'missing' ? T.certMissing : T.certFail);
-    }).then(function () { if (btn) btn.disabled = false; });
+      throw new Error(e && e.message === 'missing' ? M.certMissing : M.certFail);
+    });
   }
 })();
