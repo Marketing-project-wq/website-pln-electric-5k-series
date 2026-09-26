@@ -111,36 +111,11 @@
   ];
 
   // ---- Live Tracking ------------------------------------------------------
-  // Course + runner positions for the Live Tracking page. The route, timing
-  // points and POIs below are the REAL surveyed TMII course (exported from the
-  // organiser's Google Earth project, ~5.1 km). Runner positions are still a
-  // DEMO simulation (runners move along the real route); on race day they are
-  // replaced by the chip-timing feed.
-  // <!-- TODO: sambungkan posisi pelari ke API timing (feibot); rute sudah final -->
-  // Demo participant field (~200) for the Live Tracking page. Names and bibs
-  // are illustrative and positions are simulated; the field is deterministic
-  // (seeded) so it stays stable across reloads. On race day this list comes
-  // from the chip-timing API instead.
-  var LT_RUNNERS = (function () {
-    var FIRST = ['Rangga', 'Bayu', 'Dimas', 'Fajar', 'Reza', 'Yoga', 'Aldo', 'Gilang', 'Hendra', 'Rizky', 'Arif', 'Panji', 'Wahyu', 'Bagus', 'Iqbal', 'Tri', 'Dwi', 'Eko', 'Galih', 'Surya', 'Komang', 'Made', 'Wayan', 'Kadek', 'Gede', 'Putu', 'Nyoman', 'Bagas', 'Ketut', 'Agus', 'Andi', 'Budi', 'Candra', 'Dedi', 'Eka', 'Ferry', 'Gunawan', 'Hadi', 'Indra', 'Joko', 'Krisna', 'Lukman', 'Miko', 'Nanda', 'Oka', 'Prama', 'Rama', 'Satya', 'Teguh', 'Umar', 'Vino', 'Wisnu', 'Yudha', 'Zaki', 'Ayu', 'Dewi', 'Sari', 'Intan', 'Maya', 'Nadia', 'Putri', 'Rina', 'Sinta', 'Tari', 'Wulan', 'Farel', 'Rafi', 'Naufal', 'Alif'];
-    var LAST = ['Wijaya', 'Saputra', 'Prasetyo', 'Nugroho', 'Aditya', 'Kurniawan', 'Firmansyah', 'Ramadhan', 'Wibowo', 'Maulana', 'Setiawan', 'Nugraha', 'Hidayat', 'Santoso', 'Atmojo', 'Cahyono', 'Prabowo', 'Pratama', 'Darma', 'Putra', 'Arya', 'Andika', 'Dharma', 'Prakoso', 'Wirawan', 'Hakim', 'Halim', 'Susanto', 'Hartono', 'Permana', 'Utomo', 'Rahardjo', 'Simanjuntak', 'Sinaga', 'Tanjung', 'Siregar', 'Panjaitan', 'Lubis', 'Handoko', 'Wibisono'];
-    var seed = 20260927 >>> 0;
-    function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
-    var out = [], usedBib = {};
-    // A few known entries first (continuity with Race Results; easy to search).
-    [['1024', 'Rangga Wijaya', 942], ['2031', 'Arif Setiawan', 1006], ['3012', 'Komang Adi', 1071], ['1097', 'Bayu Saputra', 1134], ['2008', 'Panji Nugraha', 1218]]
-      .forEach(function (k) { out.push({ bib: k[0], name: k[1], finishSec: k[2] }); usedBib[k[0]] = 1; });
-    while (out.length < 200) {
-      var bib = String(1000 + Math.floor(rnd() * 8999));
-      if (usedBib[bib]) continue;
-      usedBib[bib] = 1;
-      var name = FIRST[Math.floor(rnd() * FIRST.length)] + ' ' + LAST[Math.floor(rnd() * LAST.length)];
-      // 5K finish times skewed toward 25–35 min with a tail to ~48 min.
-      out.push({ bib: bib, name: name, finishSec: Math.round(900 + Math.pow(rnd(), 1.35) * 1980) });
-    }
-    return out;
-  })();
-
+  // Real surveyed TMII course (exported from the organiser's Google Earth
+  // project, ~5.1 km): route, timing mats and POIs. Runner data comes live
+  // from the pln-5k endpoint (?mode=track) in live-tracking.js — there is no
+  // simulated field. A runner is shown AT the last timing mat they crossed
+  // (dist = mat distance in metres, matched to the feed's last_distance_m).
   var LIVE_TRACKING = {
     // [lat, lng] polyline of the official course.
     route: [
@@ -170,14 +145,15 @@
       [-6.303824,106.891453], [-6.30383,106.890399], [-6.303835,106.889942], [-6.303842,106.889554],
       [-6.304115,106.889207], [-6.304134,106.889101]
     ],
-    // Timing points ("antena/decoder"); frac = position along the route [0..1].
+    // Timing points ("antena/decoder"); frac = position along the route [0..1],
+    // dist = distance of the timing mat in metres (null for the start).
     checkpoints: [
-      { label: { id: 'Start', en: 'Start' }, lat: -6.302271, lng: 106.88909, frac: 0.0 },
-      { label: { id: 'KM 1', en: 'KM 1' }, lat: -6.299868, lng: 106.895556, frac: 0.2217 },
-      { label: { id: 'KM 2', en: 'KM 2' }, lat: -6.300774, lng: 106.903392, frac: 0.4158 },
-      { label: { id: 'KM 3', en: 'KM 3' }, lat: -6.301619, lng: 106.90425, frac: 0.6096 },
-      { label: { id: 'KM 4', en: 'KM 4' }, lat: -6.303596, lng: 106.898081, frac: 0.8045 },
-      { label: { id: 'Finish', en: 'Finish' }, lat: -6.304131, lng: 106.889101, frac: 1.0 }
+      { label: { id: 'Start', en: 'Start' }, lat: -6.302271, lng: 106.88909, frac: 0.0, dist: null },
+      { label: { id: 'KM 1', en: 'KM 1' }, lat: -6.299868, lng: 106.895556, frac: 0.2217, dist: 1000 },
+      { label: { id: 'KM 2', en: 'KM 2' }, lat: -6.300774, lng: 106.903392, frac: 0.4158, dist: 2000 },
+      { label: { id: 'KM 3', en: 'KM 3' }, lat: -6.301619, lng: 106.90425, frac: 0.6096, dist: 3000 },
+      { label: { id: 'KM 4', en: 'KM 4' }, lat: -6.303596, lng: 106.898081, frac: 0.8045, dist: 4000 },
+      { label: { id: 'Finish', en: 'Finish' }, lat: -6.304131, lng: 106.889101, frac: 1.0, dist: 5000 }
     ],
     // Extra on-course markers (not timing points).
     pois: [
@@ -185,14 +161,9 @@
     ],
     // Optional 200 m speed segment [start, finish].
     speed200: [[-6.303649,106.895609],[-6.303658,106.893801]],
-    // Demo participant field (generated above as LT_RUNNERS). finishSec = the
-    // simulated finish time used for the board clock. Positions are simulated.
-    runners: LT_RUNNERS,
-    // Seconds of wall-clock for the leader to run start->finish in the demo.
-    animSeconds: 24,
     ui: {
-      id: { board: 'Papan Live', bib: 'No. BIB', name: 'Nama', last: 'Terakhir Terdeteksi', clock: 'Waktu', restart: 'Ulangi', pause: 'Jeda', play: 'Main', sim: 'SIMULASI', running: 'Berlari', finished: 'Finish', waiting: 'Menunggu start', distance: 'Jarak' },
-      en: { board: 'Live Board', bib: 'Bib', name: 'Name', last: 'Last Detected', clock: 'Time', restart: 'Restart', pause: 'Pause', play: 'Play', sim: 'SIMULATION', running: 'Running', finished: 'Finished', waiting: 'Awaiting start', distance: 'Distance' }
+      id: { board: 'Papan Live', bib: 'No. BIB', name: 'Nama', last: 'Terakhir Terdeteksi', clock: 'Waktu', finished: 'FINISH' },
+      en: { board: 'Live Board', bib: 'Bib', name: 'Name', last: 'Last Detected', clock: 'Time', finished: 'FINISHED' }
     }
   };
 

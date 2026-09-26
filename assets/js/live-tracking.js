@@ -1,11 +1,19 @@
 /* ==========================================================================
-   live-tracking.js — Live course map (Leaflet) with a full runner field.
-   Self-initialising. Reads window.EVENT_DATA.liveTracking (real TMII route +
-   checkpoints + a ~200-runner demo field) and animates every runner along the
-   real route on a canvas layer, with a searchable live leaderboard.
+   live-tracking.js — Live course map (Leaflet) + live board from real timing.
 
-   Route + timing points are the real surveyed course. Runner positions are a
-   SIMULATION — on race day they come from the chip-timing feed.
+   Data: public pln-5k endpoint
+     ?mode=track&slug=pln-jakarta&limit=100[&q=…]
+   -> { on_course, finished, total, rows:[{ bib, name, category, finished,
+        last_label, last_time, last_distance_m, cp_count, checkpoints }] }
+   Rows arrive sorted: furthest along first, then fastest.
+
+   Positions are NOT tracked by GPS. The only fact we have is the last timing
+   mat each runner crossed, so the map shows runners AT that mat (KM 1–4 or
+   Finish), one marker per mat with a count. No interpolation, no animation
+   between mats, no guessed positions. There is no simulated data.
+
+   Board polls every 20 s, paused while the tab is hidden. Search goes to the
+   server (&q=); the page never filters the field itself.
    Requires Leaflet (vendored at /assets/vendor/leaflet/).
    ========================================================================== */
 (function () {
@@ -15,57 +23,62 @@
   var D = window.EVENT_DATA;
   if (!mapEl || !D || !D.liveTracking) return;
 
+  var API = 'https://cpvzwqptzcxnwzfzgrmt.supabase.co/functions/v1/pln-5k';
+  var SLUG = 'pln-jakarta';
+  var LIMIT = 100;
+  var POLL_MS = 20000;
+
   var LANG = D.LANG || 'id';
+  var isID = LANG === 'id';
   var CFG = D.liveTracking;
   var T = (CFG.ui && CFG.ui[LANG]) || {};
   var loc = D.loc || function (o) { return o ? (o[LANG] != null ? o[LANG] : o.id) : ''; };
   var board = document.querySelector('[data-live-board]');
 
+  var S = isID ? {
+    onCourse: 'di lintasan', finished: 'finis',
+    runners: function (n, plus) { return n + (plus ? '+' : '') + ' pelari'; },
+    empty: 'Belum ada pelari yang terdeteksi. Papan terisi begitu pelari pertama melewati KM 1.',
+    noMatch: 'Peserta tidak ditemukan.',
+    loading: 'Memuat data langsung…',
+    offline: 'Data langsung belum bisa dimuat. Halaman ini akan mencoba lagi otomatis.',
+    search: 'Cari No. BIB atau nama…', searchLabel: 'Cari peserta',
+    partial: 'Jumlah dengan tanda + adalah jumlah minimal: papan hanya memuat pelari terdepan.'
+  } : {
+    onCourse: 'on course', finished: 'finished',
+    runners: function (n, plus) { return n + (plus ? '+' : '') + (n === 1 && !plus ? ' runner' : ' runners'); },
+    empty: 'No runners detected yet. The board fills once the first runner crosses KM 1.',
+    noMatch: 'No participant found.',
+    loading: 'Loading live data…',
+    offline: 'Live data can\'t be loaded right now. This page will try again automatically.',
+    search: 'Search bib or name…', searchLabel: 'Search participants',
+    partial: 'Counts marked + are minimums: the board only loads the runners furthest ahead.'
+  };
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
   var route = CFG.route || [];
   var checkpoints = (CFG.checkpoints || []).slice().sort(function (a, b) { return a.frac - b.frac; });
-  var runners = CFG.runners || [];
-  var leaderFinish = runners.reduce(function (m, r) { return Math.min(m, r.finishSec); }, Infinity);
-  var animSeconds = CFG.animSeconds || 24;
-  var TOP_N = 12, MAX_RESULTS = 40;
+  // Timing mats a runner can be placed at (KM 1–4 + Finish), keyed by distance.
+  var mats = checkpoints.filter(function (cp) { return cp.dist; });
+  var matByDist = {};
+  mats.forEach(function (cp) { matByDist[cp.dist] = cp; });
+  var FINISH_DIST = mats.length ? mats[mats.length - 1].dist : 5000;
 
-  function pad2(n) { return (n < 10 ? '0' : '') + n; }
-  function clock(sec) { sec = Math.max(0, Math.round(sec)); return pad2(Math.floor(sec / 60)) + ':' + pad2(sec % 60); }
-  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
-  function tier(r) { return r.finishSec < 1200 ? '#8CD867' : r.finishSec < 1800 ? '#22C3D6' : '#3FA9F5'; }
-  var HL = '#F2D024';
-
-  // ---- Route distance table (interpolate a latlng at fraction f) ----------
-  function hav(a, b) {
-    var R = 6371000, dLat = (b[0] - a[0]) * Math.PI / 180, dLon = (b[1] - a[1]) * Math.PI / 180;
-    var la1 = a[0] * Math.PI / 180, la2 = b[0] * Math.PI / 180;
-    var x = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(la1) * Math.cos(la2) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    return 2 * R * Math.asin(Math.min(1, Math.sqrt(x)));
-  }
-  var cum = [0];
-  for (var i = 1; i < route.length; i++) cum.push(cum[i - 1] + hav(route[i - 1], route[i]));
-  var totalLen = cum[cum.length - 1] || 1;
-  function latlngAt(frac) {
-    if (!route.length) return [0, 0];
-    var target = Math.max(0, Math.min(1, frac)) * totalLen;
-    for (var j = 1; j < route.length; j++) {
-      if (cum[j] >= target) {
-        var seg = cum[j] - cum[j - 1] || 1, t = (target - cum[j - 1]) / seg;
-        return [route[j - 1][0] + (route[j][0] - route[j - 1][0]) * t, route[j - 1][1] + (route[j][1] - route[j - 1][1]) * t];
-      }
-    }
-    return route[route.length - 1];
-  }
-  function durationFor(r) { return animSeconds * (r.finishSec / leaderFinish); }
-  function progressFor(r, e) { return Math.min(e / durationFor(r), 1); }
-  function lastCheckpoint(p) {
-    var last = checkpoints[0];
-    for (var k = 0; k < checkpoints.length; k++) if (checkpoints[k].frac <= p + 1e-9) last = checkpoints[k];
-    return last;
+  // The mat a row was last detected at, or null when it can't be told for
+  // sure (then the runner stays on the board but is not placed on the map).
+  function matOf(r) {
+    if (r.finished) return matByDist[FINISH_DIST] || null;
+    var d = Number(r.last_distance_m);
+    if (d && matByDist[d]) return matByDist[d];
+    var m = /^\s*KM\s*(\d+)\s*$/i.exec(String(r.last_label || ''));
+    if (m && matByDist[Number(m[1]) * 1000]) return matByDist[Number(m[1]) * 1000];
+    if (/^\s*FINISH\s*$/i.test(String(r.last_label || ''))) return matByDist[FINISH_DIST] || null;
+    return null;
   }
 
   // ---- Map ----------------------------------------------------------------
-  var map = null, dots = [], hlMarker = null, selectedBib = null;
-  var L = window.L;
+  var map = null, L = window.L, matMarkers = {}, hlMarker = null;
   if (L) {
     map = L.map(mapEl, { zoomControl: true, scrollWheelZoom: false, attributionControl: true });
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
@@ -77,167 +90,179 @@
     L.polyline(route, { color: '#1FE0D6', weight: 5, opacity: 0.95, lineJoin: 'round', lineCap: 'round' }).addTo(map);
     if (CFG.speed200) L.polyline(CFG.speed200, { color: '#FF4D4D', weight: 6, opacity: 0.95, lineCap: 'round' }).addTo(map).bindTooltip('200 m Speed', { direction: 'top', className: 'lt-tip' });
 
+    // Label placement so the counts stay readable on small screens: Finish
+    // sits just below Start, and KM 2 / KM 3 are close together.
+    var TIP_DIR = { 3000: 'bottom', 5000: 'bottom' };
     checkpoints.forEach(function (cp, idx) {
       var start = idx === 0, finish = idx === checkpoints.length - 1;
-      L.circleMarker([cp.lat, cp.lng], { radius: start || finish ? 8 : 6, color: '#0A0A0A', weight: 2, fillColor: start ? '#8CD867' : finish ? '#F2D024' : '#1FE0D6', fillOpacity: 1 })
-        .addTo(map).bindTooltip(loc(cp.label), { permanent: true, direction: 'top', className: 'lt-tip' + (start || finish ? ' lt-tip--key' : '') });
+      var mk = L.circleMarker([cp.lat, cp.lng], { radius: start || finish ? 8 : 6, color: '#0A0A0A', weight: 2, fillColor: start ? '#8CD867' : finish ? '#F2D024' : '#1FE0D6', fillOpacity: 1 })
+        .addTo(map).bindTooltip(esc(loc(cp.label)), { permanent: true, direction: TIP_DIR[cp.dist] || 'top', className: 'lt-tip' + (start || finish ? ' lt-tip--key' : '') });
+      if (cp.dist) matMarkers[cp.dist] = mk;
     });
     (CFG.pois || []).forEach(function (p) {
-      L.circleMarker([p.lat, p.lng], { radius: 6, color: '#0A0A0A', weight: 2, fillColor: '#2CA6E0', fillOpacity: 1 }).addTo(map).bindTooltip(loc(p.label), { direction: 'top', className: 'lt-tip lt-tip--poi' });
+      L.circleMarker([p.lat, p.lng], { radius: 6, color: '#0A0A0A', weight: 2, fillColor: '#2CA6E0', fillOpacity: 1 }).addTo(map).bindTooltip(esc(loc(p.label)), { direction: 'top', className: 'lt-tip lt-tip--poi' });
     });
 
-    // Runner field on a fast canvas renderer.
-    var canvas = L.canvas({ padding: 0.5 });
-    dots = runners.map(function (r) {
-      return L.circleMarker(latlngAt(0), { renderer: canvas, radius: 4, weight: 0, fillColor: tier(r), fillOpacity: 0.85 }).addTo(map);
-    });
-
-    // Highlight marker (follows the selected runner).
-    hlMarker = L.marker(latlngAt(0), {
+    // Spotlight for a selected runner: sits ON their last mat, never between.
+    hlMarker = L.marker([checkpoints[0].lat, checkpoints[0].lng], {
       icon: L.divIcon({ className: 'lt-hl', html: '<span class="lt-hl__pulse"></span><span class="lt-hl__dot"></span>', iconSize: [26, 26], iconAnchor: [13, 13] }),
       interactive: false, keyboard: false, zIndexOffset: 2000, opacity: 0
     }).addTo(map);
 
-    if (route.length) map.fitBounds(L.latLngBounds(route), { padding: [34, 34] });
+    // Extra room on the left: Start/Finish sit at the route's west edge and
+    // their labels ("Finish · 1,234 runners") must not be clipped.
+    if (route.length) map.fitBounds(L.latLngBounds(route), { paddingTopLeft: [110, 44], paddingBottomRight: [34, 34] });
     setTimeout(function () { map.invalidateSize(); }, 0);
   }
 
-  function selectedIndex() {
-    if (selectedBib == null) return -1;
-    for (var i = 0; i < runners.length; i++) if (runners[i].bib === selectedBib) return i;
-    return -1;
-  }
-  // Dot styling. With nothing focused, every runner shows clearly. Once a
-  // runner is clicked (selectedBib) OR a search is active (query), the focused
-  // runner(s) stay bright and everyone else fades to a faint "shadow".
-  function applyDotStyles() {
+  // One label per mat: "KM 2 · 143 runners" (count with "+" when the loaded
+  // rows don't cover the whole field). Finish uses the exact `finished` total.
+  function updateMap(all) {
     if (!map) return;
-    var focus = !!query || selectedBib != null;
-    for (var i = 0; i < runners.length; i++) {
-      var r = runners[i], d = dots[i];
-      var sel = r.bib === selectedBib;
-      var match = query && (r.bib.indexOf(query) >= 0 || r.name.toLowerCase().indexOf(query) >= 0);
-      if (!focus) {
-        d.setStyle({ radius: 5, weight: 1, color: 'rgba(0,0,0,0.55)', fillColor: tier(r), fillOpacity: 0.95 });
-      } else if (sel) {
-        d.setStyle({ radius: 8, weight: 2, color: '#0A0A0A', fillColor: HL, fillOpacity: 1 });
-        d.bringToFront();
-      } else if (match) {
-        d.setStyle({ radius: 6, weight: 1, color: '#0A0A0A', fillColor: tier(r), fillOpacity: 1 });
-        d.bringToFront();
-      } else {
-        d.setStyle({ radius: 3, weight: 0, fillColor: '#8792A0', fillOpacity: 0.14 });   // bayangan
-      }
-    }
-    if (hlMarker) hlMarker.setOpacity(selectedIndex() >= 0 ? 1 : 0);
+    var counts = {};
+    all.rows.forEach(function (r) { var m = matOf(r); if (m) counts[m.dist] = (counts[m.dist] || 0) + 1; });
+    var partial = all.rows.length < all.total;
+    mats.forEach(function (cp) {
+      var mk = matMarkers[cp.dist]; if (!mk) return;
+      var n, plus = false;
+      if (cp.dist === FINISH_DIST && typeof all.finished === 'number') n = all.finished;
+      else { n = counts[cp.dist] || 0; plus = partial && n > 0; }
+      var label = esc(loc(cp.label)) + (n > 0 ? ' · ' + esc(S.runners(n, plus)) : '');
+      mk.setTooltipContent(label);
+      mk.setStyle({ radius: n > 0 ? 9 : (cp.dist === FINISH_DIST ? 8 : 6) });
+    });
+    if (partialEl) partialEl.hidden = !(partial && all.rows.some(function (r) { return !r.finished; }));
   }
 
-  function positionMarkers(elapsed) {
-    if (!map) return;
-    for (var i = 0; i < runners.length; i++) dots[i].setLatLng(latlngAt(progressFor(runners[i], elapsed)));
-    var idx = selectedIndex();
-    if (idx >= 0 && hlMarker) hlMarker.setLatLng(latlngAt(progressFor(runners[idx], elapsed)));
-  }
+  // ---- Board --------------------------------------------------------------
+  var rowsEl, countEl, emptyEl, searchEl, partialEl, wrapEl;
+  var query = '', selectedBib = null;
+  var latestAll = null;      // unfiltered response (map, header, ranks)
+  var latestBoard = null;    // response for the current search (or the unfiltered one)
+  var loaded = false, offline = false;
 
-  // ---- Board (built once; only rows + count update) -----------------------
-  var rowsEl = null, countEl = null, emptyEl = null, searchEl = null, query = '';
   function buildBoard() {
     if (!board) return;
     board.innerHTML =
-      '<div class="lt-board__head">' + esc(T.board || 'Live Board') +
-        ' <span class="lt-count" data-lt-count></span> <span class="lt-sim">' + esc(T.sim || 'SIMULATION') + '</span></div>' +
-      '<div class="lt-search"><input type="search" class="lt-search__input" data-lt-search placeholder="' +
-        esc(LANG === 'id' ? 'Cari No. BIB atau nama…' : 'Search bib or name…') + '" aria-label="' +
-        esc(LANG === 'id' ? 'Cari peserta' : 'Search participants') + '" autocomplete="off"></div>' +
-      '<div class="table-wrap lt-board__scroll"><table class="lt-table"><thead><tr><th>#</th><th>' +
+      '<div class="lt-board__head">' + esc(T.board || 'Live Board') + ' <span class="lt-count" data-lt-count></span></div>' +
+      '<div class="lt-search"><input type="search" class="lt-search__input" data-lt-search placeholder="' + esc(S.search) + '" aria-label="' + esc(S.searchLabel) + '" autocomplete="off"></div>' +
+      '<div class="table-wrap lt-board__scroll" data-lt-wrap><table class="lt-table"><thead><tr><th>#</th><th>' +
         esc(T.bib || 'Bib') + '</th><th>' + esc(T.name || 'Name') + '</th><th>' + esc(T.last || 'Last Detected') +
-        '</th><th>' + esc(T.clock || 'Time') + '</th></tr></thead><tbody data-lt-rows></tbody></table></div>' +
-      '<p class="lt-empty" data-lt-empty hidden>' + esc(LANG === 'id' ? 'Peserta tidak ditemukan.' : 'No participant found.') + '</p>';
+        '</th><th class="lt-time">' + esc(T.clock || 'Time') + '</th></tr></thead><tbody data-lt-rows></tbody></table></div>' +
+      '<p class="lt-empty" data-lt-empty hidden></p>' +
+      '<p class="lt-partial" data-lt-partial hidden>' + esc(S.partial) + '</p>';
     rowsEl = board.querySelector('[data-lt-rows]');
     countEl = board.querySelector('[data-lt-count]');
     emptyEl = board.querySelector('[data-lt-empty]');
     searchEl = board.querySelector('[data-lt-search]');
-    if (countEl) countEl.textContent = '· ' + runners.length + ' ' + (LANG === 'id' ? 'peserta' : 'participants');
-    if (searchEl) searchEl.addEventListener('input', function () { query = searchEl.value.trim().toLowerCase(); renderRows(lastElapsed); applyDotStyles(); });
-    if (rowsEl) rowsEl.addEventListener('click', function (e) {
+    partialEl = board.querySelector('[data-lt-partial]');
+    wrapEl = board.querySelector('[data-lt-wrap]');
+    var deb;
+    searchEl.addEventListener('input', function () {
+      clearTimeout(deb);
+      var v = searchEl.value.trim();
+      deb = setTimeout(function () { if (v !== query) { query = v; refresh(); } }, 350);
+    });
+    rowsEl.addEventListener('click', function (e) {
       var tr = e.target.closest('tr[data-bib]'); if (!tr) return;
       var bib = tr.getAttribute('data-bib');
-      selectRunner(selectedBib === bib ? null : bib);
+      select(selectedBib === bib ? null : bib);
+    });
+    rowsEl.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      var tr = e.target.closest('tr[data-bib]'); if (!tr) return;
+      e.preventDefault(); var bib = tr.getAttribute('data-bib'); select(selectedBib === bib ? null : bib);
     });
   }
 
-  function renderRows(elapsed) {
+  function renderBoard() {
     if (!rowsEl) return;
-    // Rank the whole field by progress, then filter/slice for display.
-    var all = runners.map(function (r) {
-      var p = progressFor(r, elapsed);
-      return { r: r, p: p };
-    }).sort(function (a, b) { return b.p - a.p; });
+    if (countEl) countEl.textContent = latestAll
+      ? '· ' + latestAll.on_course + ' ' + S.onCourse + ' · ' + latestAll.finished + ' ' + S.finished : '';
+    var msg = '';
+    var rows = latestBoard ? latestBoard.rows : [];
+    if (!loaded) msg = offline ? S.offline : S.loading;
+    else if (!rows.length) msg = query ? S.noMatch : S.empty;
+    emptyEl.textContent = msg;
+    emptyEl.hidden = !msg;
+    wrapEl.hidden = !!msg;
+    if (msg) { rowsEl.innerHTML = ''; return; }
 
-    var list = all, filtered = false;
-    if (query) {
-      filtered = true;
-      list = all.filter(function (x) { return x.r.bib.indexOf(query) >= 0 || x.r.name.toLowerCase().indexOf(query) >= 0; });
-    }
-    var shown = list.slice(0, filtered ? MAX_RESULTS : TOP_N);
-
-    if (emptyEl) emptyEl.hidden = !(filtered && shown.length === 0);
-    rowsEl.innerHTML = shown.map(function (x, i) {
-      var p = x.p, done = p >= 1, rank = all.indexOf(x) + 1;
-      var last = loc(lastCheckpoint(p).label);
-      var status = done ? (T.finished || 'Finished') : (p > 0 ? (T.running || 'Running') : (T.waiting || ''));
-      return '<tr data-bib="' + esc(x.r.bib) + '" class="' + (x.r.bib === selectedBib ? 'is-selected ' : '') + (done ? 'is-finished' : '') + '">' +
-        '<td class="lt-pos">' + rank + '</td>' +
-        '<td><span class="lt-swatch" style="background:' + tier(x.r) + '"></span>' + esc(x.r.bib) + '</td>' +
-        '<td class="lt-name">' + esc(x.r.name) + '</td>' +
-        '<td>' + esc(last) + ' <span class="lt-status ' + (done ? 'lt-status--done' : 'lt-status--run') + '">' + esc(status) + '</span></td>' +
-        '<td class="lt-time">' + clock(p * x.r.finishSec) + '</td></tr>';
+    // "#" = place in the whole field (server order). For a search result that
+    // isn't among the loaded leaders the place is unknown, so it shows "–".
+    var place = {};
+    if (latestAll) latestAll.rows.forEach(function (r, i) { place[r.bib] = i + 1; });
+    rowsEl.innerHTML = rows.map(function (r, i) {
+      var pos = query ? (place[r.bib] || '–') : i + 1;
+      return '<tr data-bib="' + esc(r.bib) + '" tabindex="0" class="' + (r.bib === selectedBib ? 'is-selected ' : '') + (r.finished ? 'is-finished' : '') + '">' +
+        '<td class="lt-pos">' + pos + '</td>' +
+        '<td>' + esc(r.bib) + '</td>' +
+        '<td class="lt-name">' + esc(r.name || '—') + '</td>' +
+        '<td>' + (r.finished
+          ? '<span class="lt-status lt-status--done">' + esc(T.finished || 'FINISHED') + '</span>'
+          : esc(r.last_label || '—')) + '</td>' +
+        '<td class="lt-time">' + esc(r.last_time || '—') + '</td></tr>';
     }).join('');
   }
 
-  function selectRunner(bib) {
-    selectedBib = bib;
-    applyDotStyles();
-    var idx = selectedIndex();
-    if (idx >= 0 && map) { var ll = latlngAt(progressFor(runners[idx], lastElapsed)); hlMarker.setLatLng(ll); map.panTo(ll, { animate: true }); }
-    renderRows(lastElapsed);
+  function findRow(bib) {
+    var lists = [latestBoard, latestAll];
+    for (var i = 0; i < lists.length; i++) {
+      if (!lists[i]) continue;
+      for (var j = 0; j < lists[i].rows.length; j++) if (lists[i].rows[j].bib === bib) return lists[i].rows[j];
+    }
+    return null;
+  }
+  function placeSpotlight(pan) {
+    if (!hlMarker) return;
+    var r = selectedBib != null ? findRow(selectedBib) : null;
+    var m = r ? matOf(r) : null;
+    if (m) { hlMarker.setLatLng([m.lat, m.lng]); hlMarker.setOpacity(1); if (pan && map) map.panTo([m.lat, m.lng], { animate: true }); }
+    else hlMarker.setOpacity(0);
+  }
+  function select(bib) { selectedBib = bib; renderBoard(); placeSpotlight(true); }
+
+  // ---- Fetch / poll ---------------------------------------------------------
+  function fetchTrack(q) {
+    var url = API + '?mode=track&slug=' + SLUG + '&limit=' + LIMIT + (q ? '&q=' + encodeURIComponent(q) : '');
+    return fetch(url, { cache: 'no-store' }).then(function (res) {
+      if (res.status === 404) return { on_course: 0, finished: 0, total: 0, rows: [] }; // event not set up yet
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    }).then(function (j) {
+      return {
+        on_course: Number(j && j.on_course) || 0,
+        finished: Number(j && j.finished) || 0,
+        total: Number(j && j.total) || 0,
+        rows: (j && Array.isArray(j.rows)) ? j.rows : []
+      };
+    });
+  }
+  var seq = 0;
+  function refresh() {
+    var my = ++seq, q = query;
+    // Always load the unfiltered leaders (map, header, places); when searching,
+    // load the matches for the board as well.
+    Promise.all([fetchTrack(''), q ? fetchTrack(q) : null]).then(function (res) {
+      if (my !== seq) return;
+      latestAll = res[0];
+      latestBoard = q ? res[1] : res[0];
+      loaded = true; offline = false;
+      renderBoard(); updateMap(latestAll); placeSpotlight(false);
+    }, function () {
+      if (my !== seq) return;
+      if (!loaded) { offline = true; renderBoard(); }
+      // otherwise keep showing the last good data
+    });
   }
 
-  // ---- Animation ----------------------------------------------------------
-  var elapsed = 0, lastElapsed = 0, lastTs = null, playing = false, raf = null, lastBoard = -1;
-  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var toggleBtn = document.querySelector('[data-lt-toggle]');
-  var restartBtn = document.querySelector('[data-lt-restart]');
-
-  function allDone(e) { for (var i = 0; i < runners.length; i++) if (progressFor(runners[i], e) < 1) return false; return true; }
-  function draw(e) {
-    lastElapsed = e;
-    positionMarkers(e);
-    if (lastBoard < 0 || Math.abs(e - lastBoard) >= 0.25 || allDone(e)) { renderRows(e); lastBoard = e; }
-  }
-  function setToggle(on) { if (toggleBtn) { toggleBtn.textContent = on ? (T.pause || 'Pause') : (T.play || 'Play'); toggleBtn.setAttribute('aria-pressed', String(on)); } }
-  function tick(ts) {
-    if (lastTs == null) lastTs = ts;
-    elapsed += (ts - lastTs) / 1000; lastTs = ts;
-    draw(elapsed);
-    if (playing && !allDone(elapsed)) raf = requestAnimationFrame(tick);
-    else { playing = false; setToggle(false); }
-  }
-  function play() { if (playing) return; if (allDone(elapsed)) elapsed = 0; playing = true; lastTs = null; setToggle(true); raf = requestAnimationFrame(tick); }
-  function pause() { playing = false; if (raf) cancelAnimationFrame(raf); setToggle(false); }
-  function restart() { pause(); elapsed = 0; draw(0); play(); }
-
-  if (toggleBtn) toggleBtn.addEventListener('click', function () { playing ? pause() : play(); });
-  if (restartBtn) restartBtn.addEventListener('click', restart);
+  var timer = null;
+  function start() { if (!timer && !document.hidden) timer = setInterval(function () { if (!document.hidden) refresh(); }, POLL_MS); }
+  function stop() { clearInterval(timer); timer = null; }
+  document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else { refresh(); start(); } });
 
   buildBoard();
-  applyDotStyles();
-  if (reduce) { draw(animSeconds * 0.5); setToggle(false); }
-  else {
-    draw(0);
-    if ('IntersectionObserver' in window) {
-      var io = new IntersectionObserver(function (entries) { entries.forEach(function (en) { if (en.isIntersecting) { play(); io.disconnect(); } }); }, { threshold: 0.3 });
-      io.observe(mapEl);
-    } else { play(); }
-  }
+  renderBoard();
+  refresh();
+  start();
 })();

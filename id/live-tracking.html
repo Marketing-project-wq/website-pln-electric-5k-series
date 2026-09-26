@@ -22,7 +22,7 @@
   <link rel="stylesheet" href="/assets/css/tokens.css">
   <link rel="stylesheet" href="/assets/css/base.css">
   <link rel="stylesheet" href="/assets/css/components.css">
-  <link rel="stylesheet" href="/assets/css/pages.css">
+  <link rel="stylesheet" href="/assets/css/pages.css?v=6">
   <link rel="stylesheet" href="/assets/vendor/leaflet/leaflet.css">
 </head>
 <body>
@@ -46,36 +46,33 @@
         <div class="section-head">
           <span class="kicker">Peta Rute</span>
           <h2>Rute 5K, Secara Langsung</h2>
-          <p>Lintasan resmi di Taman Mini Indonesia Indah (TMII), dengan antena timing di tiap kilometer. Saat pelari melewatinya, chip-nya terdeteksi dan papan diperbarui. Posisi pelari di bawah adalah <strong>simulasi</strong> — feed asli tersambung saat hari-H.</p>
+          <p>Lintasan resmi di Taman Mini Indonesia Indah (TMII), dengan mat timing di tiap kilometer. Saat pelari melewatinya, chip-nya terdeteksi dan papan diperbarui. Tiap pelari ditampilkan di mat timing terakhir yang ia lewati.</p>
         </div>
 
         <div class="lt-wrap">
           <!-- Peta rute (Leaflet, dirender oleh live-tracking.js) -->
-          <div class="lt-map" data-live-map role="application" aria-label="Peta satelit rute 5K di Taman Mini Indonesia Indah dengan posisi pelari beranimasi (simulasi)."></div>
+          <div class="lt-map" data-live-map role="application" aria-label="Peta satelit rute 5K di Taman Mini Indonesia Indah, dengan jumlah pelari yang terakhir terdeteksi di tiap mat timing."></div>
 
           <!-- Papan live (dirender oleh live-tracking.js) -->
           <div class="lt-board" data-live-board></div>
         </div>
 
         <div class="lt-controls">
-          <button class="btn btn--ghost btn--sm" type="button" data-lt-toggle aria-pressed="true">Jeda</button>
-          <button class="btn btn--ghost btn--sm" type="button" data-lt-restart>Ulangi</button>
-          <span class="lt-legend">Titik = peserta, warnanya sesuai pace. Cari No. BIB atau nama, lalu ketuk barisnya untuk menyorotnya di peta.</span>
+          <span class="lt-legend">Tiap mat timing menampilkan jumlah pelari yang terakhir terdeteksi di sana. Cari No. BIB atau nama, lalu ketuk barisnya untuk menyorot mat timing terakhir pelari itu.</span>
         </div>
 
-        <!-- Rute asli; feed pelari disambungkan saat hari-H. -->
-        <p class="note" style="margin-top:var(--space-5)">Rute yang ditampilkan adalah lintasan resmi hasil survei di Taman Mini Indonesia Indah. Posisi pelari masih simulasi demo — saat hari-H papan digerakkan oleh feed chip timing resmi.</p>
+        <p class="note" style="margin-top:var(--space-5)">Posisi diperbarui setiap kali pelari melewati mat timing di KM 1, 2, 3, 4 dan garis finis.</p>
       </div>
     </section>
   </main>
 
   <div id="site-footer"></div>
 
-  <script src="/assets/js/data.js"></script>
+  <script src="/assets/js/data.js?v=5"></script>
   <script src="/assets/js/main.js" defer></script>
   <script src="/assets/js/countdown.js" defer></script>
   <script src="/assets/js/accordion.js" defer></script>
   <script src="/assets/vendor/leaflet/leaflet.js" defer></script>
-  <script src="/assets/js/live-tracking.js" defer></script>
+  <script src="/assets/js/live-tracking.js?v=2" defer></script>
 </body>
 </html>

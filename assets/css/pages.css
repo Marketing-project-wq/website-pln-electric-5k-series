@@ -248,6 +248,8 @@
 .lt-table tr[data-bib]:hover td { background: rgba(255,255,255,0.05); }
 .lt-table tr.is-selected td { background: rgba(242,208,36,0.16); }
 .lt-empty { color: var(--color-muted-on-ink); font-size: var(--fs-14); text-align: center; padding: var(--space-4); }
+.lt-partial { color: var(--color-muted-on-ink); font-size: var(--fs-12); margin: var(--space-2) 0 0; }
+.lt-table tr.is-finished .lt-status--done { font-size: 11px; }
 
 .lt-controls { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; margin-top: var(--space-4); }
 .lt-legend { color: var(--color-muted-on-ink); font-size: var(--fs-14); margin-left: auto; }
