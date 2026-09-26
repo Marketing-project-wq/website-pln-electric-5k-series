@@ -167,6 +167,14 @@
     }).catch(function () { if (my === seq) failure(function () { openRunner(bib); }); });
   }
 
+  // Store badges: official artwork only. If a badge file isn't there yet,
+  // show the link as plain text instead of a broken image.
+  Array.prototype.forEach.call(document.querySelectorAll('.stores img'), function (img) {
+    function missing() { img.parentNode.classList.add('is-missing'); }
+    if (img.complete && !img.naturalWidth) missing();
+    else img.addEventListener('error', missing);
+  });
+
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     var q = input.value.trim();
