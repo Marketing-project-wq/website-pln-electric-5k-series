@@ -484,13 +484,26 @@
   // ---- Finisher certificate -----------------------------------------------
   // Positions are fractions of the PNG's own size so the layout follows the
   // template at any resolution. Adjust here if the artwork changes.
+  // Measured on assets/certificate-jakarta.png (1240 x 1754):
+  //   name line y=870, x=176..1066
+  //   boxes (2 x 2): x 176..543 | 696..1063, y 977..1177 | 1250..1450
   //   name  : centred, baseline sitting just above the name line
-  //   boxes : four boxes, small label on top, big value below
+  //   boxes : Gender | BIB Number / Position | Finish Time, each with a small
+  //           label on top and the big value below (baselines relative to
+  //           the box's top edge, as a fraction of image height)
   var CERT = {
     textColor: '#FFFFFF',
     labelColor: '#8CD867',
-    name: { x: 0.50, y: 0.475, maxW: 0.66, size: 0.070 },
-    boxes: { labelY: 0.640, valueY: 0.715, subY: 0.752, w: 0.19, centers: [0.20, 0.40, 0.60, 0.80], label: 0.017, value: 0.048, sub: 0.018 }
+    name: { x: 0.50, y: 0.482, maxW: 0.70, size: 0.050 },
+    boxes: {
+      w: 0.26,                                    // usable text width inside a box
+      cells: [                                    // [centre x, box top y]
+        [0.290, 0.557], [0.709, 0.557],
+        [0.290, 0.713], [0.709, 0.713]
+      ],
+      labelY: 0.034, valueY: 0.082, valueSubY: 0.075, subY: 0.099,
+      label: 0.017, value: 0.048, sub: 0.016
+    }
   };
   var FONT_DISPLAY = 'Anton, "Arial Narrow", Impact, sans-serif';
   var FONT_LABEL = 'Montserrat, Arial, sans-serif';
@@ -551,16 +564,16 @@
         { label: 'FINISH TIME', value: r.time || '–' }
       ];
       boxes.forEach(function (b, i) {
-        var cx = W * B.centers[i];
+        var cx = W * B.cells[i][0], top = H * B.cells[i][1];
         g.fillStyle = CERT.labelColor;
         fitFont(g, b.label, Math.round(H * B.label), bw, '700', FONT_LABEL);
-        g.fillText(b.label, cx, H * B.labelY);
+        g.fillText(b.label, cx, top + H * B.labelY);
         g.fillStyle = CERT.textColor;
         fitFont(g, b.value, Math.round(H * B.value), bw, '400', FONT_DISPLAY);
-        g.fillText(b.value, cx, H * B.valueY);
+        g.fillText(b.value, cx, top + H * (b.sub ? B.valueSubY : B.valueY));
         if (b.sub) {
           fitFont(g, b.sub, Math.round(H * B.sub), bw, '700', FONT_LABEL);
-          g.fillText(b.sub, cx, H * B.subY);
+          g.fillText(b.sub, cx, top + H * B.subY);
         }
       });
 
