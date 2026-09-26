@@ -553,7 +553,13 @@
           '<td data-label="' + COL.time + '" class="num">' + fmtMS(r.finishSec) + '</td>' +
         '</tr>';
       }).join('');
-      if (!list.length) body = '<tr><td class="results-empty" colspan="' + head.length + '">' + (isID ? 'Peserta tidak ditemukan.' : 'No participant found.') + '</td></tr>';
+      if (!list.length) {
+        var hasData = current === 'overall' || (D.results[current] && D.results[current].length);
+        var emptyMsg = hasData
+          ? (isID ? 'Peserta tidak ditemukan.' : 'No participant found.')
+          : (isID ? 'Hasil akan tersedia setelah Race Day.' : 'Results will be available after Race Day.');
+        body = '<tr><td class="results-empty" colspan="' + head.length + '">' + emptyMsg + '</td></tr>';
+      }
       table.innerHTML = '<div class="table-wrap results-scroll"><table class="data data--results"><thead><tr><th>' + head.join('</th><th>') + '</th></tr></thead><tbody>' + body + '</tbody></table></div>';
       if (filters) filters.querySelectorAll('[data-results-view]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-results-view') === current)); });
     }
