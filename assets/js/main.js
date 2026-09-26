@@ -253,9 +253,9 @@
 
   function renderPrizeTable() {
     document.querySelectorAll('[data-prize-table]').forEach(function (mount) {
-      var head = LANG === 'id' ? ['Posisi', '5K Putra', '5K Putri'] : ['Position', '5K Men', '5K Women'];
+      var head = LANG === 'id' ? ['Posisi', '5K Male', '5K Female'] : ['Position', '5K Male', '5K Female'];
       var rows = D.prizes.map(function (p) {
-        return '<tr><td data-label="' + head[0] + '">' + D.loc(p.label) + '</td><td data-label="' + head[1] + '" class="num">' + D.formatIDR(p.men) + '</td><td data-label="' + head[2] + '" class="num">' + D.formatIDR(p.women) + '</td></tr>';
+        return '<tr><td data-label="' + head[0] + '">' + D.loc(p.label) + '</td><td data-label="' + head[1] + '" class="num">' + D.formatIDR(p.male) + '</td><td data-label="' + head[2] + '" class="num">' + D.formatIDR(p.female) + '</td></tr>';
       }).join('');
       mount.innerHTML = '<div class="table-wrap table-wrap--prize"><table class="data data--prize"><thead><tr><th>' + head.join('</th><th>') + '</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
     });
