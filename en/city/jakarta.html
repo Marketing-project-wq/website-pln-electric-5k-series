@@ -35,7 +35,6 @@
         <div class="hero__city-main">
           <span class="kicker">City 01 of 03</span>
           <h1 class="hero__title">Jakarta</h1>
-          <!-- TODO: konfirmasi tanggal final ke klien -->
           <p class="hero__sub">The opening city of the Electric 5K Series. Race Day <span data-city="jakarta" data-city-field="raceDay"></span> — <span data-city="jakarta" data-city-field="quota"></span> runners, one starting line.</p>
           <p style="margin-top:1rem"><span data-city="jakarta" data-city-field="status"></span></p>
         </div>
@@ -57,8 +56,19 @@
         </div>
         <dl data-city-info="jakarta"></dl>
         <div class="mt-6">
-          <!-- TODO: konfirmasi tanggal final ke klien -->
-          <div class="ph ph--empty" style="aspect-ratio:10/7"><span class="ph__label"><svg aria-hidden="true"><use href="/assets/img/icons/sprite.svg#i-location"></use></svg>Route map will be announced closer to race day<small class="ph__size">2000 × 1400 px · 10:7</small></span></div>
+          <div class="rpc-map">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3965.8!2d106.885!3d-6.302!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69ed4167030001%3A0x7cbc3c7b5c0e9e0!2sTaman%20Mini%20Indonesia%20Indah!5e0!3m2!1sen!2sid" width="100%" height="400" style="border:0;border-radius:12px" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Taman Mini Indonesia Indah location on Google Maps"></iframe>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRAFFIC ADVISORY -->
+    <section class="section--tight surface-ink-soft">
+      <div class="container container--wide">
+        <div class="notice notice--warning">
+          <svg class="icon" aria-hidden="true"><use href="/assets/img/icons/sprite.svg#i-bolt"></use></svg>
+          <p>The Taman Mini Indonesia Indah area may experience heavy traffic on race day. Participants are advised to arrive early and allow extra travel time.</p>
         </div>
       </div>
     </section>
@@ -80,8 +90,22 @@
       </div>
     </section>
 
-    <!-- 4 — REGISTER CTA -->
+    <!-- RACE GUIDE -->
     <section class="section surface-ink-soft">
+      <div class="container container--wide">
+        <div class="section-head">
+          <span class="kicker" style="color:var(--color-signal)">Race Guide</span>
+          <h2>Race Day Guide</h2>
+          <p>Your complete guide to race day preparation. Read the Race Guide for wave schedules, venue maps, running routes, race rules, and gear checklist.</p>
+        </div>
+        <div class="hero__cta" style="justify-content:center">
+          <a class="btn" href="{{RACE_GUIDE_URL}}" target="_blank" rel="noopener noreferrer"><svg class="icon" aria-hidden="true"><use href="/assets/img/icons/sprite.svg#i-download"></use></svg> Read Race Guide</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 — REGISTER CTA -->
+    <section class="section surface-ink">
       <div class="container container--narrow text-center">
         <div class="section-head">
           <span class="kicker">Claim Your Jakarta Slot</span>

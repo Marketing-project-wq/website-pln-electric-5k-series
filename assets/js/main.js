@@ -636,11 +636,13 @@
         return '<div><svg aria-hidden="true"><use href="/assets/img/icons/sprite.svg#' + ic + '"></use></svg><div><dt>' + dt + '</dt><dd>' + dd + '</dd></div></div>';
       }
       mount.classList.add('info-list');
+      var venueText = D.loc(c.venue);
+      if (c.venueMapUrl) venueText = '<a href="' + c.venueMapUrl + '" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline;text-underline-offset:3px">' + venueText + '</a>';
       mount.innerHTML =
         row('i-calendar', ui.rpcLabel, D.loc(c.rpc)) +
         row('i-flag', ui.raceDayLabel, D.loc(c.raceDay) + ' · ' + D.loc(c.startTime)) +
         row('i-users', ui.quotaLabel, D.formatNum(c.quota) + ' ' + runnersWord) +
-        row('i-location', venueLabel, D.loc(c.venue));
+        row('i-location', venueLabel, venueText);
     });
   }
 
