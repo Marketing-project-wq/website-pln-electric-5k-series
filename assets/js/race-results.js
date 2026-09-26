@@ -489,23 +489,27 @@
   // template at any resolution. Adjust here if the artwork changes.
   // Measured on assets/certificate-jakarta.png (1240 x 1754):
   //   name line y=870, x=176..1066
-  //   boxes (2 x 2): x 176..543 | 696..1063, y 977..1177 | 1250..1450
   //   name  : centred, baseline sitting just above the name line
-  //   boxes : Gender | BIB Number / Position | Finish Time, each with a small
-  //           label on top and the big value below (baselines relative to
-  //           the box's top edge, as a fraction of image height)
+  //   boxes : outer rectangles in template pixels (scaled to the loaded PNG).
+  //           Each box's lines are laid out as ONE vertical block centred on
+  //           the box (see boxBlock), whatever the number of lines.
   var CERT = {
     textColor: '#FFFFFF',
     labelColor: '#8CD867',
+    ref: { w: 1240, h: 1754 },                    // template size the px below refer to
     name: { x: 0.50, y: 0.482, maxW: 0.70, size: 0.050 },
     boxes: {
-      w: 0.26,                                    // usable text width inside a box
-      cells: [                                    // [centre x, box top y]
-        [0.290, 0.557], [0.709, 0.557],
-        [0.290, 0.713], [0.709, 0.713]
+      rects: [                                    // [x0, y0, x1, y1]
+        [173,  977, 545, 1178],                   // GENDER
+        [694,  977, 1066, 1178],                  // BIB NUMBER
+        [173, 1250, 545, 1451],                   // POSITION
+        [694, 1250, 1066, 1451]                   // FINISH TIME
       ],
-      labelY: 0.034, valueY: 0.082, valueSubY: 0.075, subY: 0.099,
-      label: 0.017, value: 0.048, sub: 0.016
+      padX: 28,                                   // horizontal inset for text width
+      padY: 20,                                   // min clear space above/below the block
+      border: 3,                                  // box line thickness (inside the rect)
+      label: 30, value: 84, sub: 30,              // font px; sub (category) ~ label size
+      gap: 14                                     // space between consecutive lines
     }
   };
   var FONT_DISPLAY = 'Anton, "Arial Narrow", Impact, sans-serif';
@@ -520,6 +524,39 @@
       g.font = weight + ' ' + s + 'px ' + family;
     }
     return s;
+  }
+  // Draws `lines` as one vertical block centred in box `rect` (template px,
+  // scaled by sx/sy). Line heights are the real ink bounds of each text, so
+  // 2- and 3-line boxes are both centred with equal space above and below.
+  // Each line first shrinks to fit the box width; if the block is then taller
+  // than the box minus padY top and bottom, every line (and the gaps) scales
+  // down by the same factor until it fits.
+  function boxBlock(g, lines, rect, sx, sy) {
+    var B = CERT.boxes;
+    var x0 = rect[0] * sx, x1 = rect[2] * sx, y0 = rect[1] * sy, y1 = rect[3] * sy;
+    var inset = (B.border + B.padY) * sy;
+    var availH = (y1 - y0) - 2 * inset, maxW = (x1 - x0) - 2 * B.padX * sx;
+    var cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+    var scale = 1, m, blockH;
+    function measure() {
+      m = lines.map(function (l) {
+        var size = fitFont(g, l.text, Math.max(6, Math.round(l.size * sy * scale)), maxW, l.weight, l.family);
+        var t = g.measureText(l.text);
+        var asc = t.actualBoundingBoxAscent != null ? t.actualBoundingBoxAscent : size * 0.72;
+        var desc = t.actualBoundingBoxDescent != null ? t.actualBoundingBoxDescent : 0;
+        return { size: size, asc: asc, desc: desc };
+      });
+      blockH = m.reduce(function (h, x) { return h + x.asc + x.desc; }, 0) + (lines.length - 1) * B.gap * sy * scale;
+    }
+    measure();
+    for (var k = 0; k < 8 && blockH > availH; k++) { scale *= availH / blockH; measure(); }
+    var y = cy - blockH / 2;
+    lines.forEach(function (l, i) {
+      g.font = l.weight + ' ' + m[i].size + 'px ' + l.family;
+      g.fillStyle = l.color;
+      g.fillText(l.text, cx, y + m[i].asc);
+      y += m[i].asc + m[i].desc + B.gap * sy * scale;
+    });
   }
   function genderOf(r) {
     var s = String(r.sex || '').trim().toUpperCase();
@@ -559,25 +596,20 @@
       fitFont(g, name, Math.round(H * CERT.name.size), W * CERT.name.maxW, '400', FONT_DISPLAY);
       g.fillText(name, W * CERT.name.x, H * CERT.name.y);
 
-      var B = CERT.boxes, bw = W * B.w;
       var boxes = [
         { label: 'GENDER', value: genderOf(r) || '–' },
         { label: 'BIB NUMBER', value: String(r.bib) },
         { label: 'POSITION', value: r.rank != null ? String(r.rank) : '–', sub: r.category || '' },
         { label: 'FINISH TIME', value: r.time || '–' }
       ];
+      var B = CERT.boxes;
       boxes.forEach(function (b, i) {
-        var cx = W * B.cells[i][0], top = H * B.cells[i][1];
-        g.fillStyle = CERT.labelColor;
-        fitFont(g, b.label, Math.round(H * B.label), bw, '700', FONT_LABEL);
-        g.fillText(b.label, cx, top + H * B.labelY);
-        g.fillStyle = CERT.textColor;
-        fitFont(g, b.value, Math.round(H * B.value), bw, '400', FONT_DISPLAY);
-        g.fillText(b.value, cx, top + H * (b.sub ? B.valueSubY : B.valueY));
-        if (b.sub) {
-          fitFont(g, b.sub, Math.round(H * B.sub), bw, '700', FONT_LABEL);
-          g.fillText(b.sub, cx, top + H * B.subY);
-        }
+        var lines = [
+          { text: b.label, size: B.label, weight: '700', family: FONT_LABEL, color: CERT.labelColor },
+          { text: b.value, size: B.value, weight: '400', family: FONT_DISPLAY, color: CERT.textColor }
+        ];
+        if (b.sub) lines.push({ text: b.sub, size: B.sub, weight: '700', family: FONT_LABEL, color: CERT.textColor });
+        boxBlock(g, lines, B.rects[i], W / CERT.ref.w, H / CERT.ref.h);
       });
 
       var filename = 'PLN-5K-' + c.name + '-' + fileSafe(r.bib) + '-' + fileSafe(r.name) + '.png';
