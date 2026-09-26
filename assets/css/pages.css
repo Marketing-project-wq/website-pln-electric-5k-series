@@ -333,3 +333,16 @@
 @media (max-width: 767px) {
   .rpc-announce__card { max-width: none; }
 }
+
+/* Traffic / info notice banner */
+.notice {
+  display: flex; align-items: flex-start; gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-radius: 12px;
+  border: 1px solid var(--color-line);
+  background: var(--color-ink-soft);
+}
+.notice .icon { flex-shrink: 0; width: 24px; height: 24px; margin-top: 2px; }
+.notice p { margin: 0; font-size: var(--fs-16); line-height: var(--lh-body); }
+.notice--warning { border-color: var(--color-signal); }
+.notice--warning .icon { color: var(--color-signal); }
