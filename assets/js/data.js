@@ -29,7 +29,7 @@
       rpcStartISO: '2026-09-25T10:00:00+07:00',
       raceDayISO: '2026-09-27T04:30:00+07:00',
       rpc: { id: 'Jumat–Sabtu, 25–26 September 2026 · 10.00–20.00 WIB', en: 'Friday–Saturday, 25–26 September 2026 · 10:00–20:00 WIB' },
-      raceDay: { id: 'Sabtu, 27 September 2026', en: 'Saturday, 27 September 2026' },
+      raceDay: { id: 'Minggu, 27 September 2026', en: 'Sunday, 27 September 2026' },
       startTime: { id: 'Start 04.30 WIB', en: 'Start 04:30 WIB' },
       venue: { id: 'Taman Mini Indonesia Indah, Jakarta', en: 'Taman Mini Indonesia Indah, Jakarta' },
       venueMapUrl: 'https://maps.app.goo.gl/cMJJ2fXpQcWUMNi48',
