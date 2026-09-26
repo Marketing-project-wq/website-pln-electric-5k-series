@@ -12,6 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- Anton + Montserrat are also used when drawing the certificate. -->
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/runner-card.css?v=1">
   <style>
     :root {
       --ink: #0A0A0A; --ink-soft: #17181C; --paper: #FFFFFF; --muted: #A7ADB4;
@@ -83,31 +84,10 @@
     .list__meta { grid-column: 1; color: var(--muted); font-size: 14px; }
     .list__time { grid-row: 1 / span 2; grid-column: 2; font-family: var(--display); font-size: 22px; color: var(--teal); font-variant-numeric: tabular-nums; }
 
-    .card { background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 18px; padding: 22px 18px 96px; } /* bottom room so the last button clears the phone's browser bar */
-    .card__name:focus { outline: none; }
-    .card__name { margin: 0; font-family: var(--display); font-weight: 400; text-transform: uppercase; font-size: clamp(28px, 8vw, 38px); line-height: 1.05; overflow-wrap: anywhere; }
-    .card__bib { margin: 6px 0 12px; font-size: 16px; font-weight: 600; }
-    .card__bib span { color: var(--muted); font-weight: 400; font-size: 13px; letter-spacing: 0.1em; margin-right: 4px; }
-    .badge { display: inline-block; padding: 4px 10px; font-weight: 700; font-size: 13px; letter-spacing: 0.08em; color: var(--ink); background: var(--teal); border-radius: 4px; }
-    .finish { margin: 20px 0 0; padding: 16px; text-align: center; background: var(--tile); border-radius: 12px; }
-    .label { display: block; color: var(--muted); font-weight: 700; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; }
-    .finish__time { display: block; font-family: var(--display); font-size: clamp(56px, 18vw, 76px); line-height: 1.05; color: var(--teal); font-variant-numeric: tabular-nums; }
-    .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0 0; }
-    .stat { background: var(--tile); border-radius: 12px; padding: 12px 14px; min-width: 0; }
-    .stat dt { margin-bottom: 2px; }
-    .stat dd { margin: 0; font-family: var(--display); font-size: 28px; line-height: 1.1; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
-    .stat dd small { font-family: var(--body); font-size: 14px; color: var(--muted); }
-    .stat__sub { display: block; margin-top: 2px; font-weight: 700; font-size: 12px; letter-spacing: 0.06em; color: var(--teal); }
-    .splits { margin-top: 20px; }
-    .splits h2 { margin: 0 0 4px; }
-    .splits ol { list-style: none; margin: 0; padding: 0; }
-    .splits li { display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 17px; }
-    .splits li:last-child { border-bottom: 0; }
-    .splits b { font-variant-numeric: tabular-nums; }
-    .review { margin: 18px 0 0; padding: 14px 16px; background: var(--tile); border-left: 4px solid var(--accent); border-radius: 12px; font-size: 16px; }
-    .actions { display: grid; gap: 12px; margin-top: 20px; }
-    .hint { margin: -4px 0 0; text-align: center; color: var(--muted); font-size: 14px; }
-    .hint--err { color: var(--accent); }
+    /* Result card: shared styles in /assets/css/runner-card.css. Only the
+       page-specific bit lives here: bottom room so the last button clears
+       the phone's browser bar. */
+    .out > .rc { padding-bottom: 96px; }
     .back { display: inline-flex; align-items: center; min-height: 44px; margin: -8px 0 8px; padding: 0 4px; background: none; border: 0; color: var(--teal); font-weight: 700; font-size: 15px; cursor: pointer; }
     .back:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
     /* 20FIT app promo — official store badge artwork, unmodified (no border,
@@ -186,7 +166,8 @@
     </aside>
   </main>
 
-  <script src="/assets/js/certificate.js?v=1" defer></script>
-  <script src="/assets/js/cek.js?v=6" defer></script>
+  <script src="/assets/js/certificate.js?v=2" defer></script>
+  <script src="/assets/js/runner-card.js?v=1" defer></script>
+  <script src="/assets/js/cek.js?v=7" defer></script>
 </body>
 </html>

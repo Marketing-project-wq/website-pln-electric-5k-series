@@ -4,8 +4,19 @@
    /assets/certificate-<city>.png at the PNG's native size and downloads it as
    PLN-5K-<City>-<bib>-<NameWithoutSpaces>.png. Client-side only.
 
-   Usage: window.PLN_CERT.download(runner, { key: 'jakarta', name: 'Jakarta' })
-          -> Promise (rejects with an English, user-facing message)
+   Usage (city = { key: 'jakarta', name: 'Jakarta' }):
+     PLN_CERT.prepare(runner, city) -> Promise<{ file, blob, filename }>
+       Renders the canvas and builds the PNG File. Call it when the card
+       OPENS, not on click (see deliver).
+     PLN_CERT.deliver(prepared)
+       Call DIRECTLY inside the click handler, with nothing awaited before
+       it: iOS only allows navigator.share() within a live user gesture.
+       Phones with Web Share for files get the native share sheet ("Save
+       Image" on iOS, save to gallery on Android); everything else (desktop)
+       falls back to an <a download>. Cancelling the sheet is ignored.
+     PLN_CERT.download(runner, city) -> Promise
+       prepare + plain file download (no share sheet).
+   Errors reject with an English, user-facing message.
    Only call it for runners with status "ok".
    ========================================================================== */
 (function () {
@@ -111,9 +122,9 @@
   }
   function fileSafe(s) { return String(s || '').replace(/\s+/g, '').replace(/[\\/:*?"<>|]/g, ''); }
 
-  // Resolves once the PNG download has been triggered; rejects with a
-  // user-facing (English) message. `c` is the city: { key, name }.
-  function downloadCertificate(r, c) {
+  // Renders the certificate and resolves to { file, blob, filename }; rejects
+  // with a user-facing (English) message. `c` is the city: { key, name }.
+  function prepare(r, c) {
     var fontsReady = document.fonts && document.fonts.load
       ? Promise.all([document.fonts.load('64px Anton'), document.fonts.load('700 20px Montserrat')]).catch(function () {})
       : Promise.resolve();
@@ -152,12 +163,9 @@
       return new Promise(function (res, rej) {
         cv.toBlob(function (blob) {
           if (!blob) { rej(new Error('fail')); return; }
-          var url = URL.createObjectURL(blob);
-          var a = document.createElement('a');
-          a.href = url; a.download = filename;
-          document.body.appendChild(a); a.click(); a.remove();
-          setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
-          res();
+          var file = null;
+          try { file = new File([blob], filename, { type: 'image/png' }); } catch (e) { /* old browsers: download only */ }
+          res({ file: file, blob: blob, filename: filename });
         }, 'image/png');
       });
     }).catch(function (e) {
@@ -165,5 +173,36 @@
     });
   }
 
-  window.PLN_CERT = { download: downloadCertificate };
+  function saveAs(p) {
+    var url = URL.createObjectURL(p.blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = p.filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+  }
+  function canShareFile(file) {
+    try { return !!(file && navigator.canShare && navigator.share && navigator.canShare({ files: [file] })); }
+    catch (e) { return false; }
+  }
+
+  // MUST run synchronously inside the click handler (no await before share).
+  function deliver(p) {
+    if (!p) return;
+    if (canShareFile(p.file)) {
+      try {
+        navigator.share({ files: [p.file] }).catch(function (err) {
+          if (err && err.name === 'AbortError') return;        // user closed the sheet
+          saveAs(p);                                           // share refused -> plain download
+        });
+      } catch (err) {
+        saveAs(p);
+      }
+      return;
+    }
+    saveAs(p);                                                 // desktop / no Web Share for files
+  }
+
+  function download(r, c) { return prepare(r, c).then(saveAs); }
+
+  window.PLN_CERT = { prepare: prepare, deliver: deliver, download: download };
 })();

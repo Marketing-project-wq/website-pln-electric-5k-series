@@ -1,0 +1,86 @@
+/* ==========================================================================
+   Runner card — shared by /cek and the Race Results detail modal.
+   Markup: assets/js/runner-card.js. Everything is scoped under .rc and
+   carries its own colours/fonts, so it looks identical on both pages.
+   (Navy scheme matched to the venue LED board.) Selectors are written as
+   ".rc .rc__x" so page-level rules such as ".modal h2" can't leak in.
+   ========================================================================== */
+.rc {
+  --rc-panel: linear-gradient(180deg, #11265E 0%, #122144 100%);
+  --rc-border: rgba(255,255,255,0.10);
+  --rc-tile: #142758;
+  --rc-line: rgba(255,255,255,0.12);
+  --rc-line-strong: rgba(255,255,255,0.22);
+  --rc-muted: #A7ADB4;
+  --rc-teal: #1C99B1;
+  --rc-yellow: #F7EE24;
+  --rc-accent: #F8D464;
+  --rc-ink: #0A0A0A;
+  --rc-display: 'Anton', 'Arial Narrow', Impact, sans-serif;
+  --rc-body: 'Montserrat', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  position: relative; box-sizing: border-box;
+  background: var(--rc-panel); border: 1px solid var(--rc-border); border-radius: 18px;
+  padding: 22px 18px; color: #FFFFFF; text-align: left;
+  font-family: var(--rc-body); font-size: 16px; line-height: 1.5;
+  /* same text rendering as /cek, whatever the host page sets */
+  -webkit-font-smoothing: auto; -moz-osx-font-smoothing: auto; text-rendering: auto;
+}
+.rc *, .rc *::before, .rc *::after { box-sizing: border-box; }
+
+.rc .rc__name { margin: 0; font-family: var(--rc-display); font-weight: 400; text-transform: uppercase; font-size: clamp(28px, 8vw, 38px); line-height: 1.05; color: #FFFFFF; letter-spacing: normal; overflow-wrap: anywhere; }
+.rc .rc__name:focus { outline: none; }
+.rc .rc__name--muted { color: var(--rc-muted); }
+.rc.rc--closable .rc__name { margin-right: 48px; }
+.rc .rc__bib { margin: 6px 0 12px; font-size: 16px; font-weight: 600; color: #FFFFFF; }
+.rc .rc__bib span { color: var(--rc-muted); font-weight: 400; font-size: 13px; letter-spacing: 0.1em; margin-right: 4px; }
+.rc .rc__chip { display: inline-block; padding: 4px 10px; font-weight: 700; font-size: 13px; letter-spacing: 0.08em; color: var(--rc-ink); background: var(--rc-teal); border-radius: 4px; }
+
+.rc .rc__label { display: block; margin: 0; line-height: 1.5; color: var(--rc-muted); font-family: var(--rc-body); font-weight: 700; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; }
+.rc .rc__finish { margin: 20px 0 0; padding: 16px; text-align: center; background: var(--rc-tile); border-radius: 12px; }
+.rc .rc__time { display: block; font-family: var(--rc-display); font-size: clamp(56px, 18vw, 76px); line-height: 1.05; color: var(--rc-teal); font-variant-numeric: tabular-nums; }
+.rc .rc__stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0 0; }
+.rc .rc__stat { background: var(--rc-tile); border-radius: 12px; padding: 12px 14px; min-width: 0; }
+.rc .rc__stat dt { margin-bottom: 2px; }
+.rc .rc__stat dd { margin: 0; font-family: var(--rc-display); font-size: 28px; line-height: 1.1; color: #FFFFFF; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.rc .rc__stat dd small { font-family: var(--rc-body); font-size: 14px; color: var(--rc-muted); }
+.rc .rc__sub { display: block; margin-top: 2px; font-family: var(--rc-body); font-weight: 700; font-size: 12px; letter-spacing: 0.06em; color: var(--rc-teal); }
+
+.rc .rc__splits { margin-top: 20px; }
+.rc .rc__splits h3 { margin: 0 0 4px; }
+.rc .rc__splits ol { list-style: none; margin: 0; padding: 0; }
+.rc .rc__splits li { display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--rc-line); font-size: 17px; color: #FFFFFF; }
+.rc .rc__splits li:last-child { border-bottom: 0; }
+.rc .rc__splits b { font-variant-numeric: tabular-nums; }
+
+.rc .rc__review { margin: 18px 0 0; padding: 14px 16px; background: var(--rc-tile); border-left: 4px solid var(--rc-accent); border-radius: 12px; font-size: 16px; color: #FFFFFF; }
+
+.rc .rc__actions { display: grid; gap: 12px; margin-top: 20px; }
+.rc .rc__btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; min-height: 52px; padding: 12px 20px; margin: 0;
+  font-family: var(--rc-body); font-weight: 700; font-size: 16px; letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap;
+  color: var(--rc-ink); background: var(--rc-yellow); border: 0; border-radius: 10px; cursor: pointer;
+  clip-path: none; -webkit-tap-highlight-color: transparent;
+}
+.rc .rc__btn:focus-visible { outline: 3px solid var(--rc-teal); outline-offset: 3px; }
+.rc .rc__btn:active { transform: translateY(1px); }
+.rc .rc__btn[disabled] { opacity: 0.45; cursor: not-allowed; filter: grayscale(1); transform: none; }
+.rc .rc__btn svg { width: 20px; height: 20px; flex: none; max-width: none; }
+.rc .rc__btn--ghost { background: transparent; color: #FFFFFF; border: 2px solid var(--rc-line-strong); }
+.rc .rc__hint { margin: -4px 0 0; text-align: center; color: var(--rc-muted); font-size: 14px; }
+.rc .rc__hint--err { color: var(--rc-accent); }
+
+.rc .rc__close {
+  position: absolute; top: 14px; right: 14px; z-index: 1;
+  width: 40px; height: 40px; display: grid; place-items: center; padding: 0;
+  color: #FFFFFF; background: transparent; border: 1px solid var(--rc-line-strong); border-radius: 10px; cursor: pointer;
+}
+.rc .rc__close span { font-size: 26px; line-height: 1; }
+.rc .rc__close:hover { border-color: var(--rc-teal); color: var(--rc-teal); }
+.rc .rc__close:focus-visible { outline: 3px solid var(--rc-teal); outline-offset: 2px; }
+
+.rc .rc__loading { display: flex; align-items: center; gap: 12px; margin: 16px 0 4px; color: var(--rc-muted); font-size: 17px; }
+.rc .rc__spin { width: 22px; height: 22px; flex: none; border-radius: 50%; border: 3px solid var(--rc-line-strong); border-top-color: var(--rc-teal); animation: rc-spin .8s linear infinite; }
+@keyframes rc-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .rc .rc__spin { animation-duration: 2.4s; } }

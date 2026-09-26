@@ -79,14 +79,7 @@
     loading: 'Loading runner…',
     notFound: 'Runner not found.',
     error: 'Could not load this runner. Please try again.',
-    retry: 'Try again',
-    close: 'Close',
-    bib: 'BIB',
-    finish: 'Finish Time', rank: 'Rank', pace: 'Pace', team: 'Team', splits: 'Split Times',
-    of: 'of',
-    review: 'This result is under review by the race committee. Time and rank will appear once the review is complete.',
-    download: 'DOWNLOAD CERTIFICATE',
-    reviewCert: 'The certificate is available once the review is complete.'
+    bib: 'BIB'
   };
 
   function esc(s) {
@@ -342,13 +335,10 @@
   modal.setAttribute('lang', 'en');
   modal.innerHTML =
     '<div class="modal__overlay" data-close></div>' +
-    '<div class="modal__dialog rr-dialog">' +
-      '<button class="modal__close rr-close" type="button" data-close aria-label="' + M.close + '"><span aria-hidden="true">&times;</span></button>' +
-      '<div class="rr-body" data-rr-body></div>' +
-    '</div>';
+    '<div class="modal__dialog rr-dialog" data-rr-body></div>';
   document.body.appendChild(modal);
   var mBody = modal.querySelector('[data-rr-body]');
-  var mDialog = modal.querySelector('.rr-dialog');
+  var mDialog = mBody;
 
   // Scroll lock: keep the page where it is while the modal is open.
   var savedOverflow = null;
@@ -363,62 +353,25 @@
     }
   }
 
-  function stat(label, value, extra) {
-    return '<div class="rr-stat"><dt>' + esc(label) + '</dt><dd>' + value + (extra ? '<span class="rr-stat__sub">' + extra + '</span>' : '') + '</dd></div>';
-  }
-  function renderRunner(r) {
-    var ok = r.status === 'ok';
-    var html =
-      '<h2 id="rr-title" class="rr-name">' + esc(r.name || '') + '</h2>' +
-      '<p class="rr-bib"><span>' + M.bib + '</span> ' + esc(r.bib) + '</p>' +
-      (r.category ? '<span class="rr-cat">' + esc(r.category) + '</span>' : '');
-    if (ok) {
-      var stats = stat(M.finish, '<span class="rr-time">' + esc(r.time || '–') + '</span>');
-      if (r.rank != null) {
-        stats += stat(M.rank, esc(r.rank) + (r.category_size != null ? ' <small>' + M.of + ' ' + esc(r.category_size) + '</small>' : ''), r.category ? esc(r.category) : '');
-      }
-      if (r.pace) stats += stat(M.pace, esc(r.pace) + (r.pace_unit ? ' <small>' + esc(r.pace_unit) + '</small>' : ''));
-      if (r.team) stats += stat(M.team, esc(r.team));
-      html += '<dl class="rr-stats">' + stats + '</dl>';
-      var cps = Array.isArray(r.checkpoints) ? r.checkpoints.filter(function (c) { return c && c.label && c.time; }) : [];
-      if (cps.length) {
-        html += '<section class="rr-splits"><h3>' + M.splits + '</h3><ol class="rr-split-list">' +
-          cps.map(function (c) { return '<li><span>' + esc(c.label) + '</span><b>' + esc(c.time) + '</b></li>'; }).join('') +
-        '</ol></section>';
-      }
-    } else {
-      if (r.team) html += '<dl class="rr-stats">' + stat(M.team, esc(r.team)) + '</dl>';
-      html += '<p class="rr-review" role="status">' + M.review + '</p>';
-    }
-    html += '<div class="rr-actions">' +
-      '<button class="btn rr-cert" type="button" data-cert' + (ok ? '' : ' disabled aria-disabled="true"') + '>' + icon('i-download') + ' ' + M.download + '</button>' +
-      (ok ? '' : '<p class="rr-hint">' + M.reviewCert + '</p>') +
-      '<p class="rr-hint rr-cert-msg" data-cert-msg role="alert" hidden></p>' +
-    '</div>';
-    mBody.innerHTML = html;
-    var btn = mBody.querySelector('[data-cert]');
-    if (ok) btn.addEventListener('click', function () {
-      var msg = mBody.querySelector('[data-cert-msg]');
-      msg.hidden = true;
-      btn.disabled = true;
-      window.PLN_CERT.download(r, city).catch(function (e) { msg.textContent = e.message; msg.hidden = false; })
-        .then(function () { btn.disabled = false; });
-    });
+  // Modal content = the shared runner card (assets/js/runner-card.js), the
+  // same card /cek shows, with an X in its corner instead of SEARCH AGAIN.
+  var CARD = function () { return window.PLN_RUNNER_CARD; };
+  function show(card) {
+    mBody.innerHTML = '';
+    mBody.appendChild(card);
+    var x = card.querySelector('[data-rc-close]');
+    if (x && modal.contains(document.activeElement) === false) x.focus();
   }
   function fetchRunner(bib) {
     var my = ++modalSeq;
-    mBody.innerHTML = '<h2 id="rr-title" class="rr-name rr-name--muted">' + M.bib + ' ' + esc(bib) + '</h2>' +
-      '<p class="rr-loading" role="status"><span class="rr-spinner" aria-hidden="true"></span>' + M.loading + '</p>';
+    show(CARD().renderCardState({ titleId: 'rr-title', title: M.bib + ' ' + bib, muted: true, loading: true, text: M.loading, onClose: closeRunner }));
     api({ mode: 'one', slug: city.slug, bib: bib }).then(function (j) {
       if (my !== modalSeq || !modalOpen) return;
-      if (!j || !j.runner) { mBody.innerHTML = '<h2 id="rr-title" class="rr-name">' + M.notFound + '</h2>'; return; }
-      renderRunner(j.runner);
+      if (!j || !j.runner) { show(CARD().renderCardState({ titleId: 'rr-title', title: M.notFound, onClose: closeRunner })); return; }
+      show(CARD().renderRunnerCard(j.runner, { city: city, titleId: 'rr-title', showSearchAgain: false, onClose: closeRunner }));
     }, function () {
       if (my !== modalSeq || !modalOpen) return;
-      mBody.innerHTML = '<h2 id="rr-title" class="rr-name rr-name--muted">' + M.bib + ' ' + esc(bib) + '</h2>' +
-        '<p class="rr-review" role="alert">' + M.error + '</p>' +
-        '<div class="rr-actions"><button class="btn btn--ghost" type="button" data-retry>' + M.retry + '</button></div>';
-      mBody.querySelector('[data-retry]').addEventListener('click', function () { fetchRunner(bib); });
+      show(CARD().renderCardState({ titleId: 'rr-title', title: M.bib + ' ' + bib, muted: true, text: M.error, onClose: closeRunner, onRetry: function () { fetchRunner(bib); } }));
     });
   }
   function openRunner(bib, trigger) {
@@ -428,7 +381,8 @@
     if (!modalOpen) { modalOpen = true; lockPage(true); modal.classList.add('is-open'); }
     mDialog.scrollTop = 0;
     fetchRunner(bib);
-    modal.querySelector('.rr-close').focus();
+    var x = modal.querySelector('[data-rc-close]');
+    if (x) x.focus();
   }
   function closeRunner() {
     if (!modalOpen) return;
