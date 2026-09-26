@@ -147,6 +147,10 @@
 }
 
 /* Speedland — 200 m speed-test leaderboard -------------------------------- */
+.sl-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); flex-basis: 100%; }
+.sl-chips + .sl-chips { margin-top: var(--space-3); }
+.data--speedland .sl-meta { display: block; margin-top: 2px; font-size: var(--fs-12); color: var(--color-muted-on-paper); }
+.data--speedland .cat-badge { display: inline-block; margin-left: 0.4em; white-space: nowrap; font-family: var(--font-kicker); letter-spacing: 0.06em; font-size: var(--fs-12); padding: 0.1em 0.5em; background: var(--color-teal-tint); color: var(--color-ink-on-paper); border: 1px solid var(--color-teal); }
 .sl-status { display: inline-flex; align-items: center; gap: 0.5em; font-family: var(--font-kicker); letter-spacing: 0.06em; font-size: var(--fs-14); font-weight: 700; vertical-align: middle; }
 .sl-status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--color-muted-on-paper); }
 .sl-status--sample { color: var(--color-muted-on-paper); }

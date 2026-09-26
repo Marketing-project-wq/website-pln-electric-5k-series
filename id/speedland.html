@@ -22,7 +22,7 @@
   <link rel="stylesheet" href="/assets/css/tokens.css">
   <link rel="stylesheet" href="/assets/css/base.css">
   <link rel="stylesheet" href="/assets/css/components.css">
-  <link rel="stylesheet" href="/assets/css/pages.css">
+  <link rel="stylesheet" href="/assets/css/pages.css?v=5">
 </head>
 <body>
   <div id="site-header"></div>
@@ -62,7 +62,7 @@
         <div class="section-head">
           <span class="kicker">Leaderboard Langsung</span>
           <h2>Tes Kecepatan 200 m — Tercepat di Atas</h2>
-          <p>Pindah antara papan <strong>Keseluruhan</strong> dan tiap kota, serta cari tim atau peserta. Waktu diperbarui langsung dari feed timing begitu trial berjalan. <span class="sl-status sl-status--sample" data-speedland-status aria-live="polite">DATA CONTOH</span></p>
+          <p>Dua kategori, <strong>Male</strong> dan <strong>Female</strong>, masing-masing dengan peringkatnya sendiri. Pindah antara papan <strong>Keseluruhan</strong> dan tiap kota, atau cari lewat nama atau No. BIB. Waktu diperbarui otomatis begitu trial dicatat waktunya. <span class="sl-status sl-status--live" data-speedland-status aria-live="polite" hidden></span></p>
         </div>
 
         <!-- Filter tampilan: Keseluruhan + tiap kota (dirender oleh speedland.js) -->
@@ -74,18 +74,17 @@
         <!-- Tabel leaderboard (dirender oleh speedland.js) -->
         <div data-speedland-board></div>
 
-        <!-- Data contoh sampai feed terisi; disembunyikan speedland.js begitu live. -->
-        <p class="note" data-speedland-note>Data contoh untuk tata letak — waktu 200 m langsung akan muncul di sini otomatis begitu trial Landstrike dicatat waktunya. Data timing: mitra timing PLN Mobile Electric 5K (feibot).</p>
+        <p class="note">Waktu chip 200 m resmi dari sistem timing PLN Mobile Electric 5K. Hasil bersifat sementara sampai dikonfirmasi panitia.</p>
       </div>
     </section>
   </main>
 
   <div id="site-footer"></div>
 
-  <script src="/assets/js/data.js"></script>
+  <script src="/assets/js/data.js?v=4"></script>
   <script src="/assets/js/main.js" defer></script>
   <script src="/assets/js/countdown.js" defer></script>
   <script src="/assets/js/accordion.js" defer></script>
-  <script src="/assets/js/speedland.js" defer></script>
+  <script src="/assets/js/speedland.js?v=2" defer></script>
 </body>
 </html>

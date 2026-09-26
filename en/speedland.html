@@ -22,7 +22,7 @@
   <link rel="stylesheet" href="/assets/css/tokens.css">
   <link rel="stylesheet" href="/assets/css/base.css">
   <link rel="stylesheet" href="/assets/css/components.css">
-  <link rel="stylesheet" href="/assets/css/pages.css">
+  <link rel="stylesheet" href="/assets/css/pages.css?v=5">
 </head>
 <body>
   <div id="site-header"></div>
@@ -62,7 +62,7 @@
         <div class="section-head">
           <span class="kicker">Live Leaderboard</span>
           <h2>200 m Speed Test — Fastest First</h2>
-          <p>Switch between the <strong>Overall</strong> board and each city, and search for a team or runner. Times update live from the timing feed once the trial is running. <span class="sl-status sl-status--sample" data-speedland-status aria-live="polite">SAMPLE DATA</span></p>
+          <p>Two categories, <strong>Male</strong> and <strong>Female</strong>, each ranked on its own. Switch between the <strong>Overall</strong> board and each city, or search by name or bib. Times update automatically once the trial is timed. <span class="sl-status sl-status--live" data-speedland-status aria-live="polite" hidden></span></p>
         </div>
 
         <!-- View filter: Overall + each city (rendered by speedland.js) -->
@@ -74,18 +74,17 @@
         <!-- Leaderboard table (rendered by speedland.js) -->
         <div data-speedland-board></div>
 
-        <!-- Sample field shown until the feed populates; hidden by speedland.js once live. -->
-        <p class="note" data-speedland-note>Sample field shown for layout — live 200 m times appear here automatically once the Landstrike trial is timed. Timing data: PLN Mobile Electric 5K timing partner (feibot).</p>
+        <p class="note">Official 200 m chip times from the PLN Mobile Electric 5K timing system. Results are provisional until confirmed by the race committee.</p>
       </div>
     </section>
   </main>
 
   <div id="site-footer"></div>
 
-  <script src="/assets/js/data.js"></script>
+  <script src="/assets/js/data.js?v=4"></script>
   <script src="/assets/js/main.js" defer></script>
   <script src="/assets/js/countdown.js" defer></script>
   <script src="/assets/js/accordion.js" defer></script>
-  <script src="/assets/js/speedland.js" defer></script>
+  <script src="/assets/js/speedland.js?v=2" defer></script>
 </body>
 </html>
