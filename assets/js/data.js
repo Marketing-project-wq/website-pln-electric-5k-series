@@ -43,11 +43,12 @@
       quota: 3000,
       tz: 'WIB',
       rpcStartISO: '2026-10-09T10:00:00+07:00',
-      raceDayISO: '2026-10-11T06:00:00+07:00',
+      raceDayISO: '2026-10-11T04:30:00+07:00',
       rpc: { id: 'Jumat–Sabtu, 9–10 Oktober 2026 · 10.00–20.00 WIB', en: 'Friday–Saturday, 9–10 October 2026 · 10:00–20:00 WIB' },
       raceDay: { id: 'Minggu, 11 Oktober 2026', en: 'Sunday, 11 October 2026' },
-      startTime: { id: 'Start 06.00 WIB', en: 'Start 06:00 WIB' },
-      venue: { id: 'Segera diumumkan', en: 'To be announced' },
+      startTime: { id: 'Start 04.30 WIB', en: 'Start 04:30 WIB' },
+      venue: { id: 'Kawasan Candi Prambanan, Yogyakarta', en: 'Prambanan Temple Complex, Yogyakarta' },
+      venueMapUrl: 'https://maps.app.goo.gl/gfQK2nHzsPBvnqaT7',
       note: { id: 'Kota kedua — budaya & semangat komunitas lari yang tumbuh pesat.', en: 'The second city — culture and a fast-growing running community.' }
     },
     {
