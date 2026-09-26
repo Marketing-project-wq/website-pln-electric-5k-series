@@ -33,8 +33,7 @@
     .wrap { width: 100%; max-width: 480px; margin: 0 auto; padding: 24px 16px calc(40px + env(safe-area-inset-bottom)); }
 
     .brand { text-align: center; margin: 4px 0 24px; }
-    .brand img { display: block; width: 180px; max-width: 60%; height: auto; margin: 0 auto; }
-    .brand__city { display: block; margin-top: 8px; font-family: var(--body); font-weight: 700; letter-spacing: 0.32em; font-size: 14px; padding-left: 0.32em; }
+    .brand img { display: block; width: 100%; max-width: 340px; height: auto; margin: 0 auto; }
 
     .search { display: grid; gap: 12px; }
     .search label { font-weight: 600; font-size: 15px; }
@@ -127,7 +126,6 @@
 
     @media (min-width: 720px) {
       .wrap { padding-top: 48px; }
-      .brand img { width: 220px; }
     }
     @media (prefers-reduced-motion: reduce) { .spin { animation-duration: 2.4s; } }
   </style>
@@ -135,8 +133,7 @@
 <body>
   <main class="wrap">
     <header class="brand">
-      <img src="/assets/img/logo/logo-white-640.png" width="640" height="181" alt="PLN Mobile Electric 5K Series">
-      <span class="brand__city">JAKARTA</span>
+      <img src="/assets/img/logo/pln-electric-5k-jakarta.png" width="766" height="227" alt="PLN Mobile Electric 5K Series Jakarta">
     </header>
 
     <form class="search" data-search role="search" autocomplete="off" novalidate>
