@@ -18,6 +18,9 @@
   var LANG = (window.EVENT_DATA && window.EVENT_DATA.LANG) || document.documentElement.lang || 'id';
   var isID = LANG === 'id';
   var API = 'https://cpvzwqptzcxnwzfzgrmt.supabase.co/functions/v1/pln-5k';
+  // Cache-buster for the certificate template PNGs. The CDN cached a 404 for
+  // the bare URL before the file existed; bump this whenever a template changes.
+  var CERT_ASSET_VERSION = 2;
   var PAGE = 50;          // rows per page
   var MAX_LIMIT = 200;    // server caps ?limit at 200
   var POLL_MS = 30000;
@@ -30,7 +33,7 @@
     { key: 'yogyakarta', name: 'Yogyakarta', slug: null },
     { key: 'bali',       name: 'Bali',       slug: null }
   ];
-  function certSrc(city) { return '/assets/certificate-' + city.key + '.png'; }
+  function certSrc(city) { return '/assets/certificate-' + city.key + '.png?v=' + CERT_ASSET_VERSION; }
 
   var CATEGORIES = [
     { key: 'MALE OPEN',     top: 5 },
