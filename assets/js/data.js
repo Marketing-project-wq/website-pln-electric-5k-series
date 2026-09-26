@@ -123,12 +123,10 @@
     var seed = 424242 >>> 0;
     function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
     function pick(a) { return a[Math.floor(rnd() * a.length)]; }
-    var CITY_KEYS = ['jakarta', 'yogyakarta', 'bali'];
+    var CITY_KEYS = ['jakarta'];
     // Known names per city (continuity with Live Tracking; easy to search).
     var KNOWN = {
-      jakarta: [['1024', 'Rangga Wijaya', 'M', 912], ['1097', 'Bayu Saputra', 'M', 941]],
-      yogyakarta: [['2031', 'Arif Setiawan', 'M', 926], ['2008', 'Panji Nugraha', 'M', 968]],
-      bali: [['3012', 'Komang Adi', 'M', 933], ['3077', 'Made Surya', 'M', 979]]
+      jakarta: [['1024', 'Rangga Wijaya', 'M', 912], ['1097', 'Bayu Saputra', 'M', 941]]
     };
     var out = {}, usedBib = {};
     CITY_KEYS.forEach(function (city, ci) {
