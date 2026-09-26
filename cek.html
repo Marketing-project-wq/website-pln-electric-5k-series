@@ -121,6 +121,19 @@
     .stores a:focus-visible { outline: 3px solid var(--teal); outline-offset: 4px; }
     .stores img { display: block; height: 48px; width: auto; }
     @media (max-width: 359px) { .stores { flex-direction: column; } }
+    /* 20FIT PHOTO — no app needed. Outline style (not yellow: SEARCH is the
+       page's primary action), 48px tall like the badges, 14px above them. */
+    .photo { margin-top: 16px; display: flex; justify-content: center; }
+    .photo a {
+      display: inline-flex; align-items: center; justify-content: center;
+      height: 48px; padding: 0 32px; border: 1px solid rgba(255,255,255,0.35); border-radius: 10px;
+      color: var(--paper); background: transparent; text-decoration: none;
+      font-weight: 700; font-size: 16px; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .photo a:hover, .photo a:active { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.55); }
+    .photo a:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; }
+    .photo + .stores { margin-top: 0; padding-top: 14px; }
 
     .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
@@ -149,6 +162,9 @@
     <aside class="app" aria-labelledby="app-title">
       <h2 id="app-title">See your race photos</h2>
       <p>Find your finish-line photos and track your training in the 20FIT app.</p>
+      <div class="photo">
+        <a href="https://photo.20fit.id/plnjkt" target="_blank" rel="noopener noreferrer">20FIT PHOTO</a>
+      </div>
       <div class="stores">
         <a href="https://apps.apple.com/id/app/20fit-indonesia/id1475504793" target="_blank" rel="noopener noreferrer">
           <img src="/assets/img/app-store-badge.svg" width="144" height="48" alt="Download on the App Store">
@@ -161,6 +177,6 @@
   </main>
 
   <script src="/assets/js/certificate.js?v=1" defer></script>
-  <script src="/assets/js/cek.js?v=3" defer></script>
+  <script src="/assets/js/cek.js?v=4" defer></script>
 </body>
 </html>
