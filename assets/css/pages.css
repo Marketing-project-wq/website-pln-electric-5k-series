@@ -336,143 +336,43 @@
 
 /* Homepage Race Results CTA */
 .results-cta {
-  position: relative; overflow: hidden;
-  background: linear-gradient(160deg, #0a2a33 0%, #0d3d4a 30%, #0a2a33 60%, #0d0d0d 100%);
-  padding: var(--space-9) var(--space-4);
-  border-top: 3px solid var(--color-signal);
-  border-bottom: 3px solid var(--color-signal);
+  position: relative;
+  background: var(--color-ink);
+  padding: var(--space-8) var(--space-4);
 }
-.results-cta__confetti {
-  position: absolute; inset: 0; pointer-events: none;
-  background-image:
-    radial-gradient(3px 3px at 10% 15%, var(--color-signal) 50%, transparent 55%),
-    radial-gradient(2px 6px at 20% 70%, var(--color-teal) 50%, transparent 55%),
-    radial-gradient(3px 3px at 35% 25%, var(--color-lime) 50%, transparent 55%),
-    radial-gradient(2px 5px at 50% 80%, var(--color-signal) 50%, transparent 55%),
-    radial-gradient(3px 3px at 65% 10%, var(--color-teal) 50%, transparent 55%),
-    radial-gradient(2px 6px at 75% 60%, var(--color-lime) 50%, transparent 55%),
-    radial-gradient(3px 3px at 85% 30%, var(--color-signal) 50%, transparent 55%),
-    radial-gradient(2px 5px at 95% 75%, var(--color-teal) 50%, transparent 55%),
-    radial-gradient(2px 4px at 5% 50%, var(--color-lime) 50%, transparent 55%),
-    radial-gradient(3px 3px at 45% 45%, var(--color-signal) 50%, transparent 55%),
-    radial-gradient(2px 5px at 55% 20%, var(--color-teal) 50%, transparent 55%),
-    radial-gradient(3px 3px at 90% 55%, var(--color-lime) 50%, transparent 55%);
-  background-size: 100% 100%;
-  opacity: 0.35;
-  animation: confetti-drift 8s ease-in-out infinite alternate;
-}
-@keyframes confetti-drift {
-  0% { transform: translateY(0) rotate(0deg); }
-  100% { transform: translateY(-12px) rotate(1deg); }
-}
-.results-cta__glow {
-  position: absolute; inset: 0; pointer-events: none;
-  background:
-    radial-gradient(ellipse 70% 90% at 30% 50%, rgba(28,153,177,0.18) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 70% at 70% 30%, rgba(247,238,36,0.10) 0%, transparent 60%);
-}
-.results-cta__inner {
-  position: relative; z-index: 1;
-  display: flex; align-items: center; gap: var(--space-6);
-}
-.results-cta__icon {
-  flex-shrink: 0;
-  width: 120px; height: 120px;
-  display: flex; align-items: center; justify-content: center;
-  background: linear-gradient(135deg, rgba(28,153,177,0.25), rgba(247,238,36,0.15));
-  border: 2px solid rgba(247,238,36,0.3);
-  border-radius: 50%;
-  animation: icon-float 3s ease-in-out infinite;
-}
-.results-cta__icon svg {
-  width: 56px; height: 56px;
-  fill: var(--color-signal);
-  filter: drop-shadow(0 0 12px rgba(247,238,36,0.5));
-}
-@keyframes icon-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-}
-.results-cta__content { flex: 1; min-width: 0; }
-.results-cta__badge {
-  display: inline-flex; align-items: center; gap: 0.5em;
+.results-cta__kicker {
+  display: block;
   font-family: var(--font-kicker); letter-spacing: 0.1em; text-transform: uppercase;
-  font-size: var(--fs-12); font-weight: 700;
-  padding: 0.4em 1em;
-  background: rgba(28,153,177,0.2); color: var(--color-teal);
-  border: 1px solid rgba(28,153,177,0.4);
-  border-radius: 100px;
+  font-size: var(--fs-14); font-weight: 700;
+  color: var(--color-signal);
   margin-bottom: var(--space-3);
 }
-.results-cta__dot {
-  width: 8px; height: 8px;
-  background: var(--color-lime);
-  border-radius: 50%;
-  animation: dot-pulse 2s ease-in-out infinite;
-}
-@keyframes dot-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.7); }
-}
 .results-cta__title {
-  font-family: var(--font-display); text-transform: uppercase;
-  font-size: clamp(2.4rem, 7vw, 4.5rem); line-height: 0.92;
-  margin: 0 0 var(--space-3);
-  color: #fff;
-  text-shadow: 0 0 60px rgba(28,153,177,0.4), 0 2px 0 rgba(0,0,0,0.3);
+  font-size: clamp(1.6rem, 4vw, 2.4rem); line-height: 1.2;
+  margin: 0 0 var(--space-4);
+  color: #fff; font-weight: 600;
 }
-.results-cta__event {
-  font-family: var(--font-kicker); text-transform: uppercase;
-  font-size: var(--fs-16); letter-spacing: 0.06em;
-  color: var(--color-signal); font-weight: 700;
-  margin: 0 0 var(--space-1);
-}
-.results-cta__date {
-  display: flex; align-items: center; gap: 0.4em;
-  font-size: var(--fs-14);
-  color: rgba(255,255,255,0.55);
-  margin: 0 0 var(--space-3);
-}
-.results-cta__date .icon { width: 14px; height: 14px; flex-shrink: 0; }
 .results-cta__sub {
-  font-size: var(--fs-16); max-width: 520px;
-  margin: 0 0 var(--space-5);
+  font-size: var(--fs-16); max-width: 600px;
+  margin: 0 auto var(--space-6);
   color: rgba(255,255,255,0.7); line-height: 1.6;
 }
 .results-cta__btn {
-  display: inline-flex; align-items: center; gap: 0.6em;
+  display: inline-flex; align-items: center; gap: 0.5em;
   font-family: var(--font-kicker); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
-  font-size: var(--fs-20);
-  padding: 1.1em 2.8em;
-  background: linear-gradient(135deg, var(--color-signal) 0%, #d4c820 100%);
-  color: #0d0d0d;
+  font-size: var(--fs-18);
+  padding: 1em 2.4em;
+  background: var(--color-signal); color: #0d0d0d;
   text-decoration: none;
   clip-path: var(--shard);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 6px 32px rgba(247,238,36,0.4), 0 0 0 0 rgba(247,238,36,0);
-  animation: btn-glow 3s ease-in-out infinite;
-}
-@keyframes btn-glow {
-  0%, 100% { box-shadow: 0 6px 32px rgba(247,238,36,0.4), 0 0 0 0 rgba(247,238,36,0); }
-  50% { box-shadow: 0 6px 40px rgba(247,238,36,0.55), 0 0 0 8px rgba(247,238,36,0.08); }
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 4px 20px rgba(247,238,36,0.3);
 }
 .results-cta__btn:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 10px 44px rgba(247,238,36,0.6);
-  animation: none;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(247,238,36,0.45);
 }
-.results-cta__btn .icon { width: 20px; height: 20px; }
-
-@media (max-width: 768px) {
-  .results-cta { padding: var(--space-7) var(--space-4); }
-  .results-cta__inner { flex-direction: column; text-align: center; }
-  .results-cta__icon { width: 88px; height: 88px; }
-  .results-cta__icon svg { width: 40px; height: 40px; }
-  .results-cta__date { justify-content: center; }
-  .results-cta__sub { margin-left: auto; margin-right: auto; }
-  .results-cta__title { font-size: clamp(2rem, 9vw, 3rem); }
-  .results-cta__btn { font-size: var(--fs-18); padding: 1em 2.2em; }
-}
+.results-cta__btn .icon { width: 18px; height: 18px; }
 
 /* Homepage RPC announcement section */
 .rpc-announce { position: relative; overflow: hidden; }
