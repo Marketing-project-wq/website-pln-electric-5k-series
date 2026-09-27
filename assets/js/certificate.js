@@ -105,9 +105,16 @@
       y += m[i].asc + m[i].desc + B.gap * sy * scale;
     });
   }
-  function netLine(r) {
-    if (!r || r.net_basis === 'unavailable' || !r.net_time) return '';
-    return 'Net time ' + r.net_time;
+  // FINISH TIME box on the certificate = NET time when the API has one
+  // (value as sent, never computed here), with a small "Gun time" line under
+  // it. No start-mat reading (net_basis "unavailable" / net_time null) ->
+  // gun time in the box and no extra line. The box is never empty.
+  // (Only the certificate falls back to gun time; the results pages don't.)
+  function finishBox(r) {
+    var gun = (r && (r.gun_time || r.time)) || '';
+    var net = r && r.net_basis !== 'unavailable' && r.net_time ? String(r.net_time) : '';
+    if (net) return { value: net, sub: gun ? 'Gun time ' + gun : '' };
+    return { value: gun || '–', sub: '' };
   }
   function genderOf(r) {
     var s = String(r.sex || '').trim().toUpperCase();
@@ -151,9 +158,8 @@
         { label: 'GENDER', value: genderOf(r) || '–' },
         { label: 'BIB NUMBER', value: String(r.bib) },
         { label: 'POSITION', value: r.rank != null ? String(r.rank) : '–', sub: r.category || '' },
-        // Gun time stays the main value. Net time (API value only) is a small
-        // extra line, left out entirely when there was no start-mat reading.
-        { label: 'FINISH TIME', value: r.time || '–', sub: netLine(r) }
+        // Rank stays the API's `rank` (gun based). Finish time: see finishBox.
+        { label: 'FINISH TIME', value: finishBox(r).value, sub: finishBox(r).sub }
       ];
       var B = CERT.boxes;
       boxes.forEach(function (b, i) {
