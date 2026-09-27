@@ -334,6 +334,24 @@
 /* Download buttons inside accordion panels */
 .rpc-downloads { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-4); }
 
+/* Homepage Race Results CTA */
+.results-cta { position: relative; overflow: hidden; border-top: 3px solid var(--color-signal); border-bottom: 3px solid var(--color-signal); }
+.results-cta__title {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  line-height: 1;
+  margin: var(--space-3) 0;
+  color: var(--color-signal);
+}
+.results-cta__sub {
+  font-size: var(--fs-18);
+  max-width: 600px;
+  margin: 0 auto var(--space-5);
+  color: var(--color-paper);
+  opacity: 0.85;
+}
+
 /* Homepage RPC announcement section */
 .rpc-announce { position: relative; overflow: hidden; }
 .rpc-announce__grid { align-items: center; }
