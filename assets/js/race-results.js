@@ -74,7 +74,10 @@
     ages: 'Ages 40+'
   };
   // Column headers, the runner modal and the certificate stay English on both pages.
-  var COL = { rank: 'Rank', bib: 'Bib No.', name: 'Name', cat: 'Category', time: 'Finish Time', net: 'Net Time' };
+  var COL = { rank: 'Rank', bib: 'Bib No.', name: 'Name', cat: 'Category', time: 'Finish Time (Gun time)', net: 'Net Time (Chip time)' };
+  // Column headers for the two times: name + the timing basis on a 2nd line.
+  var HEAD_TIME = 'Finish Time<span class="th-basis">(Gun time)</span>';
+  var HEAD_NET = 'Net Time<span class="th-basis">(Chip time)</span>';
   var M = {
     loading: 'Loading runner…',
     notFound: 'Runner not found.',
@@ -250,7 +253,7 @@
       mount.innerHTML = message(msg);
       return;
     }
-    var head = [COL.rank, COL.bib, COL.name, COL.cat, COL.time, COL.net];
+    var head = [COL.rank, COL.bib, COL.name, COL.cat, HEAD_TIME, HEAD_NET];
     mount.innerHTML =
       (state.extra && state.extra.status !== 'ok' ? '<p class="note results-review-note">' + esc(T.reviewNote) + '</p>' : '') +
       '<div class="table-wrap"><table class="data data--results"><thead><tr><th>' + head.join('</th><th>') + '</th></tr></thead><tbody>' +

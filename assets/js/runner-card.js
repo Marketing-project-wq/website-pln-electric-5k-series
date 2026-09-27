@@ -35,7 +35,7 @@
 
   var T = {
     bib: 'BIB',
-    finish: 'Finish Time', net: 'Net Time', rank: 'Rank', pace: 'Pace', splits: 'Split Times', of: 'of',
+    finish: 'Finish Time (Gun Time)', net: 'Net Time (Chip Time)', rank: 'Rank', pace: 'Pace', splits: 'Split Times', of: 'of',
     offset: function (o) { return 'Crossed the start line ' + o + ' after the gun'; },
     noStartMat: 'No start-mat reading recorded',
     review: 'Your result is being reviewed by the race committee. Your time and rank will appear once the review is complete.',

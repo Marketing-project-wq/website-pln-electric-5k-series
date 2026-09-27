@@ -50,7 +50,7 @@
         [173,  977, 545, 1178],                   // GENDER
         [694,  977, 1066, 1178],                  // BIB NUMBER
         [173, 1250, 545, 1451],                   // POSITION
-        [694, 1250, 1066, 1451]                   // FINISH TIME
+        [694, 1250, 1066, 1451]                   // TIME (NET TIME, or GUN TIME if no net)
       ],
       padX: 28,                                   // horizontal inset for text width
       padY: 20,                                   // min clear space above/below the block
@@ -105,16 +105,16 @@
       y += m[i].asc + m[i].desc + B.gap * sy * scale;
     });
   }
-  // FINISH TIME box on the certificate = NET time when the API has one
-  // (value as sent, never computed here), with a small "Gun time" line under
-  // it. No start-mat reading (net_basis "unavailable" / net_time null) ->
-  // gun time in the box and no extra line. The box is never empty.
-  // (Only the certificate falls back to gun time; the results pages don't.)
-  function finishBox(r) {
-    var gun = (r && (r.gun_time || r.time)) || '';
+  // Time box on the certificate: NET time only, labelled by what it holds.
+  // net_time available (value as sent, never computed here) -> "NET TIME".
+  // No start-mat reading (net_basis "unavailable" / net_time null) -> the gun
+  // time, labelled "GUN TIME" — a gun time is never labelled NET TIME.
+  // The box is never empty. (The labels are drawn here, not in the PNG.)
+  function timeBox(r) {
     var net = r && r.net_basis !== 'unavailable' && r.net_time ? String(r.net_time) : '';
-    if (net) return { value: net, sub: gun ? 'Gun time ' + gun : '' };
-    return { value: gun || '–', sub: '' };
+    if (net) return { label: 'NET TIME', value: net };
+    var gun = (r && (r.gun_time || r.time)) || '';
+    return { label: 'GUN TIME', value: gun || '–' };
   }
   function genderOf(r) {
     var s = String(r.sex || '').trim().toUpperCase();
@@ -158,8 +158,8 @@
         { label: 'GENDER', value: genderOf(r) || '–' },
         { label: 'BIB NUMBER', value: String(r.bib) },
         { label: 'POSITION', value: r.rank != null ? String(r.rank) : '–', sub: r.category || '' },
-        // Rank stays the API's `rank` (gun based). Finish time: see finishBox.
-        { label: 'FINISH TIME', value: finishBox(r).value, sub: finishBox(r).sub }
+        // Rank stays the API's `rank` (gun based). Time box: see timeBox.
+        timeBox(r)
       ];
       var B = CERT.boxes;
       boxes.forEach(function (b, i) {
