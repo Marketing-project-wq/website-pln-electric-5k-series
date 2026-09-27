@@ -334,6 +334,46 @@
 /* Download buttons inside accordion panels */
 .rpc-downloads { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-4); }
 
+/* Homepage Race Results CTA */
+.results-cta {
+  position: relative;
+  background: var(--color-ink);
+  padding: var(--space-8) var(--space-4);
+}
+.results-cta__kicker {
+  display: block;
+  font-family: var(--font-kicker); letter-spacing: 0.1em; text-transform: uppercase;
+  font-size: var(--fs-14); font-weight: 700;
+  color: var(--color-signal);
+  margin-bottom: var(--space-3);
+}
+.results-cta__title {
+  font-size: clamp(1.6rem, 4vw, 2.4rem); line-height: 1.2;
+  margin: 0 0 var(--space-4);
+  color: #fff; font-weight: 600;
+}
+.results-cta__sub {
+  font-size: var(--fs-16); max-width: 600px;
+  margin: 0 auto var(--space-6);
+  color: rgba(255,255,255,0.7); line-height: 1.6;
+}
+.results-cta__btn {
+  display: inline-flex; align-items: center; gap: 0.5em;
+  font-family: var(--font-kicker); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  font-size: var(--fs-18);
+  padding: 1em 2.4em;
+  background: var(--color-signal); color: #0d0d0d;
+  text-decoration: none;
+  clip-path: var(--shard);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 4px 20px rgba(247,238,36,0.3);
+}
+.results-cta__btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(247,238,36,0.45);
+}
+.results-cta__btn .icon { width: 18px; height: 18px; }
+
 /* Homepage RPC announcement section */
 .rpc-announce { position: relative; overflow: hidden; }
 .rpc-announce__grid { align-items: center; }
