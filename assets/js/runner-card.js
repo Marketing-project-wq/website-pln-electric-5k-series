@@ -20,6 +20,11 @@
    - SPLIT TIMES is left out ENTIRELY when runner.checkpoints is empty (no
      empty heading, no "-" placeholder).
    - "of <category_size>" only when category_size is not null.
+   - FINISH TIME = `time` (gun time, the basis of the rankings). NET TIME is
+     shown from the API's `net_time` only — never computed here, never
+     filled with gun time, never "00:00". net_basis "unavailable" hides it
+     and says "No start-mat reading recorded" instead.
+   - PACE = `pace` (from gun time), matching the FINISH TIME above it.
    - Certificate: rendered and turned into a File as soon as the card
      opens; the button reads "PREPARING..." until then. The click only
      calls PLN_CERT.deliver() — nothing is awaited first, because iOS only
@@ -30,7 +35,9 @@
 
   var T = {
     bib: 'BIB',
-    finish: 'Finish Time', rank: 'Rank', pace: 'Pace', splits: 'Split Times', of: 'of',
+    finish: 'Finish Time', net: 'Net Time', rank: 'Rank', pace: 'Pace', splits: 'Split Times', of: 'of',
+    offset: function (o) { return 'Crossed the start line ' + o + ' after the gun'; },
+    noStartMat: 'No start-mat reading recorded',
     review: 'Your result is being reviewed by the race committee. Your time and rank will appear once the review is complete.',
     notFinished: 'You haven\'t finished yet. Your time will appear here automatically.',
     reviewCert: 'The certificate is available once the review is complete.',
@@ -49,6 +56,11 @@
   }
   function el(html) { var t = document.createElement('template'); t.innerHTML = html.trim(); return t.content.firstElementChild; }
   function closeBtn() { return '<button class="rc__close" type="button" data-rc-close aria-label="' + T.close + '"><span aria-hidden="true">&times;</span></button>'; }
+  // Net time as sent by the API, or null (unknown / no start-mat reading).
+  function netTimeOf(r) {
+    if (!r || r.net_basis === 'unavailable') return null;
+    return r.net_time ? String(r.net_time) : null;
+  }
   function stat(label, value, sub) {
     return '<div class="rc__stat"><dt class="rc__label">' + esc(label) + '</dt><dd>' + value + (sub ? '<span class="rc__sub">' + esc(sub) + '</span>' : '') + '</dd></div>';
   }
@@ -70,7 +82,15 @@
     } else if (!finished) {
       html += '<p class="rc__review" role="status">' + esc(T.notFinished) + '</p>';
     } else {
-      html += '<div class="rc__finish"><span class="rc__label">' + esc(T.finish) + '</span><span class="rc__time">' + esc(r.time) + '</span></div>';
+      var net = netTimeOf(r);
+      html += '<div class="rc__finish"><span class="rc__label">' + esc(T.finish) + '</span><span class="rc__time">' + esc(r.time) + '</span>';
+      if (r.net_basis === 'unavailable') {
+        html += '<p class="rc__netnote">' + esc(T.noStartMat) + '</p>';
+      } else if (net) {
+        html += '<p class="rc__net"><span class="rc__net-label">' + esc(T.net) + '</span> <span class="rc__net-time">' + esc(net) + '</span></p>';
+        if (r.start_offset) html += '<p class="rc__netnote">' + esc(T.offset(r.start_offset)) + '</p>';
+      }
+      html += '</div>';
       var stats = '';
       if (r.rank != null) stats += stat(T.rank, esc(r.rank) + (r.category_size != null ? ' <small>' + esc(T.of) + ' ' + esc(r.category_size) + '</small>' : ''), r.category || '');
       if (r.pace) stats += stat(T.pace, esc(r.pace) + (r.pace_unit ? ' <small>' + esc(r.pace_unit) + '</small>' : ''));
@@ -148,5 +168,5 @@
     return card;
   }
 
-  window.PLN_RUNNER_CARD = { renderRunnerCard: renderRunnerCard, renderCardState: renderCardState };
+  window.PLN_RUNNER_CARD = { renderRunnerCard: renderRunnerCard, renderCardState: renderCardState, netTimeOf: netTimeOf };
 })();

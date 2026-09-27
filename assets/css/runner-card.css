@@ -39,6 +39,11 @@
 .rc .rc__label { display: block; margin: 0; line-height: 1.5; color: var(--rc-muted); font-family: var(--rc-body); font-weight: 700; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; }
 .rc .rc__finish { margin: 20px 0 0; padding: 16px; text-align: center; background: var(--rc-tile); border-radius: 12px; }
 .rc .rc__time { display: block; font-family: var(--rc-display); font-size: clamp(56px, 18vw, 76px); line-height: 1.05; color: var(--rc-teal); font-variant-numeric: tabular-nums; }
+/* Net time: secondary line under FINISH TIME (gun time). */
+.rc .rc__net { margin: 6px 0 0; display: flex; align-items: baseline; justify-content: center; gap: 8px; }
+.rc .rc__net-label { color: var(--rc-muted); font-weight: 700; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; }
+.rc .rc__net-time { font-family: var(--rc-display); font-size: 26px; line-height: 1.1; color: #FFFFFF; font-variant-numeric: tabular-nums; }
+.rc .rc__netnote { margin: 4px 0 0; color: var(--rc-muted); font-size: 13px; line-height: 1.4; }
 .rc .rc__stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0 0; }
 .rc .rc__stat { background: var(--rc-tile); border-radius: 12px; padding: 12px 14px; min-width: 0; }
 .rc .rc__stat dt { margin-bottom: 2px; }

@@ -74,7 +74,7 @@
     ages: 'Ages 40+'
   };
   // Column headers, the runner modal and the certificate stay English on both pages.
-  var COL = { rank: 'Rank', bib: 'Bib No.', name: 'Name', cat: 'Category', time: 'Time' };
+  var COL = { rank: 'Rank', bib: 'Bib No.', name: 'Name', cat: 'Category', time: 'Finish Time', net: 'Net Time' };
   var M = {
     loading: 'Loading runner…',
     notFound: 'Runner not found.',
@@ -224,7 +224,9 @@
       '<td data-label="' + COL.name + '"><button type="button" class="results-name" data-open="' + esc(r.bib) + '">' + esc(r.name) + '</button>' +
         (ok ? '' : ' <span class="results-review">' + esc(T.review) + '</span>') + '</td>' +
       '<td data-label="' + COL.cat + '">' + (r.category ? '<span class="cat-badge">' + esc(r.category) + '</span>' : '–') + '</td>' +
-      '<td data-label="' + COL.time + '" class="num">' + (ok && r.time ? esc(r.time) : '–') + '</td>' +
+      '<td data-label="' + COL.time + '" class="num results-time">' + (ok && r.time ? esc(r.time) : '–') + '</td>' +
+      // Net time straight from the API; "-" when unknown (never gun time, never 00:00).
+      '<td data-label="' + COL.net + '" class="num results-net">' + ((ok && window.PLN_RUNNER_CARD.netTimeOf(r)) ? esc(window.PLN_RUNNER_CARD.netTimeOf(r)) : '-') + '</td>' +
     '</tr>';
   }
   function message(text) { return '<p class="results-message">' + esc(text) + '</p>'; }
@@ -248,7 +250,7 @@
       mount.innerHTML = message(msg);
       return;
     }
-    var head = [COL.rank, COL.bib, COL.name, COL.cat, COL.time];
+    var head = [COL.rank, COL.bib, COL.name, COL.cat, COL.time, COL.net];
     mount.innerHTML =
       (state.extra && state.extra.status !== 'ok' ? '<p class="note results-review-note">' + esc(T.reviewNote) + '</p>' : '') +
       '<div class="table-wrap"><table class="data data--results"><thead><tr><th>' + head.join('</th><th>') + '</th></tr></thead><tbody>' +

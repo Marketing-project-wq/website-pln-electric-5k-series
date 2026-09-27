@@ -105,6 +105,10 @@
       y += m[i].asc + m[i].desc + B.gap * sy * scale;
     });
   }
+  function netLine(r) {
+    if (!r || r.net_basis === 'unavailable' || !r.net_time) return '';
+    return 'Net time ' + r.net_time;
+  }
   function genderOf(r) {
     var s = String(r.sex || '').trim().toUpperCase();
     if (/^(M|MALE|L|LAKI|PRIA|男)/.test(s)) return 'MALE';
@@ -147,7 +151,9 @@
         { label: 'GENDER', value: genderOf(r) || '–' },
         { label: 'BIB NUMBER', value: String(r.bib) },
         { label: 'POSITION', value: r.rank != null ? String(r.rank) : '–', sub: r.category || '' },
-        { label: 'FINISH TIME', value: r.time || '–' }
+        // Gun time stays the main value. Net time (API value only) is a small
+        // extra line, left out entirely when there was no start-mat reading.
+        { label: 'FINISH TIME', value: r.time || '–', sub: netLine(r) }
       ];
       var B = CERT.boxes;
       boxes.forEach(function (b, i) {
