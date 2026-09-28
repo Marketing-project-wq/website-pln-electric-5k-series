@@ -4,6 +4,11 @@
    - otherwise   -> ?mode=list&q=&limit=20 ; tap a row -> ?mode=one&bib=
    Always &slug=pln-jakarta. Searching happens on the server; the page never
    pulls the whole field. The endpoint is public by design (no keys here).
+
+   Shareable result URL: <current path>?bib=<bib> (query param, not a path
+   segment — the site is static). Opening such a link shows that runner's
+   card straight away; history back/forward moves between list and card.
+   Other query params are ignored.
    ========================================================================== */
 (function () {
   'use strict';
@@ -28,6 +33,15 @@
   var out = document.querySelector('[data-out]');
   var seq = 0;
   var lastList = null; // { q, rows } — for "Back to list"
+
+  // ---- Shareable URL (?bib=) -------------------------------------------------
+  function shareUrl(bib) {
+    return location.origin + location.pathname + '?bib=' + encodeURIComponent(bib);
+  }
+  function setUrl(bib, replace) {
+    var u = bib ? shareUrl(bib) : location.origin + location.pathname;
+    try { history[replace ? 'replaceState' : 'pushState']({ bib: bib || null }, '', u); } catch (e) {}
+  }
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -70,25 +84,30 @@
   // SEARCH AGAIN button; "Back to list" sits above it when opened from a list.
   function searchAgain() {
     seq++; lastList = null;
+    setUrl(null, true);
     input.value = '';
     out.innerHTML = '';
     input.focus();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
-  function showCard(r, fromList) {
+  // noPush: the URL already points at this runner (deep link / back-forward).
+  function showCard(r, fromList, noPush) {
     out.innerHTML = fromList ? '<button class="back" type="button" data-back>' + esc(T.back) + '</button>' : '';
     out.appendChild(window.PLN_RUNNER_CARD.renderRunnerCard(r, {
-      city: CITY, titleId: 'card-name', showSearchAgain: true, onSearchAgain: searchAgain
+      city: CITY, titleId: 'card-name', showSearchAgain: true, onSearchAgain: searchAgain,
+      shareUrl: shareUrl(r.bib)
     }));
     var back = out.querySelector('[data-back]');
     if (back) back.addEventListener('click', function () {
       if (!lastList) return;
+      setUrl(null, true);
       showList(lastList.q, lastList.rows);
       var b = out.querySelector('[data-bib="' + String(r.bib).replace(/"/g, '') + '"]');
       if (b) b.focus();
     });
     var h = document.getElementById('card-name');
     if (h) { h.focus({ preventScroll: true }); out.scrollIntoView({ block: 'start', behavior: 'smooth' }); }
+    if (!noPush) setUrl(r.bib);
   }
 
   // ---- Flow ----------------------------------------------------------------
@@ -116,14 +135,14 @@
       : function () { return searchList(q, my); };
     run().catch(function () { if (my === seq) failure(function () { search(q); }); });
   }
-  function openRunner(bib) {
+  function openRunner(bib, noPush) {
     var my = ++seq;
     loading(T.loadingRunner);
     api({ mode: 'one', bib: bib }).then(function (j) {
       if (my !== seq) return;
-      if (j && j.runner) showCard(j.runner, !!lastList);
-      else message(T.notFound, true);
-    }).catch(function () { if (my === seq) failure(function () { openRunner(bib); }); });
+      if (j && j.runner) showCard(j.runner, !!lastList, noPush);
+      else { setUrl(null, true); message(T.notFound, true); }   // don't leave a dead ?bib= in the URL
+    }).catch(function () { if (my === seq) failure(function () { openRunner(bib, noPush); }); });
   }
 
   form.addEventListener('submit', function (e) {
@@ -137,4 +156,16 @@
     var b = e.target.closest('[data-bib]');
     if (b) openRunner(b.getAttribute('data-bib'));
   });
+
+  // Back / forward between the list and a runner's card.
+  window.addEventListener('popstate', function () {
+    var b = new URLSearchParams(location.search).get('bib');
+    if (b) openRunner(b, true);
+    else if (lastList) { seq++; showList(lastList.q, lastList.rows); }
+    else { seq++; out.innerHTML = ''; input.value = ''; }
+  });
+
+  // Deep link: /cek?bib=50920 opens that runner's card directly.
+  var boot = (new URLSearchParams(location.search).get('bib') || '').trim();
+  if (boot) { input.value = boot; openRunner(boot, true); }
 })();

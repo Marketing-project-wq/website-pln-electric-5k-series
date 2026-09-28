@@ -9,6 +9,8 @@
        city            : { key, name }  certificate template / file name
        titleId         : id for the name heading (aria-labelledby / focus)
        showSearchAgain : true -> outline SEARCH AGAIN button (/cek)
+       shareUrl        : given -> outline SHARE MY RESULT button (share sheet,
+                         else copies the link) — /cek passes ?bib= links
        onSearchAgain   : click handler for it
        onClose         : given -> X button in the card corner (modal)
      }
@@ -44,6 +46,9 @@
     download: 'Download Certificate',
     preparing: 'Preparing...',
     again: 'Search again',
+    shareLink: 'Share My Result',
+    linkCopied: 'Link copied',
+    linkFailed: 'Could not copy the link',
     close: 'Close',
     retry: 'Try again'
   };
@@ -110,6 +115,10 @@
       if (!ok) html += '<p class="rc__hint">' + esc(T.reviewCert) + '</p>';
       html += '<p class="rc__hint rc__hint--err" data-rc-cert-msg role="alert" hidden></p>';
     }
+    if (opts.shareUrl) {
+      html += '<button class="rc__btn rc__btn--ghost" type="button" data-rc-link>' + esc(T.shareLink) + '</button>' +
+        '<p class="rc__hint" data-rc-link-msg role="status" hidden></p>';
+    }
     if (opts.showSearchAgain) html += '<button class="rc__btn rc__btn--ghost" type="button" data-rc-again>' + esc(T.again) + '</button>';
     html += '</div></article>';
 
@@ -117,8 +126,44 @@
     if (opts.onClose) card.querySelector('[data-rc-close]').addEventListener('click', opts.onClose);
     if (opts.showSearchAgain && opts.onSearchAgain) card.querySelector('[data-rc-again]').addEventListener('click', opts.onSearchAgain);
 
+    if (opts.shareUrl) wireShareLink(card, opts.shareUrl);
     if (finished) wireCertificate(card, r, opts.city);
     return card;
+  }
+
+  // Share sheet where available (called straight from the click — iOS needs
+  // the live gesture); otherwise copy the link and say so for 2.5 s.
+  function wireShareLink(card, u) {
+    var btn = card.querySelector('[data-rc-link]');
+    var msg = card.querySelector('[data-rc-link-msg]');
+    var timer = null;
+    function say(text) {
+      msg.textContent = text; msg.hidden = false;
+      clearTimeout(timer);
+      timer = setTimeout(function () { msg.hidden = true; }, 2500);
+    }
+    function legacyCopy() {
+      var ta = document.createElement('textarea');
+      ta.value = u; ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed'; ta.style.top = '0'; ta.style.left = '0'; ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(ta);
+      say(ok ? T.linkCopied : T.linkFailed);
+    }
+    btn.addEventListener('click', function () {
+      if (navigator.share) {
+        navigator.share({ title: document.title, url: u }).catch(function () {});   // AbortError etc.: ignore
+        return;
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(u).then(function () { say(T.linkCopied); }, legacyCopy);
+      } else {
+        legacyCopy();
+      }
+    });
   }
 
   // Prepare the PNG now; the click only delivers it (share sheet / download).
