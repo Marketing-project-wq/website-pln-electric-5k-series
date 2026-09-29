@@ -3,7 +3,7 @@
    links and cached pages keep working).
 
    Data: the public pln-5k endpoint, one event per city:
-     ?mode=list&slug=<city slug>&limit=100[&offset=…]
+     ?mode=list&slug=<city slug>&limit=200[&offset=…]  (200 = API max)
    Rows: bib, name, sex, category, rank, time, time_ms, status.
    A 404 {"error":"event not found"} (or an empty list) is the normal state
    until that city's Landstrike Race Day — shown as a polite waiting message.
@@ -20,8 +20,8 @@
 
   var LANG = (window.EVENT_DATA && window.EVENT_DATA.LANG) || document.documentElement.lang || 'id';
   var API = 'https://cpvzwqptzcxnwzfzgrmt.supabase.co/functions/v1/pln-5k';
-  var PAGE = 100;       // rows per request
-  var MAX_PAGES = 10;   // safety cap per city (1,000 runners)
+  var PAGE = 200;       // 200 adalah batas maksimum mode=list di API
+  var MAX_PAGES = 20;   // 4.000 pelari per kota
   var POLL_MS = 30000;
 
   // City -> Landstrike event slug. Add a city by adding a line here; it gets
