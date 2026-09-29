@@ -78,10 +78,11 @@
   function timeKey(r) { return typeof r.time_ms === 'number' ? r.time_ms : Infinity; }
 
   // ---- Fetch ----------------------------------------------------------------
-  // Resolves to rows ([] when the event doesn't exist yet); rejects only on
-  // real network/server failures.
+  // Resolves to { rows, frozen } (rows [] when the event doesn't exist yet;
+  // frozen = the API's event.is_frozen); rejects only on real network/server
+  // failures.
   function fetchCity(city) {
-    var rows = [];
+    var rows = [], isFrozen = false;
     function page(n) {
       var url = API + '?mode=list&slug=' + encodeURIComponent(city.slug) + '&limit=' + PAGE + '&offset=' + (n * PAGE);
       return fetch(url, { cache: 'no-store' }).then(function (r) {
@@ -91,15 +92,16 @@
       }).then(function (j) {
         var got = (j && j.rows) || [];
         rows = rows.concat(got);
+        if (n === 0) isFrozen = !!(j && j.event && j.event.is_frozen === true);
         if (got.length === PAGE && n + 1 < MAX_PAGES) return page(n + 1);
-        return rows;
+        return { rows: rows, frozen: isFrozen };
       });
     }
     return page(0);
   }
   function refresh() {
     return Promise.all(CITIES.map(function (c) {
-      return fetchCity(c).then(function (rows) { return { key: c.key, rows: rows, ok: true }; },
+      return fetchCity(c).then(function (d) { return { key: c.key, rows: d.rows, frozen: d.frozen, ok: true }; },
                                function () { return { key: c.key, ok: false }; });
     })).then(function (res) {
       var anyOk = false;
@@ -111,6 +113,10 @@
       });
       state.offline = !anyOk && !state.loaded;
       state.loaded = state.loaded || anyOk;
+      // Every city loaded and every one frozen -> the results can't change
+      // any more: stop polling. A city that is still live (race day), not
+      // created yet (404) or failed to load keeps the polling going.
+      if (res.every(function (x) { return x.ok && x.frozen; })) { frozen = true; stop(); }
       paint();
     });
   }
@@ -191,11 +197,11 @@
     searchEl.querySelector('input').addEventListener('input', function () { state.q = this.value.trim(); paint(); });
   }
 
-  // ---- Polling (paused while the tab is hidden) -------------------------------
-  var timer = null;
-  function start() { if (!timer && !document.hidden) timer = setInterval(function () { if (!document.hidden) refresh(); }, POLL_MS); }
+  // ---- Polling (paused while the tab is hidden; off once all cities are frozen)
+  var timer = null, frozen = false;
+  function start() { if (!timer && !frozen && !document.hidden) timer = setInterval(function () { if (!document.hidden) refresh(); }, POLL_MS); }
   function stop() { clearInterval(timer); timer = null; }
-  document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else { refresh(); start(); } });
+  document.addEventListener('visibilitychange', function () { if (frozen) return; if (document.hidden) stop(); else { refresh(); start(); } });
 
   paint();
   refresh();
