@@ -79,10 +79,10 @@
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://electric5k.example/id/speedland.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/speedland.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/speedland.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/speedland.html"/>
+    <loc>https://electric5k.example/id/landstrike.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/landstrike.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/landstrike.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/landstrike.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
@@ -212,10 +212,10 @@
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://electric5k.example/en/speedland.html</loc>
-    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/speedland.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/speedland.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/speedland.html"/>
+    <loc>https://electric5k.example/en/landstrike.html</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://electric5k.example/id/landstrike.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://electric5k.example/en/landstrike.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://electric5k.example/id/landstrike.html"/>
     <changefreq>weekly</changefreq>
   </url>
   <url>
