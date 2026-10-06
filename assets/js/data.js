@@ -47,8 +47,9 @@
       rpc: { id: 'Jumat–Sabtu, 9–10 Oktober 2026 · 10.00–20.00 WIB', en: 'Friday–Saturday, 9–10 October 2026 · 10:00–20:00 WIB' },
       raceDay: { id: 'Minggu, 11 Oktober 2026', en: 'Sunday, 11 October 2026' },
       startTime: { id: 'Start 04.30 WIB', en: 'Start 04:30 WIB' },
-      venue: { id: 'Kawasan Candi Prambanan, Yogyakarta', en: 'Prambanan Temple Complex, Yogyakarta' },
+      venue: { id: 'Taman Wisata Candi Prambanan, Yogyakarta', en: 'Taman Wisata Candi Prambanan, Yogyakarta' },
       venueMapUrl: 'https://maps.app.goo.gl/gfQK2nHzsPBvnqaT7',
+      rpcVenue: { id: 'Plaza Ambarrukmo — Ground Floor Extension', en: 'Plaza Ambarrukmo — Ground Floor Extension' },
       note: { id: 'Kota kedua — budaya & semangat komunitas lari yang tumbuh pesat.', en: 'The second city — culture and a fast-growing running community.' }
     },
     {
