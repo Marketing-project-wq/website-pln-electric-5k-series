@@ -27,6 +27,10 @@
      filled with gun time, never "00:00". net_basis "unavailable" hides it
      and says "No start-mat reading recorded" instead.
    - PACE = `pace` (from gun time), matching the FINISH TIME above it.
+   - race_status 'REGISTERED' (registered, hasn't raced yet — e.g. Yogyakarta
+     before race day): "you're registered" + the start CORAL, certificate
+     disabled with its own hint. Checked BEFORE the "under review" branch,
+     which still covers every other non-'ok' status (PACER, NOT IN REVISI…).
    - Certificate: rendered and turned into a File as soon as the card
      opens; the button reads "PREPARING..." until then. The click only
      calls PLN_CERT.deliver() — nothing is awaited first, because iOS only
@@ -43,6 +47,9 @@
     review: 'Your result is being reviewed by the race committee. Your time and rank will appear once the review is complete.',
     notFinished: 'You haven\'t finished yet. Your time will appear here automatically.',
     reviewCert: 'The certificate is available once the review is complete.',
+    registered: 'You\'re registered. Your time will appear here automatically once you cross the finish line.',
+    coral: 'Start Coral',
+    registeredCert: 'Your certificate will be available here after you finish.',
     download: 'Download Certificate',
     preparing: 'Preparing...',
     again: 'Search again',
@@ -74,6 +81,7 @@
     opts = opts || {};
     var ok = r.status === 'ok';
     var finished = ok && !!r.time;
+    var registered = r.race_status === 'REGISTERED';
     var titleId = opts.titleId || 'rc-title';
 
     var html = '<article class="rc' + (opts.onClose ? ' rc--closable' : '') + '" aria-labelledby="' + esc(titleId) + '">' +
@@ -82,7 +90,13 @@
       '<p class="rc__bib"><span>' + T.bib + '</span>' + esc(r.bib) + '</p>' +
       (r.category ? '<span class="rc__chip">' + esc(r.category) + '</span>' : '');
 
-    if (!ok) {
+    if (registered) {
+      // Registered, not raced yet (race_status REGISTERED, status 'pending'):
+      // not "under review". Show the start coral — the most useful thing on
+      // race morning. No time, rank or splits exist yet.
+      html += '<p class="rc__review" role="status">' + esc(T.registered) + '</p>';
+      if (r.coral) html += '<dl class="rc__stats rc__stats--one">' + stat(T.coral, esc(r.coral)) + '</dl>';
+    } else if (!ok) {
       html += '<p class="rc__review" role="status">' + esc(T.review) + '</p>';
     } else if (!finished) {
       html += '<p class="rc__review" role="status">' + esc(T.notFinished) + '</p>';
@@ -112,7 +126,8 @@
     if (finished || !ok) {
       html += '<button class="rc__btn" type="button" data-rc-cert disabled aria-disabled="true">' + DL_ICON +
         '<span data-rc-cert-label>' + esc(finished ? T.preparing : T.download) + '</span></button>';
-      if (!ok) html += '<p class="rc__hint">' + esc(T.reviewCert) + '</p>';
+      if (registered) html += '<p class="rc__hint">' + esc(T.registeredCert) + '</p>';
+      else if (!ok) html += '<p class="rc__hint">' + esc(T.reviewCert) + '</p>';
       html += '<p class="rc__hint rc__hint--err" data-rc-cert-msg role="alert" hidden></p>';
     }
     if (opts.shareUrl) {
