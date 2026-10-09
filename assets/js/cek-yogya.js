@@ -1,9 +1,11 @@
 /* ==========================================================================
    /cek-yogya — PLN Mobile Electric 5K Yogyakarta (11 Oct 2026) quick-check
    page. A standalone copy of assets/js/cek.js (/cek, Jakarta — untouched);
-   only CITY differs. One search box:
-   - all digits  -> ?mode=one&bib= ; if not found, fall back to the list
-   - otherwise   -> ?mode=list&q=&limit=20 ; tap a row -> ?mode=one&bib=
+   CITY differs, and the name search uses pln-find (finds runners who
+   haven't finished yet; BIB lookups still use pln-5k mode=one). One search box:
+   - all digits  -> pln-5k ?mode=one&bib= ; if not found, fall back to the list
+   - otherwise   -> pln-find ?q=&limit=20 (min 2 chars, held back in the UI
+                    below that) ; tap a row -> pln-5k ?mode=one&bib=
    Always &slug=pln-yogya. Searching happens on the server; the page never
    pulls the whole field. The endpoint is public by design (no keys here).
 
@@ -15,6 +17,11 @@
 (function () {
   'use strict';
   var API = 'https://cpvzwqptzcxnwzfzgrmt.supabase.co/functions/v1/pln-5k';
+  // Name search: pln-find (same row shape as pln-5k mode=list, but also finds
+  // runners who haven't finished yet; min 2 chars, max 20 rows, no pacers).
+  // BIB lookups and the runner card stay on pln-5k mode=one.
+  var FIND = 'https://cpvzwqptzcxnwzfzgrmt.supabase.co/functions/v1/pln-find';
+  var FIND_MIN = 2;
   var CITY = { key: 'yogyakarta', name: 'Yogyakarta', slug: 'pln-yogya' };
   var LIST_LIMIT = 20;
 
@@ -22,6 +29,7 @@
     searching: 'Searching…',
     loadingRunner: 'Loading result…',
     notFound: 'No runner found. Check the BIB number or try part of your name.',
+    tooShort: 'Type at least 2 characters of your name, or your BIB number.',
     error: 'Couldn\'t reach the results server. Check your connection and try again.',
     retry: 'Try again',
     matches: function (n) { return n + (n === 1 ? ' runner matches' : ' runners match') + ' — tap your name'; },
@@ -54,6 +62,16 @@
     params.slug = CITY.slug;
     var qs = Object.keys(params).map(function (k) { return encodeURIComponent(k) + '=' + encodeURIComponent(params[k]); }).join('&');
     return fetch(API + '?' + qs, { cache: 'no-store' }).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    });
+  }
+
+  // pln-find: { event, query, total, rows }. Only `rows` is read (its event
+  // object is slimmer than pln-5k's — no roster_size / ranked_by / …).
+  function find(q) {
+    var qs = 'slug=' + encodeURIComponent(CITY.slug) + '&q=' + encodeURIComponent(q) + '&limit=' + LIST_LIMIT;
+    return fetch(FIND + '?' + qs, { cache: 'no-store' }).then(function (r) {
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return r.json();
     });
@@ -114,10 +132,12 @@
 
   // ---- Flow ----------------------------------------------------------------
   function searchList(q, my) {
+    // pln-find answers 400 below 2 characters: never send such a request.
+    if (q.length < FIND_MIN) { message(T.tooShort, true); return Promise.resolve(); }
     loading(T.searching);
-    return api({ mode: 'list', q: q, limit: LIST_LIMIT, offset: 0 }).then(function (j) {
+    return find(q).then(function (j) {
       if (my !== seq) return;
-      var rows = (j && j.rows) || [];
+      var rows = (j && Array.isArray(j.rows)) ? j.rows : [];
       if (!rows.length) message(T.notFound, true);
       else showList(q, rows);
     });
