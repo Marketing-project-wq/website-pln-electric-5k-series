@@ -27,8 +27,8 @@
   // City -> Landstrike event slug. Add a city by adding a line here; it gets
   // its own tab and is merged into OVERALL automatically.
   var CITIES = [
-    { key: 'jakarta', name: 'Jakarta', slug: 'pln-landstrike-jakarta' }
-    // { key: 'yogyakarta', name: 'Yogyakarta', slug: 'pln-landstrike-yogya' },
+    { key: 'jakarta', name: 'Jakarta', slug: 'pln-landstrike-jakarta' },
+    { key: 'yogyakarta', name: 'Yogyakarta', slug: 'pln-landstrike-yogya' }
     // { key: 'bali',       name: 'Bali',       slug: 'pln-landstrike-bali' }
   ];
   var CATS = ['MALE', 'FEMALE'];
@@ -59,7 +59,10 @@
   var searchEl = document.querySelector('[data-speedland-search]');
   var statusEl = document.querySelector('[data-speedland-status]');
 
-  var state = { view: 'overall', cat: '', q: '', data: {}, loaded: false, offline: false };
+  // Default view = the first city (Jakarta), not OVERALL: with more than one
+  // city OVERALL merges the boards, and Jakarta's published ranking must stay
+  // what visitors see first. frozen[key]: that city's event.is_frozen.
+  var state = { view: CITIES[0].key, cat: '', q: '', data: {}, frozen: {}, loaded: false, offline: false };
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -101,6 +104,8 @@
   }
   function refresh() {
     return Promise.all(CITIES.map(function (c) {
+      // A frozen city's results can't change: keep what we have, don't refetch.
+      if (state.frozen[c.key]) return Promise.resolve({ key: c.key, frozen: true, ok: true, cached: true });
       return fetchCity(c).then(function (d) { return { key: c.key, rows: d.rows, frozen: d.frozen, ok: true }; },
                                function () { return { key: c.key, ok: false }; });
     })).then(function (res) {
@@ -108,6 +113,8 @@
       res.forEach(function (x) {
         if (!x.ok) return;               // keep whatever that city showed last time
         anyOk = true;
+        if (x.cached) return;
+        if (x.frozen) state.frozen[x.key] = true;
         state.data[x.key] = x.rows.filter(function (r) { return r.status === 'ok' && r.time; })
           .map(function (r) { return { bib: r.bib, name: r.name, time: r.time, time_ms: r.time_ms, cat: catOf(r), city: x.key }; });
       });

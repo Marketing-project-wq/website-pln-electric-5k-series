@@ -17,12 +17,16 @@
   function statusClass(s) { return 'badge badge--' + s; }
 
   // ---- Partial injection --------------------------------------------------
+  // Cache-buster for the header/footer partials: bump PARTIALS_V whenever a
+  // file in /assets/partials changes (and bump main.js?v= in the pages), or
+  // browsers keep serving the old menu from cache.
+  var PARTIALS_V = 2;
   function injectPartials() {
     var headerMount = document.getElementById('site-header');
     var footerMount = document.getElementById('site-footer');
     var jobs = [];
-    if (headerMount) jobs.push(load('/assets/partials/header-' + LANG + '.html', headerMount));
-    if (footerMount) jobs.push(load('/assets/partials/footer-' + LANG + '.html', footerMount));
+    if (headerMount) jobs.push(load('/assets/partials/header-' + LANG + '.html?v=' + PARTIALS_V, headerMount));
+    if (footerMount) jobs.push(load('/assets/partials/footer-' + LANG + '.html?v=' + PARTIALS_V, footerMount));
     Promise.all(jobs).then(function () {
       wireNav();
       setActiveNav();
