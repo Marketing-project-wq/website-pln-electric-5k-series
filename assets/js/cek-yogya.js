@@ -43,6 +43,11 @@
   var out = document.querySelector('[data-out]');
   var seq = 0;
   var lastList = null; // { q, rows } — for "Back to list"
+  // Unofficial-times marker: set from every response's event.is_frozen
+  // (false -> marker on the list and the card + certificate; true or
+  // missing -> nothing). Never hardcoded per city.
+  var unofficial = false;
+  function noteEvent(j) { unofficial = window.PLN_RUNNER_CARD.isUnofficial(j && j.event); }
 
   // ---- Shareable URL (?bib=) -------------------------------------------------
   function shareUrl(bib) {
@@ -67,8 +72,9 @@
     });
   }
 
-  // pln-find: { event, query, total, rows }. Only `rows` is read (its event
-  // object is slimmer than pln-5k's — no roster_size / ranked_by / …).
+  // pln-find: { event, query, total, rows }. Only `rows` and event.is_frozen
+  // are read (its event object is slimmer than pln-5k's — no roster_size /
+  // ranked_by / …).
   function find(q) {
     var qs = 'slug=' + encodeURIComponent(CITY.slug) + '&q=' + encodeURIComponent(q) + '&limit=' + LIST_LIMIT;
     return fetch(FIND + '?' + qs, { cache: 'no-store' }).then(function (r) {
@@ -88,7 +94,7 @@
 
   function showList(q, rows) {
     lastList = { q: q, rows: rows };
-    out.innerHTML =
+    out.innerHTML = (unofficial ? window.PLN_RUNNER_CARD.unofficialNote() : '') +
       '<p class="list-head">' + esc(T.matches(rows.length)) + '</p>' +
       '<ul class="list">' + rows.map(function (r) {
         return '<li><button type="button" data-bib="' + esc(r.bib) + '">' +
@@ -115,7 +121,7 @@
     out.innerHTML = fromList ? '<button class="back" type="button" data-back>' + esc(T.back) + '</button>' : '';
     out.appendChild(window.PLN_RUNNER_CARD.renderRunnerCard(r, {
       city: CITY, titleId: 'card-name', showSearchAgain: true, onSearchAgain: searchAgain,
-      shareUrl: shareUrl(r.bib)
+      shareUrl: shareUrl(r.bib), unofficial: unofficial
     }));
     var back = out.querySelector('[data-back]');
     if (back) back.addEventListener('click', function () {
@@ -137,6 +143,7 @@
     loading(T.searching);
     return find(q).then(function (j) {
       if (my !== seq) return;
+      noteEvent(j);
       var rows = (j && Array.isArray(j.rows)) ? j.rows : [];
       if (!rows.length) message(T.notFound, true);
       else showList(q, rows);
@@ -150,6 +157,7 @@
           loading(T.searching);
           return api({ mode: 'one', bib: q }).then(function (j) {
             if (my !== seq) return;
+            noteEvent(j);
             if (j && j.runner) showCard(j.runner, false);
             else return searchList(q, my);
           });
@@ -162,6 +170,7 @@
     loading(T.loadingRunner);
     api({ mode: 'one', bib: bib }).then(function (j) {
       if (my !== seq) return;
+      noteEvent(j);
       if (j && j.runner) showCard(j.runner, !!lastList, noPush);
       else { setUrl(null, true); message(T.notFound, true); }   // don't leave a dead ?bib= in the URL
     }).catch(function () { if (my === seq) failure(function () { openRunner(bib, noPush); }); });

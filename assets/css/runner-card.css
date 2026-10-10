@@ -90,3 +90,13 @@
 .rc .rc__spin { width: 22px; height: 22px; flex: none; border-radius: 50%; border: 3px solid var(--rc-line-strong); border-top-color: var(--rc-teal); animation: rc-spin .8s linear infinite; }
 @keyframes rc-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .rc .rc__spin { animation-duration: 2.4s; } }
+
+/* Unofficial-times marker (event.is_frozen === false). Standalone class so the
+   /cek pages can put the same marker above their result lists too. */
+.rc-unofficial {
+  margin: 0 0 14px; padding: 8px 12px; box-sizing: border-box;
+  font-family: 'Montserrat', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-weight: 800; font-size: 12px; line-height: 1.35; letter-spacing: 0.08em; text-transform: uppercase; text-align: center;
+  color: #FFD200; background: rgba(0,0,0,0.28); border: 1.5px solid #FFD200; border-radius: 8px;
+}
+.rc.rc--closable .rc-unofficial { margin-right: 48px; }

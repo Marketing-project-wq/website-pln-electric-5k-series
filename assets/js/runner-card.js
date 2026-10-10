@@ -13,7 +13,15 @@
                          else copies the link) — /cek passes ?bib= links
        onSearchAgain   : click handler for it
        onClose         : given -> X button in the card corner (modal)
+       unofficial      : true -> "UNOFFICIAL TIMES — SUBJECT TO OFFICIAL
+                         CONFIRMATION" at the top of the card AND on the
+                         certificate. Pass isUnofficial(event).
      }
+   window.PLN_RUNNER_CARD.isUnofficial(event) -> boolean
+     true only when the API's event.is_frozen is exactly false (results not
+     yet confirmed). true, missing or no event -> false: no marker.
+   window.PLN_RUNNER_CARD.unofficialNote() -> HTML for the same marker, for
+     the pages' own lists (styled by .rc-unofficial in runner-card.css).
    window.PLN_RUNNER_CARD.renderCardState(opts) -> HTMLElement
      Same card shell for loading / not found / error:
      { title, text, loading, onRetry, onClose, titleId }
@@ -56,6 +64,7 @@
     shareLink: 'Share My Result',
     linkCopied: 'Link copied',
     linkFailed: 'Could not copy the link',
+    unofficial: 'Unofficial times \u2014 subject to official confirmation',
     close: 'Close',
     retry: 'Try again'
   };
@@ -73,6 +82,8 @@
     if (!r || r.net_basis === 'unavailable') return null;
     return r.net_time ? String(r.net_time) : null;
   }
+  function isUnofficial(ev) { return !!(ev && ev.is_frozen === false); }
+  function unofficialNote() { return '<p class="rc-unofficial" role="note">' + esc(T.unofficial) + '</p>'; }
   function stat(label, value, sub) {
     return '<div class="rc__stat"><dt class="rc__label">' + esc(label) + '</dt><dd>' + value + (sub ? '<span class="rc__sub">' + esc(sub) + '</span>' : '') + '</dd></div>';
   }
@@ -86,6 +97,7 @@
 
     var html = '<article class="rc' + (opts.onClose ? ' rc--closable' : '') + '" aria-labelledby="' + esc(titleId) + '">' +
       (opts.onClose ? closeBtn() : '') +
+      (opts.unofficial ? unofficialNote() : '') +
       '<h2 class="rc__name" id="' + esc(titleId) + '" tabindex="-1">' + esc(r.name || '') + '</h2>' +
       '<p class="rc__bib"><span>' + T.bib + '</span>' + esc(r.bib) + '</p>' +
       (r.category ? '<span class="rc__chip">' + esc(r.category) + '</span>' : '');
@@ -142,7 +154,7 @@
     if (opts.showSearchAgain && opts.onSearchAgain) card.querySelector('[data-rc-again]').addEventListener('click', opts.onSearchAgain);
 
     if (opts.shareUrl) wireShareLink(card, opts.shareUrl);
-    if (finished) wireCertificate(card, r, opts.city);
+    if (finished) wireCertificate(card, r, opts.city, { unofficial: !!opts.unofficial });
     return card;
   }
 
@@ -182,7 +194,7 @@
   }
 
   // Prepare the PNG now; the click only delivers it (share sheet / download).
-  function wireCertificate(card, r, city) {
+  function wireCertificate(card, r, city, certOpts) {
     var btn = card.querySelector('[data-rc-cert]');
     var label = card.querySelector('[data-rc-cert-label]');
     var msg = card.querySelector('[data-rc-cert-msg]');
@@ -196,7 +208,7 @@
     function prep() {
       prepared = null; failed = null;
       ready(false, T.preparing);
-      return window.PLN_CERT.prepare(r, city).then(function (p) {
+      return window.PLN_CERT.prepare(r, city, certOpts).then(function (p) {
         prepared = p; msg.hidden = true; ready(true, T.download);
       }, function (e) {
         failed = e; showError(e); ready(true, T.download);   // click retries
@@ -228,5 +240,5 @@
     return card;
   }
 
-  window.PLN_RUNNER_CARD = { renderRunnerCard: renderRunnerCard, renderCardState: renderCardState, netTimeOf: netTimeOf };
+  window.PLN_RUNNER_CARD = { renderRunnerCard: renderRunnerCard, renderCardState: renderCardState, netTimeOf: netTimeOf, isUnofficial: isUnofficial, unofficialNote: unofficialNote };
 })();

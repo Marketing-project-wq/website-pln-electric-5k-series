@@ -9,6 +9,10 @@
    until that city's Landstrike Race Day — shown as a polite waiting message.
    No sample data, no timing-vendor calls from the browser.
 
+   Unofficial marker: a city whose event.is_frozen is false gets "UNOFFICIAL
+   TIMES — SUBJECT TO OFFICIAL CONFIRMATION" above the board whenever it is
+   in view (its tab, or OVERALL). is_frozen true / no event -> no marker.
+
    Categories: MALE / FEMALE (filter chips + ALL). Rank is computed within
    each category, fastest first, in both the city and the overall view.
    ========================================================================== */
@@ -54,6 +58,7 @@
   };
   // Column headers stay English on both pages (same as Race Results).
   var COL = { rank: 'Rank', who: 'Participant', time: '200 M' };
+  var UNOFFICIAL = 'Unofficial times \u2014 subject to official confirmation';   // same text on /en and /id
 
   var filtersEl = document.querySelector('[data-speedland-filters]');
   var searchEl = document.querySelector('[data-speedland-search]');
@@ -61,8 +66,9 @@
 
   // Default view = the first city (Jakarta), not OVERALL: with more than one
   // city OVERALL merges the boards, and Jakarta's published ranking must stay
-  // what visitors see first. frozen[key]: that city's event.is_frozen.
-  var state = { view: CITIES[0].key, cat: '', q: '', data: {}, frozen: {}, loaded: false, offline: false };
+  // what visitors see first. frozen[key]: that city's event.is_frozen;
+  // unofficial[key]: true when that city's event.is_frozen is exactly false.
+  var state = { view: CITIES[0].key, cat: '', q: '', data: {}, frozen: {}, unofficial: {}, loaded: false, offline: false };
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -81,11 +87,11 @@
   function timeKey(r) { return typeof r.time_ms === 'number' ? r.time_ms : Infinity; }
 
   // ---- Fetch ----------------------------------------------------------------
-  // Resolves to { rows, frozen } (rows [] when the event doesn't exist yet;
-  // frozen = the API's event.is_frozen); rejects only on real network/server
-  // failures.
+  // Resolves to { rows, frozen, unofficial } (rows [] when the event doesn't
+  // exist yet; frozen = event.is_frozen === true, unofficial = event.is_frozen
+  // === false); rejects only on real network/server failures.
   function fetchCity(city) {
-    var rows = [], isFrozen = false;
+    var rows = [], isFrozen = false, isUnofficial = false;
     function page(n) {
       var url = API + '?mode=list&slug=' + encodeURIComponent(city.slug) + '&limit=' + PAGE + '&offset=' + (n * PAGE);
       return fetch(url, { cache: 'no-store' }).then(function (r) {
@@ -95,9 +101,12 @@
       }).then(function (j) {
         var got = (j && j.rows) || [];
         rows = rows.concat(got);
-        if (n === 0) isFrozen = !!(j && j.event && j.event.is_frozen === true);
+        if (n === 0) {
+          isFrozen = !!(j && j.event && j.event.is_frozen === true);
+          isUnofficial = !!(j && j.event && j.event.is_frozen === false);
+        }
         if (got.length === PAGE && n + 1 < MAX_PAGES) return page(n + 1);
-        return { rows: rows, frozen: isFrozen };
+        return { rows: rows, frozen: isFrozen, unofficial: isUnofficial };
       });
     }
     return page(0);
@@ -106,7 +115,7 @@
     return Promise.all(CITIES.map(function (c) {
       // A frozen city's results can't change: keep what we have, don't refetch.
       if (state.frozen[c.key]) return Promise.resolve({ key: c.key, frozen: true, ok: true, cached: true });
-      return fetchCity(c).then(function (d) { return { key: c.key, rows: d.rows, frozen: d.frozen, ok: true }; },
+      return fetchCity(c).then(function (d) { return { key: c.key, rows: d.rows, frozen: d.frozen, unofficial: d.unofficial, ok: true }; },
                                function () { return { key: c.key, ok: false }; });
     })).then(function (res) {
       var anyOk = false;
@@ -115,6 +124,7 @@
         anyOk = true;
         if (x.cached) return;
         if (x.frozen) state.frozen[x.key] = true;
+        state.unofficial[x.key] = !!x.unofficial;
         state.data[x.key] = x.rows.filter(function (r) { return r.status === 'ok' && r.time; })
           .map(function (r) { return { bib: r.bib, name: r.name, time: r.time, time_ms: r.time_ms, cat: catOf(r), city: x.key }; });
       });
@@ -142,7 +152,13 @@
     return out;
   }
   function cityName(key) { for (var i = 0; i < CITIES.length; i++) if (CITIES[i].key === key) return CITIES[i].name; return key; }
-  function message(text) { mount.innerHTML = '<p class="results-message">' + esc(text) + '</p>'; }
+  // Marker HTML for the current view ('' when every city in view is frozen
+  // or unknown — then the board is exactly what it was without the marker).
+  function unofficialNote() {
+    var on = CITIES.some(function (c) { return (state.view === 'overall' || state.view === c.key) && state.unofficial[c.key]; });
+    return on ? '<p class="sl-unofficial" role="note">' + esc(UNOFFICIAL) + '</p>' : '';
+  }
+  function message(text) { mount.innerHTML = unofficialNote() + '<p class="results-message">' + esc(text) + '</p>'; }
 
   function paint() {
     var overall = state.view === 'overall';
@@ -168,7 +184,7 @@
     if (!list.length) { message(state.q ? T.noMatch : T.noneInCat); return; }
 
     var multiCity = overall && CITIES.length > 1;
-    mount.innerHTML = '<div class="table-wrap"><table class="data data--speedland"><thead><tr>' +
+    mount.innerHTML = unofficialNote() + '<div class="table-wrap"><table class="data data--speedland"><thead><tr>' +
       '<th>' + COL.rank + '</th><th>' + COL.who + '</th><th class="num">' + COL.time + '</th></tr></thead><tbody>' +
       list.map(function (r) {
         return '<tr' + (r.rank <= 3 ? ' class="sl-podium-' + r.rank + '"' : '') + '>' +
