@@ -5,7 +5,7 @@
    city: Jakarta .png, Yogyakarta .jpg) at its native size and downloads it as
    PLN-5K-<City>-<bib>-<NameWithoutSpaces>.<png|jpg>. Client-side only.
 
-   Usage (city = { key: 'jakarta', name: 'Jakarta' }):
+   Usage (city = { key: 'jakarta', name: 'Jakarta', slug: 'pln-jakarta' }):
      PLN_CERT.prepare(runner, city, opts) -> Promise<{ file, blob, filename }>
        Renders the canvas and builds the image File. Call it when the card
        OPENS, not on click (see deliver).
@@ -43,8 +43,12 @@
   // Yogyakarta is a 2480x3508 photo: JPEG output (a PNG would be ~10 MB).
   var TEMPLATES = {
     jakarta: { file: 'certificate-jakarta.png', type: 'image/png', ext: 'png', layout: 'jakarta' },
-    yogyakarta: { file: 'certificate-yogyakarta-clean.jpg', type: 'image/jpeg', ext: 'jpg', layout: 'yogyakarta' }
+    yogyakarta: { file: 'certificate-yogyakarta-clean.jpg', type: 'image/jpeg', ext: 'jpg', layout: 'yogyakarta', overallRank: true }
   };
+  // overallRank: true -> POSITION is the OVERALL rank, fetched once per
+  // certificate from pln-find ?slug=<city.slug>&bib=<bib> (pln-5k only has the
+  // category rank). One extra request, made only here — never on page load.
+  var FIND = 'https://cpvzwqptzcxnwzfzgrmt.supabase.co/functions/v1/pln-find';
   function templateOf(city) { return TEMPLATES[city && city.key] || null; }
   function certSrc(t) { return '/assets/' + t.file + '?v=' + CERT_ASSET_VERSION; }
 
@@ -252,18 +256,32 @@
     return { sx: W / CERT.ref.w, sy: H / CERT.ref.h, unofficial: CERT.unofficial };
   }
 
-  // Overall position: 1..N over every finisher, whatever the category or sex.
-  // The pln-5k endpoint doesn't send it yet — `rank` is the CATEGORY rank and
-  // is deliberately not used. Shows "–" until the API adds `overall_rank`.
-  function overallRankOf(r) {
-    var n = r && r.overall_rank;
-    return (typeof n === 'number' && n > 0) || (typeof n === 'string' && /^\d+$/.test(n)) ? String(n) : '–';
+  // Overall position: 1..N over every finisher, whatever the category or sex
+  // (pln-find: equal times share a rank, pacers are never ranked). `rank` is
+  // the CATEGORY rank and is deliberately not used. null (not finished /
+  // pacer) -> "–".
+  function overallRankText(n) {
+    return (typeof n === 'number' && n > 0 && Math.floor(n) === n) ? String(n) : '–';
+  }
+  // Resolves to the runner's overall_rank (number or null). A failed request
+  // rejects, so the certificate is never made with a wrong or missing POSITION
+  // (the card's button then retries).
+  function fetchOverallRank(r, c) {
+    var url = FIND + '?slug=' + encodeURIComponent(c.slug || '') + '&bib=' + encodeURIComponent(r.bib);
+    return fetch(url, { cache: 'no-store' }).then(function (res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    }).then(function (j) {
+      var x = j && j.runner;
+      if (!x || String(x.bib) !== String(r.bib)) throw new Error('runner mismatch');
+      return x.overall_rank == null ? null : x.overall_rank;
+    });
   }
 
   // Yogyakarta (certificate-yogyakarta-clean.jpg): name on the line; boxes
   // GENDER / BIB NUMBER / POSITION (overall) / FINISH TIME with BOTH gun and
   // net time as two labelled rows. Every text has a dark halo.
-  function drawYogya(g, W, H, r) {
+  function drawYogya(g, W, H, r, overall) {
     var L = YOGYA, sx = W / L.ref.w, sy = H / L.ref.h;
     g.textAlign = 'center';
     g.textBaseline = 'alphabetic';
@@ -293,7 +311,7 @@
     }
     simple(0, 'GENDER', genderOf(r) || '–');
     simple(1, 'BIB NUMBER', String(r.bib));
-    simple(2, 'POSITION', overallRankOf(r));
+    simple(2, 'POSITION', overallRankText(overall));
 
     // FINISH TIME: header, then "GUN TIME <gun_time>" and "NET TIME
     // <net_time>" rows (label left, value right, shared baseline). Values are
@@ -332,7 +350,8 @@
   }
 
   // Renders the certificate and resolves to { file, blob, filename }; rejects
-  // with a user-facing (English) message. `c` is the city: { key, name };
+  // with a user-facing (English) message. `c` is the city: { key, name, slug }
+  // (slug is needed where the template ranks overall, i.e. Yogyakarta);
   // opts.unofficial prints the unofficial-times marker.
   function prepare(r, c, opts) {
     opts = opts || {};
@@ -341,14 +360,15 @@
     var fontsReady = document.fonts && document.fonts.load
       ? Promise.all([document.fonts.load('64px Anton'), document.fonts.load('700 20px Montserrat'), document.fonts.load('800 20px Montserrat')]).catch(function () {})
       : Promise.resolve();
-    return Promise.all([loadImage(certSrc(t)), fontsReady]).then(function (res) {
+    var rankReady = t.overallRank ? fetchOverallRank(r, c) : Promise.resolve(null);
+    return Promise.all([loadImage(certSrc(t)), fontsReady, rankReady]).then(function (res) {
       var img = res[0], W = img.naturalWidth, H = img.naturalHeight;
       var cv = document.createElement('canvas');
       cv.width = W; cv.height = H;
       var g = cv.getContext('2d');
       g.drawImage(img, 0, 0, W, H);
 
-      var placed = t.layout === 'yogyakarta' ? drawYogya(g, W, H, r) : drawJakarta(g, W, H, r);
+      var placed = t.layout === 'yogyakarta' ? drawYogya(g, W, H, r, res[2]) : drawJakarta(g, W, H, r);
       if (opts.unofficial) drawUnofficial(g, W, placed.sx, placed.sy, placed.unofficial);
 
       var filename = 'PLN-5K-' + c.name + '-' + fileSafe(r.bib) + '-' + fileSafe(r.name) + '.' + t.ext;
