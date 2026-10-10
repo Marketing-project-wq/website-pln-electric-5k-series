@@ -14,8 +14,10 @@
        onSearchAgain   : click handler for it
        onClose         : given -> X button in the card corner (modal)
        unofficial      : true -> "UNOFFICIAL TIMES — SUBJECT TO OFFICIAL
-                         CONFIRMATION" at the top of the card AND on the
-                         certificate. Pass isUnofficial(event).
+                         CONFIRMATION" at the top of the card, and NO
+                         certificate button (nothing is prepared): one line
+                         "Certificate available once results are confirmed."
+                         instead. Pass isUnofficial(event).
      }
    window.PLN_RUNNER_CARD.isUnofficial(event) -> boolean
      true only when the API's event.is_frozen is exactly false (results not
@@ -58,6 +60,7 @@
     registered: 'You\'re registered. Your time will appear here automatically once you cross the finish line.',
     coral: 'Start Coral',
     registeredCert: 'Your certificate will be available here after you finish.',
+    certPending: 'Certificate available once results are confirmed.',
     download: 'Download Certificate',
     preparing: 'Preparing...',
     again: 'Search again',
@@ -135,7 +138,12 @@
     }
 
     html += '<div class="rc__actions">';
-    if (finished || !ok) {
+    if (opts.unofficial && (finished || !ok)) {
+      // Results not confirmed yet (event.is_frozen === false): no certificate
+      // button at all, just one line saying it will come. Flipping
+      // is_frozen to true brings the button back — no deploy.
+      html += '<p class="rc__hint rc__hint--cert" data-rc-cert-pending>' + esc(registered ? T.registeredCert : T.certPending) + '</p>';
+    } else if (finished || !ok) {
       html += '<button class="rc__btn" type="button" data-rc-cert disabled aria-disabled="true">' + DL_ICON +
         '<span data-rc-cert-label>' + esc(finished ? T.preparing : T.download) + '</span></button>';
       if (registered) html += '<p class="rc__hint">' + esc(T.registeredCert) + '</p>';
@@ -154,7 +162,7 @@
     if (opts.showSearchAgain && opts.onSearchAgain) card.querySelector('[data-rc-again]').addEventListener('click', opts.onSearchAgain);
 
     if (opts.shareUrl) wireShareLink(card, opts.shareUrl);
-    if (finished) wireCertificate(card, r, opts.city, { unofficial: !!opts.unofficial });
+    if (finished && !opts.unofficial) wireCertificate(card, r, opts.city, { unofficial: false });
     return card;
   }
 

@@ -76,6 +76,7 @@
 .rc .rc__btn--ghost { background: transparent; color: #FFFFFF; border: 2px solid var(--rc-line-strong); }
 .rc .rc__hint { margin: -4px 0 0; text-align: center; color: var(--rc-muted); font-size: 14px; }
 .rc .rc__hint--err { color: var(--rc-accent); }
+.rc .rc__hint--cert { margin: 0; }   /* stands alone in place of the certificate button */
 
 .rc .rc__close {
   position: absolute; top: 14px; right: 14px; z-index: 1;
