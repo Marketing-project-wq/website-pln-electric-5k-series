@@ -27,7 +27,7 @@
   // assets/certificate-<key>.png.
   var CITIES = [
     { key: 'jakarta',    name: 'Jakarta',    slug: 'pln-jakarta' },
-    { key: 'yogyakarta', name: 'Yogyakarta', slug: null },
+    { key: 'yogyakarta', name: 'Yogyakarta', slug: 'pln-yogya' },
     { key: 'bali',       name: 'Bali',       slug: null }
   ];
 
@@ -42,7 +42,7 @@
     allCats: 'Semua Kategori',
     search: 'Cari No. BIB atau nama…', searchLabel: 'Cari peserta',
     overall: 'Keseluruhan',
-    cityPending: 'Hasil Yogyakarta dan Bali belum tersedia — tab akan aktif setelah Race Day kota tersebut. Tab Keseluruhan aktif setelah hasil kota lain masuk.',
+    cityPending: 'Hasil Bali belum tersedia — tab akan aktif setelah Race Day Bali.',
     notYet: 'Hasil belum tersedia',
     live: 'Lomba sedang berlangsung. Hasil akan muncul di sini secara otomatis begitu pelari pertama finis — halaman ini diperbarui sendiri setiap 30 detik.',
     catEmpty: 'Belum ada finisher di kategori ini.',
@@ -59,7 +59,7 @@
     allCats: 'All Categories',
     search: 'Search bib or name…', searchLabel: 'Search participants',
     overall: 'Overall',
-    cityPending: 'Yogyakarta and Bali results are not available yet — their tabs switch on after each city\'s Race Day. Overall switches on once another city has results.',
+    cityPending: 'Bali results are not available yet — its tab switches on after Bali\'s Race Day.',
     notYet: 'Results not available yet',
     live: 'The race is in progress. Results appear here automatically as soon as the first runner finishes — this page refreshes itself every 30 seconds.',
     catEmpty: 'No finishers in this category yet.',
