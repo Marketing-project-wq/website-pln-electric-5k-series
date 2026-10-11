@@ -93,7 +93,7 @@
   //   "Name" placeholder ink y=1307..1391 (erased in the -clean file)
   //   boxes (outer edge of the 5 px white outline):
   //     GENDER [348,1954,1091,2357]   BIB NUMBER  [1389,1955,2132,2357]
-  //     POSITION [347,2501,1091,2903] FINISH TIME [1389,2501,2132,2903]
+  //     POSITION [347,2501,1091,2903] TIME [1389,2501,2132,2903]
   //   sponsor panel starts y~3255. Left boxes sit on the candi photo, right
   //   ones on the teal rays, so every text gets a dark halo (shadow).
   // All numbers are template px; scaled to the loaded image like CERT.
@@ -104,14 +104,12 @@
       [348, 1954, 1091, 2357],                     // GENDER
       [1389, 1955, 2132, 2357],                    // BIB NUMBER
       [347, 2501, 1091, 2903],                     // POSITION (overall)
-      [1389, 2501, 2132, 2903]                     // FINISH TIME: gun + net
+      [1389, 2501, 2132, 2903]                     // NET TIME (timeBox, as Jakarta)
     ],
     padX: 64,                                      // horizontal inset for text width
     label: 46, value: 168, gap: 26,                // label/value font px
-    rowLabel: 38, rowValue: 116, rowGap: 22,       // FINISH TIME rows
     labelColor: '#FFD200',                         // PLN yellow (= --pln-yellow on the Yogya display)
     textColor: '#FFFFFF',
-    rowLabelColor: 'rgba(255,255,255,0.88)',
     halo: { color: 'rgba(0,0,0,0.75)', blur: 18 },
     unofficial: { y: 3080, size: 46, padX: 48, padY: 26 }
   };
@@ -279,8 +277,8 @@
   }
 
   // Yogyakarta (certificate-yogyakarta-clean.jpg): name on the line; boxes
-  // GENDER / BIB NUMBER / POSITION (overall) / FINISH TIME with BOTH gun and
-  // net time as two labelled rows. Every text has a dark halo.
+  // GENDER / BIB NUMBER / POSITION (overall) / one time (timeBox, the same
+  // NET TIME box as Jakarta). Every text has a dark halo.
   function drawYogya(g, W, H, r, overall) {
     var L = YOGYA, sx = W / L.ref.w, sy = H / L.ref.h;
     g.textAlign = 'center';
@@ -313,38 +311,10 @@
     simple(1, 'BIB NUMBER', String(r.bib));
     simple(2, 'POSITION', overallRankText(overall));
 
-    // FINISH TIME: header, then "GUN TIME <gun_time>" and "NET TIME
-    // <net_time>" rows (label left, value right, shared baseline). Values are
-    // the API's own strings; a missing one shows "–", never the other time.
-    var gun = String(r.gun_time || r.time || '') || '–';
-    var net = (r.net_basis !== 'unavailable' && r.net_time) ? String(r.net_time) : '–';
-    var rows = [{ label: 'GUN TIME', value: gun }, { label: 'NET TIME', value: net }];
-    var b = box(3), maxW = b.x1 - b.x0;
-    var hs = fitFont(g, 'FINISH TIME', Math.round(L.label * sy), maxW, '700', FONT_LABEL);
-    var hm = inkOf(g, 'FINISH TIME', hs);
-    var rl = Math.round(L.rowLabel * sy);
-    g.font = '700 ' + rl + 'px ' + FONT_LABEL;
-    var lw = Math.max(g.measureText('GUN TIME').width, g.measureText('NET TIME').width);
-    // One value size for both rows so the two times line up.
-    var vs = Math.round(L.rowValue * sy);
-    rows.forEach(function (x) { vs = Math.min(vs, fitFont(g, x.value, vs, maxW - lw - L.gap * sx, '400', FONT_DISPLAY)); });
-    g.font = '400 ' + vs + 'px ' + FONT_DISPLAY;
-    var digit = inkOf(g, '0', vs);                  // row height from digit ink, so a "–" row matches
-    var rowH = digit.asc + digit.desc;
-    var y = b.cy - (hm.asc + hm.desc + L.gap * sy + 2 * rowH + L.rowGap * sy) / 2;
-    g.font = '700 ' + hs + 'px ' + FONT_LABEL; g.fillStyle = L.labelColor;
-    haloText(g, 'FINISH TIME', b.cx, y + hm.asc, L.halo, sy);
-    y += hm.asc + hm.desc + L.gap * sy;
-    rows.forEach(function (x) {
-      var base = y + digit.asc;
-      g.textAlign = 'left';
-      g.font = '700 ' + rl + 'px ' + FONT_LABEL; g.fillStyle = L.rowLabelColor;
-      haloText(g, x.label, b.x0, base, L.halo, sy);
-      g.textAlign = 'right';
-      g.font = '400 ' + vs + 'px ' + FONT_DISPLAY; g.fillStyle = L.textColor;
-      haloText(g, x.value, b.x1, base, L.halo, sy);
-      y += rowH + L.rowGap * sy;
-    });
+    // Time box: same as Jakarta — one time, labelled by what it holds
+    // (timeBox: NET TIME = the API's net_time string as sent).
+    var t = timeBox(r);
+    simple(3, t.label, t.value);
     g.textAlign = 'center';
     return { sx: sx, sy: sy, unofficial: L.unofficial };
   }
